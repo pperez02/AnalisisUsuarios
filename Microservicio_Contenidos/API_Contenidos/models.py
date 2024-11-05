@@ -23,16 +23,12 @@ class Contenido(Base):
     fechaLanzamiento = Column(String)  # Formato: YYYY-MM-DD
     idGenero = Column(String, ForeignKey("Genero.id"))
     valoracionPromedio = Column(Float)  # Escala de 0 a 10
-    idSubtitulosContenido = Column(String, ForeignKey("SubtituloContenido.idListaSubtitulo"))
-    idDoblajeContenido = Column(String, ForeignKey("DoblajeContenido.idListaDoblaje"))
+    idSubtitulosContenido = Column(String, ForeignKey("SubtituloContenido.idSubtitulosContenido"))
+    idDoblajeContenido = Column(String, ForeignKey("DoblajeContenido.idDoblajeContenido"))
 
-class Pelicula(Base):
-    __tablename__ = "Pelicula"
-
-    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()), index=True)
-    duracion = Column(Integer)  # En minutos
-    idDirector = Column(String, ForeignKey("Director.id")) 
-
+    #Parametros exclusivos de Pelicula
+    duracion = Column(Integer, nullable=True)  # En minutos
+    idDirector = Column(String, ForeignKey("Director.id"), nullable=True) 
 
 class Temporada(Base):
     __tablename__ = "Temporada"
@@ -46,11 +42,12 @@ class Temporada(Base):
         PrimaryKeyConstraint('idContenido', 'idTemporada'),
     )
 
-class Episodio(Temporada):
+class Episodio(Base):
     __tablename__ = "Episodio"
 
+    idContenido = Column(String, ForeignKey("Contenido.id"))
+    idTemporada = Column(String, ForeignKey("Temporada.idTemporada"))
     idEpisodio = Column(String, default=lambda: str(uuid.uuid4()), index=True)
-
     idDirector = Column(String, ForeignKey("Director.id"))
     numeroEpisodio = Column(Integer)
     duracion = Column(Integer)  # En minutos
@@ -67,7 +64,7 @@ class Trailer(Base):
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()), index=True)
     titulo = Column(String)
     duracion = Column(Integer)  # En minutos
-    idDoblajeContenido = Column(String, ForeignKey("DoblajeContenido.idListaDoblaje"))
+    idDoblajeContenido = Column(String, ForeignKey("DoblajeContenido.idDoblajeContenido"))
     fecha_trailer = Column(String)  # Formato: YYYY-MM-DD
 
 class Genero(Base):
@@ -82,6 +79,11 @@ class Reparto(Base):
 
     idContenido = Column(String, ForeignKey("Contenido.id"), index=True)
     idActor = Column(String, ForeignKey("Actor.id"), index=True)
+
+    __table_args__ = (
+        PrimaryKeyConstraint('idContenido', 'idActor'),
+    )
+
 
 
 class Actor(Base):
