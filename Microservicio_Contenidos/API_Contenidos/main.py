@@ -25,3 +25,11 @@ models.Base.metadata.create_all(bind=engine)
 def get_database():
     db = next(get_db())
     return db
+
+@app.post("/peliculas", response_model=schemas.Pelicula)
+def create_pelicula(pelicula: schemas.PeliculaCreate, db: Session = Depends(get_db)):
+    return crud.create_pelicula(db=db, pelicula=pelicula)
+
+@app.post("/series", response_model=schemas.Contenido)
+def create_serie(serie: schemas.SerieCreate, db: Session = Depends(get_db)):
+    return crud.create_serie(db=db, serie=serie)
