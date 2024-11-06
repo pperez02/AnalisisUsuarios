@@ -45,7 +45,7 @@ def create_serie(db: Session, serie: schemas.ContenidoBase):
 
 # Función para actualizar un contenido
 def update_content(db: Session, content_id: str, content: schemas.ContenidoUpdate):
-    content_query = db.query(models.Contenido).filter(models.Contenido.id == content_id).first()
+    content_query = db.query(model.Contenido).filter(model.Contenido.id == content_id).first()
     if content_query:
         content_query.tipoContenido = content.tipoContenido
         content_query.titulo = content.titulo
@@ -64,8 +64,8 @@ def update_content(db: Session, content_id: str, content: schemas.ContenidoUpdat
 
 # Función para añadir subtítulos a un contenido
 def update_subtitulo(db: Session, content_id: str, subtitulo_id: str):
-    content_query = db.query(models.Contenido).filter(models.Contenido.id == content_id).first()
-    subtitulo_query = db.query(models.Subtitulo).filter(models.Subtitulo.idSubtitulo == subtitulo_id).first()
+    content_query = db.query(model.Contenido).filter(model.Contenido.id == content_id).first()
+    subtitulo_query = db.query(model.Subtitulo).filter(model.Subtitulo.idSubtitulo == subtitulo_id).first()
     if content_query and subtitulo_query:
         db_SubtituloContenido = models.SubtituloContenido (
             idSubtitulosContenido = content_query.idSubtitulosContenido,
@@ -79,8 +79,8 @@ def update_subtitulo(db: Session, content_id: str, subtitulo_id: str):
 
 # Función para añadir doblajes a un contenido
 def update_doblaje(db: Session, content_id: str, doblaje_id: str):
-    content_query = db.query(models.Contenido).filter(models.Contenido.id == content_id).first()
-    doblaje_query = db.query(models.Doblaje).filter(models.Doblaje.idDoblaje == doblaje_id).first()
+    content_query = db.query(model.Contenido).filter(model.Contenido.id == content_id).first()
+    doblaje_query = db.query(model.Doblaje).filter(model.Doblaje.idDoblaje == doblaje_id).first()
     if content_query and doblaje_query:
         db_DoblajeContenido = models.DoblajeContenido (
             idDoblajeContenido = content_query.idDoblajeContenido,

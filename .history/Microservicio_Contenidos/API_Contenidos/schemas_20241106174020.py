@@ -17,12 +17,6 @@ class Contenido(ContenidoBase):
     id: str #Generado Automaticamente
     class Config:
         from_attributes = True
-    
-class ContenidoUpdate(ContenidoBase):
-    duracion: Optional[int]
-    idDirector: Optional[str]
-    class Config:
-        from_attributes = True   
 
 class PeliculaCreate(ContenidoBase):
     duracion: int
@@ -38,4 +32,3 @@ class Pelicula(ContenidoBase):
 
 class SerieCreate(ContenidoBase):
     pass
-     
