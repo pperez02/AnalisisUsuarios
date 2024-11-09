@@ -33,3 +33,38 @@ def get_db():
     finally:
         db.close()
 
+def initialize_database():
+    if not os.path.exists("./contenidos.db"):
+        # Crea las tablas si no existen
+        Base.metadata.create_all(bind=engine)
+        print("Base de datos creada y tablas inicializadas.")
+
+        # Insertar valores iniciales
+        db = SessionLocal()
+        try:
+            subtitulosExistentes = db.query(models.Subtitulo).count()
+            if subtitulosExistentes == 0:
+                subtitulo_nuevo = models.Subtitulo(idSubtitulo="1", idioma="Inglés")    
+                db.add(subtitulo_nuevo)  
+                subtitulo_nuevo = models.Subtitulo(idSubtitulo="2", idioma="Español")    
+                db.add(subtitulo_nuevo)  
+                subtitulo_nuevo = models.Subtitulo(idSubtitulo="3", idioma="Italiano")    
+                db.add(subtitulo_nuevo)  
+                subtitulo_nuevo = models.Subtitulo(idSubtitulo="4", idioma="Portugués")    
+                db.add(subtitulo_nuevo)      
+            
+            doblajesExistentes = db.query(models.Subtitulo).count()
+            if doblajesExistentes == 0:
+                doblaje_nuevo = models.Doblaje(idDoblaje="1", idioma="Inglés")    
+                db.add(doblaje_nuevo)  
+                doblaje_nuevo = models.Doblaje(idDoblaje="2", idioma="Español")    
+                db.add(doblaje_nuevo)  
+                doblaje_nuevo = models.Doblaje(idDoblaje="3", idioma="Italiano")    
+                db.add(doblaje_nuevo)  
+                doblaje_nuevo = models.Doblaje(idDoblaje="4", idioma="Portugués")    
+                db.add(doblaje_nuevo)
+
+            db.commit()
+            print("Valores iniciales insertados (Idiomas).")
+        finally:
+            db.close()

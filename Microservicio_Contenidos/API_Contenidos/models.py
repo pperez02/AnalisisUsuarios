@@ -116,7 +116,7 @@ class Subtitulo(Base):
     __tablename__ = "Subtitulo"
 
     idSubtitulo = Column(String, primary_key=True) #TODO
-    idiomas = Column(String)
+    idioma = Column(String)
 
 class DoblajeContenido(Base):
     __tablename__ = "DoblajeContenido"

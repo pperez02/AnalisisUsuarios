@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
 import uuid
+from typing import Union
 
 # Función para crear una película
 def create_pelicula(db: Session, pelicula: schemas.PeliculaCreate):  
@@ -44,10 +45,11 @@ def create_serie(db: Session, serie: schemas.ContenidoBase):
     return db_serie
 
 # Función para actualizar un contenido
-def update_content(db: Session, content_id: str, content: schemas.ContenidoUpdate):
+
+def update_content(db: Session, content_id: str, content: Union[schemas.PeliculaUpdate, schemas.SerieUpdate]):
     content_query = db.query(models.Contenido).filter(models.Contenido.id == content_id).first()
     if content_query:
-        content_query.tipoContenido = content.tipoContenido
+        # Actualiza los campos comunes a ambos tipos
         content_query.titulo = content.titulo
         content_query.descripcion = content.descripcion
         content_query.fechaLanzamiento = content.fechaLanzamiento
@@ -55,13 +57,18 @@ def update_content(db: Session, content_id: str, content: schemas.ContenidoUpdat
         content_query.valoracionPromedio = content.valoracionPromedio
         content_query.idSubtitulosContenido = content.idSubtitulosContenido
         content_query.idDoblajeContenido = content.idDoblajeContenido
-        if content.tipoContenido == "Pelicula":
-            content_query.duracion = content.duracion
-            content_query.idDirector = content.idDirector
+
+        # Solo para las películas, actualiza `duracion` e `idDirector`
+        if isinstance(content, schemas.PeliculaUpdate):
+            if content.duracion is not None:
+                content_query.duracion = content.duracion
+            if content.idDirector is not None:
+                content_query.idDirector = content.idDirector
+
         db.commit()
         db.refresh(content_query)
-    return content_query           
-
+    return content_query
+          
 # Función para añadir subtítulos a un contenido
 def update_subtitulo(db: Session, content_id: str, subtitulo_id: str):
     content_query = db.query(models.Contenido).filter(models.Contenido.id == content_id).first()

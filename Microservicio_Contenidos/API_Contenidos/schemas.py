@@ -18,11 +18,16 @@ class Contenido(ContenidoBase):
     class Config:
         from_attributes = True
     
-class ContenidoUpdate(ContenidoBase):
+class PeliculaUpdate(ContenidoBase):
     duracion: Optional[int]
     idDirector: Optional[str]
     class Config:
         from_attributes = True   
+
+class SerieUpdate(ContenidoBase):
+    pass
+    class Config:
+            from_attributes = True
 
 class PeliculaCreate(ContenidoBase):
     duracion: int
@@ -32,7 +37,6 @@ class PeliculaCreate(ContenidoBase):
 
 class Pelicula(ContenidoBase):
     id: str
-
     class Config:
         from_attributes = True
 

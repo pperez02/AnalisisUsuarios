@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from . import models, schemas, crud
-from .database import engine, get_db
+from .database import engine, get_db, initialize_database
 
 """
 Autor: Grupo GA01 - ASEE
@@ -19,7 +19,7 @@ app = FastAPI(
     version="1.0.0",
 )
 
-models.Base.metadata.create_all(bind=engine)
+initialize_database()
 
 # Dependency para obtener la sesión de base de datos
 def get_database():
@@ -35,14 +35,14 @@ def create_serie(serie: schemas.SerieCreate, db: Session = Depends(get_db)):
     return crud.create_serie(db=db, serie=serie)
 
 @app.put("/peliculas/{idPelicula}")
-def update_pelicula(idPelicula: str, pelicula_data: schemas.ContenidoUpdate, db: Session = Depends(get_db)):
+def update_pelicula(idPelicula: str, pelicula_data: schemas.PeliculaUpdate, db: Session = Depends(get_db)):
     pelicula = crud.update_content(db=db, content_id=idPelicula, content=pelicula_data)
     if pelicula is None:
         raise HTTPException(status_code=404, detail="Película no encontrada")
     return {"message": "Datos de película actualizados exitosamente"}
 
 @app.put("/series/{idSerie}")
-def update_serie(idSerie: str, serie_data: schemas.ContenidoUpdate, db: Session = Depends(get_db)):
+def update_serie(idSerie: str, serie_data: schemas.SerieUpdate, db: Session = Depends(get_db)):
     serie = crud.update_content(db=db, content_id=idSerie, content=serie_data)
     if serie is None:
         raise HTTPException(status_code=404, detail="Serie no encontrada")
