@@ -44,6 +44,31 @@ def create_serie(db: Session, serie: schemas.ContenidoBase):
 
     return db_serie
 
+# Función para crear una temporada
+def create_temporada(db: Session, temporada: schemas.TemporadaCreate, idContenido: str):
+    db_temporada = models.Temporada(
+        idContenido=idContenido,
+        numeroTemporada=temporada.numeroTemporada
+    )
+    db.add(db_temporada)
+    db.commit()
+    db.refresh(db_temporada)
+    return db_temporada
+
+# Función para crear un episodio
+def create_episodio(db: Session, episodio: schemas.EpisodioCreate, idContenido: str, idTemporada: str):
+    db_episodio = models.Episodio(
+        idContenido=idContenido,
+        idTemporada=idTemporada,
+        idDirector=episodio.idDirector,
+        numeroEpisodio=episodio.numeroEpisodio,
+        duracion=episodio.duracion
+    )
+    db.add(db_episodio)
+    db.commit()
+    db.refresh(db_episodio)
+    return db_episodio
+
 # Función para actualizar un contenido
 
 def update_content(db: Session, content_id: str, content: Union[schemas.PeliculaUpdate, schemas.SerieUpdate]):
@@ -98,3 +123,37 @@ def update_doblaje(db: Session, content_id: str, doblaje_id: str):
         db.refresh(db_DoblajeContenido)
 
     return db_DoblajeContenido    
+
+# Función para eliminar una película o serie
+def delete_content(db: Session, idContenido: str) -> bool:
+    content = db.query(models.Contenido).filter(models.Contenido.id == idContenido).first()
+    if content:
+        db.delete(content)
+        db.commit()
+        return True
+    return False
+
+# Función para eliminar una temporada de una serie
+def delete_season(db: Session, idContenido: str, idTemporada: str) -> bool:
+    season = db.query(models.Temporada).filter(
+        models.Temporada.idContenido == idContenido,
+        models.Temporada.idTemporada == idTemporada
+    ).first()
+    if season:
+        db.delete(season)
+        db.commit()
+        return True
+    return False
+
+# Función para eliminar un episodio de una temporada específica
+def delete_episode(db: Session, idContenido: str, idTemporada: str, idEpisodio: str) -> bool:
+    episode = db.query(models.Episodio).filter(
+        models.Episodio.idContenido == idContenido,
+        models.Episodio.idTemporada == idTemporada,
+        models.Episodio.idEpisodio == idEpisodio
+    ).first()
+    if episode:
+        db.delete(episode)
+        db.commit()
+        return True
+    return False

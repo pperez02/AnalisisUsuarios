@@ -34,6 +34,14 @@ def create_pelicula(pelicula: schemas.PeliculaCreate, db: Session = Depends(get_
 def create_serie(serie: schemas.SerieCreate, db: Session = Depends(get_db)):
     return crud.create_serie(db=db, serie=serie)
 
+@app.post("/contenidos/{idContenido}/temporadas", response_model=schemas.Temporada)
+def create_temporada(idContenido: str, temporada: schemas.TemporadaCreate, db: Session = Depends(get_db)):
+    return crud.create_temporada(db=db, temporada=temporada, idContenido=idContenido)
+
+@app.post("/contenidos/{idContenido}/temporadas/{idTemporada}/episodios", response_model=schemas.Episodio)
+def create_episodio(idContenido: str, idTemporada: str, episodio: schemas.EpisodioCreate, db: Session = Depends(get_db)):
+    return crud.create_episodio(db=db, episodio=episodio, idContenido=idContenido, idTemporada=idTemporada)
+
 @app.put("/peliculas/{idPelicula}")
 def update_pelicula(idPelicula: str, pelicula_data: schemas.PeliculaUpdate, db: Session = Depends(get_db)):
     pelicula = crud.update_content(db=db, content_id=idPelicula, content=pelicula_data)
@@ -55,3 +63,34 @@ def update_subtitulos(idContenido: str, idSubtitulo: str, db: Session = Depends(
 @app.post("/contenidos/{idContenido}/doblajes/{idDoblaje}")
 def update_doblaje(idContenido: str, idDoblaje: str, db: Session = Depends(get_db)):
     return crud.update_doblaje(db=db, content_id=idContenido, doblaje_id=idDoblaje) 
+
+# Nuevo endpoint para eliminar contenido en distintos niveles
+@app.delete("/contenidos/{idContenido}/{idTemporada}/{idEpisodio}", tags=["Eliminar contenido"])
+@app.delete("/contenidos/{idContenido}/{idTemporada}", tags=["Eliminar contenido"])
+@app.delete("/contenidos/{idContenido}", tags=["Eliminar contenido"])
+def delete_content(
+    idContenido: str, 
+    idTemporada: str = None, 
+    idEpisodio: str = None, 
+    db: Session = Depends(get_db)
+):
+    if idEpisodio:
+        # Eliminar episodio
+        success = crud.delete_episode(db=db, idContenido=idContenido, idTemporada=idTemporada, idEpisodio=idEpisodio)
+        if not success:
+            raise HTTPException(status_code=404, detail="Episodio no encontrado")
+        return {"message": "Episodio eliminado exitosamente"}
+
+    elif idTemporada:
+        # Eliminar temporada
+        success = crud.delete_season(db=db, idContenido=idContenido, idTemporada=idTemporada)
+        if not success:
+            raise HTTPException(status_code=404, detail="Temporada no encontrada")
+        return {"message": "Temporada eliminada exitosamente"}
+
+    else:
+        # Eliminar película o serie
+        success = crud.delete_content(db=db, idContenido=idContenido)
+        if not success:
+            raise HTTPException(status_code=404, detail="Contenido no encontrado")
+        return {"message": "Contenido eliminado exitosamente"}

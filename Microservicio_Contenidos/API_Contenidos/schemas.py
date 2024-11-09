@@ -42,4 +42,31 @@ class Pelicula(ContenidoBase):
 
 class SerieCreate(ContenidoBase):
     pass
-     
+
+class TemporadaBase(BaseModel):
+    numeroTemporada: int
+
+class TemporadaCreate(TemporadaBase):
+    pass
+
+class Temporada(TemporadaBase):
+    idTemporada: str  # Generado automáticamente
+    idContenido: str
+    class Config:
+        from_attributes = True
+
+
+class EpisodioBase(BaseModel):
+    idDirector: str
+    numeroEpisodio: int
+    duracion: int  # En minutos
+
+class EpisodioCreate(EpisodioBase):
+    pass
+
+class Episodio(EpisodioBase):
+    idEpisodio: str  # Generado automáticamente
+    idContenido: str
+    idTemporada: str
+    class Config:
+        from_attributes = True

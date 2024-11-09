@@ -84,8 +84,6 @@ class Reparto(Base):
         PrimaryKeyConstraint('idContenido', 'idActor'),
     )
 
-
-
 class Actor(Base):
     __tablename__ = "Actor"
 
