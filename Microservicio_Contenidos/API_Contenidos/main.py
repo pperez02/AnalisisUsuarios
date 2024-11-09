@@ -65,8 +65,8 @@ def update_doblaje(idContenido: str, idDoblaje: str, db: Session = Depends(get_d
     return crud.update_doblaje(db=db, content_id=idContenido, doblaje_id=idDoblaje) 
 
 # Nuevo endpoint para eliminar contenido en distintos niveles
-@app.delete("/contenidos/{idContenido}/{idTemporada}/{idEpisodio}", tags=["Eliminar contenido"])
-@app.delete("/contenidos/{idContenido}/{idTemporada}", tags=["Eliminar contenido"])
+@app.delete("/contenidos/{idContenido}/temporadas/{idTemporada}/episodios/{idEpisodio}", tags=["Eliminar contenido"])
+@app.delete("/contenidos/{idContenido}/temporadas/{idTemporada}", tags=["Eliminar contenido"])
 @app.delete("/contenidos/{idContenido}", tags=["Eliminar contenido"])
 def delete_content(
     idContenido: str, 
