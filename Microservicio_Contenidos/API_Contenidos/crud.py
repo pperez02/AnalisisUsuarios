@@ -157,3 +157,48 @@ def delete_episode(db: Session, idContenido: str, idTemporada: str, idEpisodio: 
         db.commit()
         return True
     return False
+
+# Consulta de contenido por id
+def get_contenido_by_id(db: Session, id_contenido: str):
+    # Consulta general para obtener el tipo de contenido y otros datos básicos
+    contenido = db.query(models.Contenido).filter(models.Contenido.id == id_contenido).first()
+    
+    if not contenido:
+        return None
+    
+    # Diferenciación entre Pelicula y Serie
+    if contenido.tipoContenido == "Pelicula":
+        return get_pelicula_by_id(db, id_contenido)
+    elif contenido.tipoContenido == "Serie":
+        return get_serie_by_id(db, id_contenido)
+    else:
+        return contenido
+
+# Obtiene datos específicos de una Pelicula por id
+def get_pelicula_by_id(db: Session, id_contenido: str):
+    return db.query(models.Contenido).filter(models.Contenido.id == id_contenido and models.Contenido.tipoContenido == "Pelicula").first()
+
+# Obtiene datos específicos de una Serie por id
+def get_serie_by_id(db: Session, id_contenido: str):
+    return db.query(models.Contenido).filter(models.Contenido.id == id_contenido and models.Contenido.tipoContenido == "Serie").first()
+
+# Consulta de todos los contenidos
+def get_all_contenidos(db: Session):
+    # Obtener todos los contenidos generales (Peliculas o Series)
+    contenidos = db.query(models.Contenido).all()
+    
+    # Crear una lista para almacenar los resultados
+    resultado_contenidos = []
+
+    # Iterar sobre cada contenido y diferenciar si es Pelicula o Serie
+    for contenido in contenidos:
+        if contenido.tipoContenido == "Pelicula":
+            pelicula = get_pelicula_by_id(db, contenido.id)  # Obtener detalles de la Película
+            if pelicula:
+                resultado_contenidos.append(pelicula)
+        elif contenido.tipoContenido == "Serie":
+            serie = get_serie_by_id(db, contenido.id)  # Obtener detalles de la Serie
+            if serie:
+                resultado_contenidos.append(serie)
+
+    return resultado_contenidos
