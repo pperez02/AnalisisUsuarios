@@ -94,3 +94,19 @@ def delete_content(
         if not success:
             raise HTTPException(status_code=404, detail="Contenido no encontrado")
         return {"message": "Contenido eliminado exitosamente"}
+    
+@app.get("/contenidos/{idContenido}", response_model=schemas.Contenido)
+def get_contenido(idContenido: str, db: Session = Depends(get_db)):
+    # Llamada al CRUD para obtener el contenido por id
+    contenido = crud.get_contenido_by_id(db=db, id_contenido=idContenido)
+    
+    # Si no se encuentra el contenido, se lanza una excepción 404
+    if not contenido:
+        raise HTTPException(status_code=404, detail="Contenido no encontrado")
+    
+    return contenido
+
+@app.get("/contenidos", response_model=list[schemas.Contenido])
+def obtener_todos_los_contenidos(db: Session = Depends(get_db)):
+    contenidos = crud.get_all_contenidos(db)
+    return contenidos
