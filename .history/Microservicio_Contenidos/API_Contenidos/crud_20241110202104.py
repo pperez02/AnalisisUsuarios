@@ -219,18 +219,14 @@ def create_genero(db: Session, genero: schemas.GeneroCreate):
 
 # Función para actualizar un género existente
 def update_genero(db: Session, genero_id: str, genero: schemas.GeneroUpdate):
-    # Asegúrate de que 'nombre' y 'descripcion' son de tipo string
-    nombre = genero.nombre if isinstance(genero.nombre, str) else str(genero.nombre)
-    descripcion = genero.descripcion if isinstance(genero.descripcion, str) else str(genero.descripcion)
-    
-    # Realiza la actualización usando valores seguros
-    db_genero = db.query(models.Genero).filter(models.Genero.id == genero_id).first()
-    if db_genero:
-        db_genero.nombre = nombre
-        db_genero.descripcion = descripcion
+    genero_query = db.query(models.Genero).filter(models.Genero.id == genero.id).first()
+    if genero_query:
+        genero_query.nombre=genero.nombre,
+        genero_query.descripcion=genero.descripcion
+
         db.commit()
-        db.refresh(db_genero)
-    return db_genero
+        db.refresh(genero_query)
+    return genero_query 
 
 # Función para eliminar un género existente
 def delete_genero(db: Session, genero_id: str) -> bool:

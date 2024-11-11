@@ -116,11 +116,11 @@ def get_genero(idGenero: str, db: Session = Depends(get_db)):
     genero = crud.get_genero(db=db, genero_id=idGenero)
     return genero
 
-@app.post("/generos", response_model=schemas.Genero)
+@app.post("/generos", response_model=schemas.GeneroCreate)
 def create_genero(genero: schemas.GeneroCreate, db: Session = Depends(get_db)):
     return crud.create_genero(db=db, genero=genero)
 
-@app.put("/generos/{idGenero}")
+@app.put("/generos/{idGenero}", response_model=schemas.GeneroUpdate)
 def update_genero(idGenero: str, genero_data: schemas.GeneroUpdate, db: Session = Depends(get_db)):
     genero = crud.update_genero(db=db, genero_id=idGenero, genero=genero_data)
     if genero is None:

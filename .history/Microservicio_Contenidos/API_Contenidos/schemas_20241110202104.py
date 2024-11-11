@@ -82,7 +82,4 @@ class GeneroUpdate(GeneroBase):
     pass
 
 class Genero(GeneroBase):
-    id: str # Generado automáticamente
-
-    class Config:
-        from_attributes = True    
+    pass    
