@@ -33,6 +33,23 @@ class User(UserBase):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
-
     class Config:
         from_attributes = True  # Esto permite a Pydantic trabajar con los modelos de SQLAlchemy, si es necesario        
+
+# Esquema para la actualización de usuario
+class UserUpdate(BaseModel):
+    nombre: Optional[str] = None
+    email: Optional[EmailStr] = None
+    password: Optional[str] = None
+    idioma:Optional[str]
+    idPlanSuscripcion: Optional[str] = None
+    idListaPersonalizada: Optional[str] = None
+    idHistorial: Optional[str] = None
+    class Config:
+        from_attributes = True  # Permite a Pydantic trabajar con los modelos de SQLAlchemy, si es necesario
+
+# Esquema para el idioma del usuario
+class UserLanguage(BaseModel):
+    idioma: str  # Idioma preferido del usuario
+    class Config:
+        from_attributes = True  # Permite a Pydantic trabajar con los modelos de SQLAlchemy, si es necesario
