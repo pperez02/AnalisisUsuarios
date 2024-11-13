@@ -63,3 +63,26 @@ def update_user_language(idUsuario: str, idioma: schemas.UserLanguage, db: Sessi
     user.idioma = idioma.idioma  # Este campo debe estar definido en tu modelo
     db.commit()
     return {"message": "Idioma actualizado exitosamente"}
+
+@app.put("/usuarios/{idUsuario}/suscripcion")
+def update_subscription(idUsuario: str, subscription: schemas.SubscriptionUpdate, db: Session = Depends(get_database)):
+    user = crud.get_user(db, user_id=idUsuario)
+    if user is None:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    if subscription.accion == "cambiar":
+        
+        nuevoPlan = crud.get_plan_suscripcion(db, subscription.idPlanSuscripcion)
+        if nuevoPlan is None:
+            raise HTTPException(status_code=404, detail="Plan de suscripción no encontrado")
+        user.idPlanSuscripcion = subscription.idPlanSuscripcion  
+        db.commit()
+        return {"message": "Suscripción cambiada exitosamente", "nuevoPlan": subscription.idPlanSuscripcion}
+
+    elif subscription.accion == "cancelar":
+        
+        user.idPlanSuscripcion = None  # O la lógica que decida cómo manejar la cancelación
+        db.commit()
+        return {"message": "Suscripción cancelada exitosamente"}
+
+    raise HTTPException(status_code=400, detail="Acción no válida")

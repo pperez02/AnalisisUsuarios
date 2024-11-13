@@ -47,3 +47,7 @@ def update_user(db: Session, user_id: str, user_data: schemas.UserUpdate):
         db.commit()
         db.refresh(user)
     return user
+
+# Función para obtener un plan de suscripción por ID
+def get_plan_suscripcion(db: Session, plan_id: str):
+    return db.query(models.PlanSuscripcion).filter(models.PlanSuscripcion.id == plan_id).first()

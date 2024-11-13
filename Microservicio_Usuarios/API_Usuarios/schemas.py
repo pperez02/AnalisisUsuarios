@@ -53,3 +53,12 @@ class UserLanguage(BaseModel):
     idioma: str  # Idioma preferido del usuario
     class Config:
         from_attributes = True  # Permite a Pydantic trabajar con los modelos de SQLAlchemy, si es necesario
+
+#Esquemas necesarias para cambiar o cancelar una suscripción a la plataforma
+class AccionSuscripcion(str, Enum):
+    cambiar = "cambiar"
+    cancelar = "cancelar"
+
+class SubscriptionUpdate(BaseModel):
+    accion: AccionSuscripcion  # Usa el Enum aquí
+    idPlanSuscripcion: Optional[str]
