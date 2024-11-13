@@ -70,28 +70,26 @@ def create_episodio(db: Session, episodio: schemas.EpisodioCreate, idContenido: 
     return db_episodio
 
 # Función para actualizar un contenido
-def update_content(db: Session, content_id: str, content: Union[schemas.PeliculaUpdate, schemas.SerieUpdate]):
-    content_query = db.query(models.Contenido).filter(models.Contenido.id == content_id).first()
-    if content_query:
-        # Actualiza los campos comunes a ambos tipos
-        content_query.titulo = content.titulo
-        content_query.descripcion = content.descripcion
-        content_query.fechaLanzamiento = content.fechaLanzamiento
-        content_query.idGenero = content.idGenero
-        content_query.valoracionPromedio = content.valoracionPromedio
-        content_query.idSubtitulosContenido = content.idSubtitulosContenido
-        content_query.idDoblajeContenido = content.idDoblajeContenido
+def update_content(db: Session, content_id: str, content_data: Union[schemas.PeliculaUpdate, schemas.SerieUpdate]):
+    # Buscar el contenido a actualizar en la base de datos
+    content = db.query(models.Contenido).filter(models.Contenido.id == content_id).first()
+    
+    # Si no existe el contenido, se devuelve un None
+    if not content:
+        return None
 
-        # Solo para las películas, actualiza `duracion` e `idDirector`
-        if isinstance(content, schemas.PeliculaUpdate):
-            if content.duracion is not None:
-                content_query.duracion = content.duracion
-            if content.idDirector is not None:
-                content_query.idDirector = content.idDirector
-
-        db.commit()
-        db.refresh(content_query)
-    return content_query
+    # Convertir los datos en un diccionario, excluyendo los campos no enviados
+    update_data = {k: v for k, v in content_data.model_dump(exclude_unset=True).items() if v is not None}
+    
+    # Actualizar los campos del contenido usando setattr
+    for key, value in update_data.items():
+        setattr(content, key, value)
+    
+    # Confirmar los cambios en la base de datos
+    db.commit()
+    db.refresh(content)
+    
+    return content
           
 # Función para añadir subtítulos a un contenido
 def update_subtitulo(db: Session, content_id: str, subtitulo_id: str):
@@ -157,25 +155,11 @@ def delete_episode(db: Session, idContenido: str, idTemporada: str, idEpisodio: 
         return True
     return False
 
-# Consulta de contenido por id
-def get_contenido_by_id(db: Session, id_contenido: str):
-    # Consulta general para obtener el tipo de contenido y otros datos básicos
-    contenido = db.query(models.Contenido).filter(models.Contenido.id == id_contenido).first()
-    
-    if not contenido:
-        return None
-    
-    # Diferenciación entre Pelicula y Serie
-    if contenido.tipoContenido == "Pelicula":
-        return get_pelicula_by_id(db, id_contenido)
-    elif contenido.tipoContenido == "Serie":
-        return get_serie_by_id(db, id_contenido)
-    else:
-        return contenido
-
 # Obtiene datos específicos de una Pelicula por id
 def get_pelicula_by_id(db: Session, id_contenido: str):
-    return db.query(models.Contenido).filter(models.Contenido.id == id_contenido and models.Contenido.tipoContenido == "Pelicula").first()
+    return db.query(models.Contenido).filter(
+        models.Contenido.id == id_contenido,
+        models.Contenido.tipoContenido == "Pelicula").first()
 
 # Obtiene datos específicos de una Serie por id
 def get_serie_by_id(db: Session, id_contenido: str):
@@ -201,6 +185,130 @@ def get_all_contenidos(db: Session):
                 resultado_contenidos.append(serie)
 
     return resultado_contenidos
+
+def get_serie_con_temporadas_episodios(db: Session, idSerie: str):
+
+    serie = db.query(models.Contenido).filter(
+        models.Contenido.id == idSerie,
+        models.Contenido.tipoContenido == "Serie"
+    ).first()
+
+    if not serie:
+        return None
+    
+    #Obtener todas sus temporadas y episodios
+    temporadas = db.query(models.Temporada).filter(models.Temporada.idContenido == idSerie).all()
+    temporadas_data = []
+
+    for temporada in temporadas:
+        episodios = db.query(models.Episodio).filter(models.Episodio.idTemporada == temporada.idTemporada).all()
+        
+        # Estructura de episodios para la respuesta
+        episodios_data = [
+            schemas.Episodio(
+                idDirector=episodio.idDirector,
+                idEpisodio=episodio.idEpisodio,
+                duracion=episodio.duracion,
+                numeroEpisodio=episodio.numeroEpisodio,
+                idContenido=episodio.idContenido,
+                idTemporada=episodio.idTemporada
+            ) for episodio in episodios
+        ]
+
+        # Añadir los datos de la temporada con sus episodios
+        temporadas_data.append(schemas.TemporadasGet(
+            idTemporada=temporada.idTemporada,
+            Episodios=episodios_data
+        ))
+    return schemas.SeriesGet(
+        idSerie=serie.id,
+        Temporadas=temporadas_data
+    )
+
+def get_all_series_con_temporadas_episodios(db: Session):
+    # Obtener todas las series
+    series = db.query(models.Contenido).filter(models.Contenido.tipoContenido == "Serie").all()
+    series_data = []
+
+    for serie in series:
+        # Obtener todas las temporadas para la serie actual
+        temporadas = db.query(models.Temporada).filter(models.Temporada.idContenido == serie.id).all()
+        temporadas_data = []
+
+        for temporada in temporadas:
+            # Obtener todos los episodios para la temporada actual
+            episodios = db.query(models.Episodio).filter(models.Episodio.idTemporada == temporada.idTemporada).all()
+            
+            # Estructura de episodios para la respuesta
+            episodios_data = [
+                schemas.Episodio(
+                    idDirector=episodio.idDirector,
+                    idEpisodio=episodio.idEpisodio,
+                    duracion=episodio.duracion,
+                    numeroEpisodio=episodio.numeroEpisodio,
+                    idContenido=episodio.idContenido,
+                    idTemporada=episodio.idTemporada
+                ) for episodio in episodios
+            ]
+
+            # Añadir los datos de la temporada con sus episodios
+            temporadas_data.append(schemas.TemporadasGet(
+                idTemporada=temporada.idTemporada,
+                Episodios=episodios_data
+            ))
+
+        # Añadir los datos de la serie con sus temporadas
+        series_data.append(schemas.SeriesGet(
+            idSerie=serie.id,
+            Temporadas=temporadas_data
+        ))
+
+    return series_data  # Devolver todas las series con temporadas y episodios
+
+# Función para obtener una temporada por idContenido y idTemporada
+def get_temporada(db: Session, idContenido: str, idTemporada: str):
+    return db.query(models.Temporada).filter(
+        models.Temporada.idContenido == idContenido,
+        models.Temporada.idTemporada == idTemporada
+    ).first()
+
+# Función para actualizar una temporada
+def update_temporada(db: Session, idContenido: str, idTemporada: str, temporada: schemas.TemporadaUpdate):
+    temporada_query = db.query(models.Temporada).filter(
+        models.Temporada.idContenido == idContenido,
+        models.Temporada.idTemporada == idTemporada
+    ).first()
+    if temporada_query:
+        temporada_query.numeroTemporada = temporada.numeroTemporada
+        db.commit()
+        db.refresh(temporada_query)
+    return temporada_query
+
+# Función para obtener un episodio por idContenido, idTemporada e idEpisodio
+def get_episodio(db: Session, idContenido: str, idTemporada: str, idEpisodio: str):
+    return db.query(models.Episodio).filter(
+        models.Episodio.idContenido == idContenido,
+        models.Episodio.idTemporada == idTemporada,
+        models.Episodio.idEpisodio == idEpisodio
+    ).first()
+
+# Función para actualizar un episodio
+def update_episodio(db: Session,  idContenido: str, idTemporada: str, idEpisodio: str, episodio_nuevo: schemas.EpisodioUpdate):
+    
+    episodio_actual = get_episodio(db=db, idContenido=idContenido, idTemporada=idTemporada, idEpisodio=idEpisodio)
+    if not episodio_actual:
+        return None
+    if episodio_nuevo.numeroEpisodio:
+        episodio_actual.numeroEpisodio = episodio_nuevo.numeroEpisodio
+    if episodio_nuevo.duracion:
+        episodio_actual.duracion = episodio_nuevo.duracion
+    if episodio_nuevo.idDirector:
+        episodio_actual.idDirector = episodio_nuevo.idDirector
+    db.commit()
+    db.refresh(episodio_actual)
+
+    return episodio_actual
+
 
 # Función para consultar los datos de un género
 def get_genero(db: Session, genero_id: str):

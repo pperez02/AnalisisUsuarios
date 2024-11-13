@@ -44,14 +44,15 @@ def create_episodio(idContenido: str, idTemporada: str, episodio: schemas.Episod
 
 @app.put("/peliculas/{idPelicula}")
 def update_pelicula(idPelicula: str, pelicula_data: schemas.PeliculaUpdate, db: Session = Depends(get_db)):
-    pelicula = crud.update_content(db=db, content_id=idPelicula, content=pelicula_data)
+    # Si no todos los campos son enviados mediante el cliente, el metodo debe recibir un "None"
+    pelicula = crud.update_content(db=db, content_id=idPelicula, content_data=pelicula_data)
     if pelicula is None:
         raise HTTPException(status_code=404, detail="Película no encontrada")
     return {"message": "Datos de película actualizados exitosamente"}
 
 @app.put("/series/{idSerie}")
 def update_serie(idSerie: str, serie_data: schemas.SerieUpdate, db: Session = Depends(get_db)):
-    serie = crud.update_content(db=db, content_id=idSerie, content=serie_data)
+    serie = crud.update_content(db=db, content_id=idSerie, content_data=serie_data)
     if serie is None:
         raise HTTPException(status_code=404, detail="Serie no encontrada")
     return {"message": "Datos de serie actualizados exitosamente"}
@@ -95,21 +96,65 @@ def delete_content(
             raise HTTPException(status_code=404, detail="Contenido no encontrado")
         return {"message": "Contenido eliminado exitosamente"}
     
-@app.get("/contenidos/{idContenido}", response_model=schemas.Contenido)
-def get_contenido(idContenido: str, db: Session = Depends(get_db)):
+@app.get("/peliculas/{idContenido}", response_model=schemas.Contenido)
+def get_peliculas(idContenido: str, db: Session = Depends(get_db)):
     # Llamada al CRUD para obtener el contenido por id
-    contenido = crud.get_contenido_by_id(db=db, id_contenido=idContenido)
-    
+    contenido = crud.get_pelicula_by_id(db=db, id_contenido=idContenido)    
     # Si no se encuentra el contenido, se lanza una excepción 404
     if not contenido:
-        raise HTTPException(status_code=404, detail="Contenido no encontrado")
-    
+        raise HTTPException(status_code=404, detail="Pelicula no encontrada")    
     return contenido
 
 @app.get("/contenidos", response_model=list[schemas.Contenido])
 def obtener_todos_los_contenidos(db: Session = Depends(get_db)):
     contenidos = crud.get_all_contenidos(db)
     return contenidos
+
+@app.get("/series/{idSerie}", response_model=schemas.SeriesGet)
+def get_series(idSerie: str, db: Session = Depends(get_db)):
+    serie = crud.get_serie_con_temporadas_episodios(db=db, idSerie=idSerie)
+    if not serie:
+        raise HTTPException(status_code=404, detail="Serie no encontrada")  
+    return serie
+
+@app.get("/series", response_model=list[schemas.SeriesGet])
+def get_all_series(db: Session = Depends(get_db)):
+    series = crud.get_all_series_con_temporadas_episodios(db=db)
+
+    if not series:
+        raise HTTPException(status_code=404, detail="No existen series")
+    
+    return series
+
+
+@app.get("/contenidos/{idContenido}/temporadas/{idTemporada}", response_model=schemas.Temporada)
+def get_temporada(idContenido: str, idTemporada: str, db: Session = Depends(get_db)):
+    temporada = crud.get_temporada(db=db, idContenido=idContenido, idTemporada=idTemporada)
+    if not temporada:
+        raise HTTPException(status_code=404, detail="Temporada no encontrada")
+    return temporada
+
+@app.put("/contenidos/{idContenido}/temporadas/{idTemporada}")
+def update_temporada(idContenido: str, idTemporada: str, temporada_data: schemas.TemporadaUpdate, db: Session = Depends(get_db)):
+    temporada = crud.update_temporada(db=db, idContenido=idContenido, idTemporada=idTemporada, temporada=temporada_data)
+    if not temporada:
+        raise HTTPException(status_code=404, detail="Temporada no encontrada")
+    return {"message": "Temporada actualizada exitosamente"}
+
+@app.get("/contenidos/{idContenido}/temporadas/{idTemporada}/episodios/{idEpisodio}", response_model=schemas.Episodio)
+def get_episodio(idContenido: str, idTemporada: str, idEpisodio: str, db: Session = Depends(get_db)):
+    episodio = crud.get_episodio(db=db, idContenido=idContenido, idTemporada=idTemporada, idEpisodio=idEpisodio)
+    if not episodio:
+        raise HTTPException(status_code=404, detail="Episodio no encontrado")
+    return episodio
+
+@app.put("/contenidos/{idContenido}/temporadas/{idTemporada}/episodios/{idEpisodio}")
+def update_episodio(idContenido: str, idTemporada: str, idEpisodio: str, episodio_data: schemas.EpisodioUpdate, db: Session = Depends(get_db)):
+    episodio_nuevo = crud.update_episodio(db=db, idContenido=idContenido, idTemporada=idTemporada, idEpisodio=idEpisodio, episodio_nuevo=episodio_data)
+    if not episodio_nuevo:
+        raise HTTPException(status_code=404, detail="Episodio no actualizado")
+    return {"message": "Episodio actualizado exitosamente"}
+
 
 @app.get("/generos/{idGenero}", response_model=schemas.Genero)
 def get_genero(idGenero: str, db: Session = Depends(get_db)):

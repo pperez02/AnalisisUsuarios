@@ -13,18 +13,27 @@ class ContenidoBase(BaseModel):
 class ContenidoCreate(ContenidoBase):
     tipoContenido: str
 
+class ContenidoUpdate(BaseModel):
+    titulo: Optional[str] = None
+    descripcion: Optional[str] = None
+    fechaLanzamiento: Optional[str] = None
+    idGenero: Optional[str] = None
+    valoracionPromedio: Optional[float] = None
+    idSubtitulosContenido: Optional[str] = None
+    idDoblajeContenido: Optional[str] = None
+
 class Contenido(ContenidoBase):
     id: str #Generado Automaticamente
     class Config:
         from_attributes = True
     
-class PeliculaUpdate(ContenidoBase):
-    duracion: Optional[int]
-    idDirector: Optional[str]
+class PeliculaUpdate(ContenidoUpdate):
+    duracion: Optional[int] = None
+    idDirector: Optional[str] = None
     class Config:
         from_attributes = True   
 
-class SerieUpdate(ContenidoBase):
+class SerieUpdate(ContenidoUpdate):
     pass
     class Config:
             from_attributes = True
@@ -85,4 +94,19 @@ class Genero(GeneroBase):
     id: str # Generado automáticamente
 
     class Config:
-        from_attributes = True    
+        from_attributes = True
+
+class TemporadasGet(BaseModel):
+    idTemporada: str
+    Episodios: list[Episodio]
+class SeriesGet(BaseModel):
+    idSerie: str
+    Temporadas: list[TemporadasGet]
+
+class TemporadaUpdate(BaseModel):
+    numeroTemporada: Optional[int]
+
+class EpisodioUpdate(BaseModel):
+    numeroEpisodio: Optional[int] = None
+    duracion: Optional[int] = None
+    idDirector: Optional[str] = None
