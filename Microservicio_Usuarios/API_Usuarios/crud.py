@@ -51,3 +51,23 @@ def update_user(db: Session, user_id: str, user_data: schemas.UserUpdate):
 # Función para obtener un plan de suscripción por ID
 def get_plan_suscripcion(db: Session, plan_id: str):
     return db.query(models.PlanSuscripcion).filter(models.PlanSuscripcion.id == plan_id).first()
+
+# Crear un nuevo método de pago
+def create_metodo_pago(db: Session, metodo_pago: schemas.MetodoPagoCreate):
+    db_metodo_pago = models.MetodoPago(
+        tipo=metodo_pago.tipo,
+        numeroTarjeta=metodo_pago.numeroTarjeta,
+        emailPaypal=metodo_pago.emailPaypal
+    )
+    db.add(db_metodo_pago)
+    db.commit()
+    db.refresh(db_metodo_pago)
+    return db_metodo_pago
+
+# Obtener un método de pago por ID
+def get_metodo_pago(db: Session, metodo_pago_id: str):
+    return db.query(models.MetodoPago).filter(models.MetodoPago.id == metodo_pago_id).first()
+
+# Obtener todos los métodos de pago
+def get_metodos_pago(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(models.MetodoPago).offset(skip).limit(limit).all()

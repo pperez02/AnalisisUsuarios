@@ -86,3 +86,24 @@ def update_subscription(idUsuario: str, subscription: schemas.SubscriptionUpdate
         return {"message": "Suscripción cancelada exitosamente"}
 
     raise HTTPException(status_code=400, detail="Acción no válida")
+
+@app.get("/metodos-pago", response_model=list[schemas.MetodoPago])
+def get_payment_methods(db: Session = Depends(get_database)):
+    return crud.get_metodos_pago(db)
+
+@app.get("/usuarios/{idUsuario}/metodos-pago", response_model=list[schemas.MetodoPago])
+def get_user_payment_methods(idUsuario: str, db: Session = Depends(get_database)):
+    user = crud.get_user(db, user_id=idUsuario)
+    if user is None:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    return crud.get_metodos_pago_usuario(db, user_id=idUsuario)
+
+@app.post("/usuarios/{idUsuario}/metodos-pago", response_model=schemas.MetodoPagoUsuarioCreate)
+def add_payment_method(idUsuario: str, metodo_pago: schemas.MetodoPagoCreate, db: Session = Depends(get_database)):
+    user = crud.get_user(db, user_id=idUsuario)
+    if user is None:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    metodoPagoCreado = crud.create_metodo_pago(db, metodo_pago)
+    idMetodoPago = metodoPagoCreado.id
+    metodoPagoUsuario = schemas.MetodoPagoUsuarioCreate(idUsuario=user.id, idMetodoPago=idMetodoPago)
+    return crud.create_metodo_pago_usuario(db, metodoPagoUsuario)

@@ -62,3 +62,32 @@ class AccionSuscripcion(str, Enum):
 class SubscriptionUpdate(BaseModel):
     accion: AccionSuscripcion  # Usa el Enum aquí
     idPlanSuscripcion: Optional[str]
+
+# Esquema para el método de pago
+class MetodoPagoBase(BaseModel):
+    tipo: str
+    numeroTarjeta: Optional[str] = None
+    emailPaypal: Optional[str] = None
+
+class MetodoPagoCreate(MetodoPagoBase):
+    pass  # Se hereda todo de MetodoPagoBase, no se necesita modificar nada aquí
+
+class MetodoPago(MetodoPagoBase):
+    id: str  # ID generado automáticamente
+
+    class Config:
+        from_attributes = True
+
+# Esquema para el método de pago del usuario
+class MetodoPagoUsuarioBase(BaseModel):
+    idUsuario: str
+    idMetodoPago: str
+
+class MetodoPagoUsuarioCreate(MetodoPagoUsuarioBase):
+    pass  # Se hereda todo de MetodoPagoUsuarioBase, no se necesita modificar nada aquí
+
+class MetodoPagoUsuario(MetodoPagoUsuarioBase):
+    id: str  # ID generado automáticamente
+
+    class Config:
+        from_attributes = True
