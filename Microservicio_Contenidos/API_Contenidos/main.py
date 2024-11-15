@@ -178,3 +178,22 @@ def delete_genero(idGenero: str, db: Session = Depends(get_db)):
     if not success:
         raise HTTPException(status_code=404, detail="Género no encontrado")
     return {"message": "Género eliminado exitosamente"}        
+
+#Asociar actores a una pelicula. Param: NO lista de actores, un solo actor (idActor)
+@app.put("/contenidos/{idContenido}")
+def update_reparto(idContenido: str, reparto_data: schemas.RepartoUpdate, db: Session = Depends(get_db)):
+    reparto = crud.update_reparto(db=db, idContenido=idContenido, nuevo_reparto=reparto_data)
+
+    if reparto is None:
+        raise HTTPException(status_code=404, detail="Género no encontrado")
+    return {"message": "Reparto actualizado exitosamente"}
+
+@app.get("/actores/{idActor}/contenidos")
+def get_content_by_actor(idActor: str, db: Session = Depends(get_db)):
+    content = crud.get_content_by_actor(db=db, idActor=idActor)
+    return content
+
+@app.get("/directores/{idDirector}/contenidos")
+def get_content_by_director(idDirector: str, db: Session = Depends(get_db)):
+    content = crud.get_content_by_director(db=db, idDirector=idDirector)
+    return content

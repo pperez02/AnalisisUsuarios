@@ -347,4 +347,38 @@ def delete_genero(db: Session, genero_id: str) -> bool:
         db.delete(genero)
         db.commit()
         return True
-    return False    
+    return False
+
+#Funcion para actualizar el reparto
+def update_reparto(db: Session, idContenido: str, nuevo_reparto: schemas.RepartoUpdate):
+    db_contenido = db.query(models.Contenido).filter(models.Contenido.id == idContenido).first()
+    idActorNew = nuevo_reparto.idActor
+    db_actor = db.query(models.Actor).filter(models.Actor.id == idActorNew).first()
+    if db_contenido and db_actor:
+        db_reparto = models.Reparto (
+            idContenido = db_contenido.id,
+            idActor = db_actor.id
+        )
+    db.add(db_reparto)
+    db.commit()
+    db.refresh(db_reparto)
+
+    return db_reparto
+
+def get_content_by_actor(db: Session, idActor: str):
+    #Obtener los idContenido de Reparto en los que existe el idActor
+    idsContenido_by_actor = db.query(models.Reparto.idContenido).filter(models.Reparto.idActor == idActor).all()
+
+    #Extraer solo los idContenido de los resultados obtenidos
+    contenido_ids = [contenido.idContenido for contenido in idsContenido_by_actor]
+
+    #Recuperar los contenidos correspondientes a esos idContenido
+    contenidos = db.query(models.Contenido).filter(models.Contenido.id.in_(contenido_ids)).all()
+
+    return contenidos
+
+def get_content_by_director(db: Session, idDirector: str):
+
+    # Recuperar los contenidos dentro de la tabla contenidos con ese idDirector
+    contenidos = db.query(models.Contenido).filter(models.Contenido.idDirector == idDirector ).all()
+    return contenidos
