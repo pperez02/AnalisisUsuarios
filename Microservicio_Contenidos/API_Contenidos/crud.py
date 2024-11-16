@@ -365,6 +365,14 @@ def update_reparto(db: Session, idContenido: str, nuevo_reparto: schemas.Reparto
 
     return db_reparto
 
+def get_actor(db: Session, idActor: str):
+    actor = db.query(models.Actor).filter(models.Actor.id == idActor).first()
+    return actor
+
+def get_director(db: Session, idDirector: str):
+    director = db.query(models.Director).filter(models.Director.id == idDirector).first()
+    return director
+
 def get_content_by_actor(db: Session, idActor: str):
     #Obtener los idContenido de Reparto en los que existe el idActor
     idsContenido_by_actor = db.query(models.Reparto.idContenido).filter(models.Reparto.idActor == idActor).all()

@@ -66,27 +66,44 @@ def initialize_database():
 
             actoresExistentes = db.query(models.Actor).count()
             if actoresExistentes == 0:
-                actor_nuevo = models.Actor(idACtor="1", nombre="Robert Deniro", nacionalidad="EstadoUnidense", fechaNacimiento="1943-08-17")    
+                #Pelicula de prueba para vincular a los nuevos Actores
+                contenido_vinculado_actores = models.Contenido(id="ContenidoActores1", tipoContenido="Pelicula", titulo = "PeliculaActores", descripcion="prueba", 
+                                    fechaLanzamiento="0000-00-00", idGenero="1", valoracionPromedio=0, idSubtitulosContenido="1", idDoblajeContenido="1", 
+                                    duracion=120, idDirector="1")
+                db.add(contenido_vinculado_actores)
+                actor_nuevo = models.Actor(id="1", nombre="Robert Deniro", nacionalidad="EstadoUnidense", fechaNacimiento="1943-08-17")    
                 db.add(actor_nuevo)  
-                actor_nuevo = models.Actor(idACtor="2", idioma="Tom Cruise", nacionalidad="EstadoUnidense", fechaNacimiento="1962-07-03")    
+                actor_nuevo = models.Actor(id="2", nombre="Tom Cruise", nacionalidad="EstadoUnidense", fechaNacimiento="1962-07-03")    
                 db.add(actor_nuevo)  
-                actor_nuevo = models.Actor(idACtor="3", idioma="Tom Hardy", nacionalidad="Britanico", fechaNacimiento="1977-09-15")    
+                actor_nuevo = models.Actor(id="3", nombre="Tom Hardy", nacionalidad="Britanico", fechaNacimiento="1977-09-15")    
                 db.add(actor_nuevo)  
-                actor_nuevo = models.Actor(idACtor="4", idioma="George Clooney", nacionalidad="EstadoUnidense", fechaNacimiento="1961-05-06")    
+                actor_nuevo = models.Actor(id="4", nombre="George Clooney", nacionalidad="EstadoUnidense", fechaNacimiento="1961-05-06")    
                 db.add(actor_nuevo)
+
+                for i in 1,2,3,4:
+                    reparto_nuevo = models.Reparto(idContenido="ContenidoActores1", idActor=str(i))
+                    db.add(reparto_nuevo)
 
             directoresExistentes = db.query(models.Director).count()
             if directoresExistentes == 0:
                 directorNuevo = models.Director(id="1", nombre="Francis Ford Coppola", nacionalidad="EstadoUnidense", fechaNacimiento="1939-04-07")    
                 db.add(directorNuevo)  
-                directorNuevo = models.Director(id="2", idioma="Stanley Kubrik", nacionalidad="Estadounidense", fechaNacimiento="1928-07-26")    
+                directorNuevo = models.Director(id="2", nombre="Stanley Kubrik", nacionalidad="Estadounidense", fechaNacimiento="1928-07-26")    
                 db.add(directorNuevo)  
-                directorNuevo = models.Director(id="3", idioma="Jean Luc Godard", nacionalidad="Frances", fechaNacimiento="1930-12-03")    
+                directorNuevo = models.Director(id="3", nombre="Jean Luc Godard", nacionalidad="Frances", fechaNacimiento="1930-12-03")    
                 db.add(directorNuevo)  
-                directorNuevo = models.Director(id="4", idioma="David Lynch", nacionalidad="EstadoUnidense", fechaNacimiento="1946-01-20")    
+                directorNuevo = models.Director(id="4", nombre="David Lynch", nacionalidad="EstadoUnidense", fechaNacimiento="1946-01-20")    
                 db.add(directorNuevo)
+                #Pelicula de prueba para vincular a los nuevos directores
+
+                for i in 1,2,3,4:
+                    idContenidoD = "ContenidoDirectores"+str(i)
+                    contenido_vinculado_directores = models.Contenido(id=idContenidoD, tipoContenido="Pelicula", titulo = "PeliculaDirectores"+str(i), descripcion="prueba", 
+                                    fechaLanzamiento="0000-00-00", idGenero="1", valoracionPromedio=0, idSubtitulosContenido="1", idDoblajeContenido="1", 
+                                    duracion=120, idDirector=str(i))
+                    db.add(contenido_vinculado_directores)
 
             db.commit()
-            print("Valores iniciales insertados (Idiomas).")
+            print("Valores iniciales insertados (Contenidos).")
         finally:
             db.close()

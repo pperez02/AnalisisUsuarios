@@ -180,7 +180,7 @@ def delete_genero(idGenero: str, db: Session = Depends(get_db)):
     return {"message": "Género eliminado exitosamente"}        
 
 #Asociar actores a una pelicula. Param: NO lista de actores, un solo actor (idActor)
-@app.put("/contenidos/{idContenido}")
+@app.put("/contenidos/{idContenido}/actores")
 def update_reparto(idContenido: str, reparto_data: schemas.RepartoUpdate, db: Session = Depends(get_db)):
     reparto = crud.update_reparto(db=db, idContenido=idContenido, nuevo_reparto=reparto_data)
 
@@ -188,6 +188,22 @@ def update_reparto(idContenido: str, reparto_data: schemas.RepartoUpdate, db: Se
         raise HTTPException(status_code=404, detail="Género no encontrado")
     return {"message": "Reparto actualizado exitosamente"}
 
+#Funciones para obtener la información de un actor/director por su ID
+@app.get("/actores/{idActor}", response_model=schemas.Actor)
+def get_actor(idActor: str, db: Session = Depends(get_db)):
+    actor = crud.get_actor(db=db, idActor=idActor)
+    if actor is None:
+        raise HTTPException(status_code=404, detail="Actor no encontrado")
+    return actor
+
+@app.get("/directores/{idDirector}", response_model=schemas.Director)
+def get_director(idDirector: str, db: Session = Depends(get_db)):
+    director = crud.get_director(db=db, idDirector=idDirector)
+    if director is None:
+        raise HTTPException(status_code=404, detail="Director no encontrado")
+    return director
+
+#Funciones para obtener los contenidos relacionados con un actor/director por su ID
 @app.get("/actores/{idActor}/contenidos")
 def get_content_by_actor(idActor: str, db: Session = Depends(get_db)):
     content = crud.get_content_by_actor(db=db, idActor=idActor)

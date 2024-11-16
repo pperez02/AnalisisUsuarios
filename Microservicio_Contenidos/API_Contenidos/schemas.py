@@ -114,3 +114,14 @@ class EpisodioUpdate(BaseModel):
 class RepartoUpdate(BaseModel):
     idActor: str
 
+class Actor(BaseModel):
+    id: str
+    nombre: str
+    nacionalidad: str
+    fechaNacimiento: str
+
+class Director(BaseModel):
+    id: str
+    nombre: str
+    nacionalidad: str
+    fechaNacimiento: str
