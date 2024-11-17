@@ -34,13 +34,4 @@ class ListaPersonalizada(Base):
 
     __table_args__ = (
         PrimaryKeyConstraint('idLista', 'idContenido'),
-    )
-
-class HistorialUsuario(Base):
-    __tablename__ = "historial_usuario"
-    idHistorial = Column(String, nullable=False)
-    idContenido = Column(String, nullable=False)
-
-    __table_args__ = (
-        PrimaryKeyConstraint('idHistorial', 'idContenido')
-    )       
+    )    

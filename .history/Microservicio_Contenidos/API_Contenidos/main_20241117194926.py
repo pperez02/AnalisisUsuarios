@@ -135,6 +135,7 @@ def get_all_series(db: Session = Depends(get_db)):
     
     return series
 
+
 @app.get("/contenidos/{idContenido}/temporadas/{idTemporada}", response_model=schemas.Temporada)
 def get_temporada(idContenido: str, idTemporada: str, db: Session = Depends(get_db)):
     temporada = crud.get_temporada(db=db, idContenido=idContenido, idTemporada=idTemporada)
@@ -185,11 +186,4 @@ def delete_genero(idGenero: str, db: Session = Depends(get_db)):
     success = crud.delete_genero(db=db, genero_id=idGenero)
     if not success:
         raise HTTPException(status_code=404, detail="Género no encontrado")
-    return {"message": "Género eliminado exitosamente"}    
-
-@app.get("/generos/{idGenero}/contenidos", response_model=list[schemas.Contenido])
-def get_contenidos_genero(idGenero: str, db: Session = Depends(get_db)):
-    contenidos = crud.get_contenidos_por_genero(db=db, genero_id=idGenero)
-    if not contenidos:
-        raise HTTPException(status_code=404, detail="No existe ningún contenido con ese genero")
-    return contenidos         
+    return {"message": "Género eliminado exitosamente"}        

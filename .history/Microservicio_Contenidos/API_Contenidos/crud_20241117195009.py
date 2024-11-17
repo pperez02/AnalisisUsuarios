@@ -351,7 +351,3 @@ def delete_genero(db: Session, genero_id: str) -> bool:
         db.commit()
         return True
     return False    
-
-# Función para obtener los contenidos de un género específico
-def get_contenidos_por_genero(db: Session, idGenero: str)
-    return db.query(models.Contenido).filter(models.Contenido.idGenero == genero_id).all()    

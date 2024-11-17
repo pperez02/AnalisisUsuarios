@@ -29,18 +29,9 @@ class ListaMeGusta(Base):
 
 class ListaPersonalizada(Base):
     __tablename__ = "lista_personalizada"
-    idLista = Column(String, nullable=False)
-    idContenido = Column(String, nullable=False)  # Referencia lógica a Contenido
+    idLista = Column(String, primary_key=True, nullable=False)
+    idContenido = Column(String, primary_key=True, nullable=False)  # Referencia lógica a Contenido
 
     __table_args__ = (
         PrimaryKeyConstraint('idLista', 'idContenido'),
-    )
-
-class HistorialUsuario(Base):
-    __tablename__ = "historial_usuario"
-    idHistorial = Column(String, nullable=False)
-    idContenido = Column(String, nullable=False)
-
-    __table_args__ = (
-        PrimaryKeyConstraint('idHistorial', 'idContenido')
-    )       
+    )    
