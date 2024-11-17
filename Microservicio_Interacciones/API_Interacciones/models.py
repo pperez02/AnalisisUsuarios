@@ -42,5 +42,5 @@ class HistorialUsuario(Base):
     idContenido = Column(String, nullable=False)
 
     __table_args__ = (
-        PrimaryKeyConstraint('idHistorial', 'idContenido')
+        PrimaryKeyConstraint('idHistorial', 'idContenido'),
     )       

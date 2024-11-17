@@ -12,7 +12,7 @@ Descripción: Conexión a la base de datos usuarios.db y creación de sesión
 """
 
 # URL de la base de datos (SQLite en este caso)
-SQLALCHEMY_DATABASE_URL = "sqlite:///./usuarios.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./Microservicio_Usuarios/usuarios.db"
 
 # Crear el motor para interactuar con la base de datos
 engine = create_engine(
@@ -35,7 +35,7 @@ def get_db():
 
 # Función para inicializar la base de datos
 def initialize_database():
-    if not os.path.exists("./usuarios.db"):
+    if not os.path.exists("./Microservicio_Usuarios/usuarios.db"):
         # Crea las tablas si no existen
         Base.metadata.create_all(bind=engine)
         print("Base de datos creada y tablas inicializadas.")

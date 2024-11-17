@@ -192,4 +192,12 @@ def get_contenidos_genero(idGenero: str, db: Session = Depends(get_db)):
     contenidos = crud.get_contenidos_por_genero(db=db, genero_id=idGenero)
     if not contenidos:
         raise HTTPException(status_code=404, detail="No existe ningún contenido con ese genero")
-    return contenidos         
+    return contenidos 
+
+# Endpoint para asignar una nueva valoración a un contenido y recalcular el promedio
+@app.put("/contenidos/{idContenido}/valoracion")
+def actualizar_valoracion_contenido(idContenido: str, valoracion: int, db: Session = Depends(get_db)):
+    valoracion_contenido = crud.valorar_contenido(db=db, idContenido=idContenido, valoracion=valoracion)
+    if not valoracion_contenido:
+        raise HTTPException(status_code=404, detail="Contenido no encontrado")
+    return {"message": "Valoración del contenido actualizada exitosamente"} 

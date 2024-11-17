@@ -353,5 +353,15 @@ def delete_genero(db: Session, genero_id: str) -> bool:
     return False    
 
 # Función para obtener los contenidos de un género específico
-def get_contenidos_por_genero(db: Session, idGenero: str)
-    return db.query(models.Contenido).filter(models.Contenido.idGenero == genero_id).all()    
+def get_contenidos_por_genero(db: Session, idGenero: str):
+    return db.query(models.Contenido).filter(models.Contenido.idGenero == idGenero).all() 
+
+def valorar_contenido(db: Session, idContenido: str, valoracion: int):
+    contenido = db.query(models.Contenido).filter(models.Contenido.id == idContenido).first()
+    print(contenido)
+    if not contenido:
+        return None   
+    contenido.valoracionPromedio = (contenido.valoracionPromedio + valoracion)/2
+    db.commit()
+    db.refresh(contenido)
+    return contenido

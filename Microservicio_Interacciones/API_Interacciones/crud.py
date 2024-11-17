@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
+import requests
 
 """
 Autor: Grupo GA01 - ASEE
@@ -67,11 +68,71 @@ def get_recomendaciones_usuario(db: Session, usuario_id: str):
     generos = get_generos_usuario(db, usuario_id)
     
     # Obtenemos la lista de contenidos en función de esos géneros
-    recomedaciones = []
+    recomendaciones = []
     if generos:
         lista1 = requests.get(f"{BASE_URL}/generos/{generos[0].id}").json()
         lista2 = requests.get(f"{BASE_URL}/generos/{generos[1].id}").json()
         recomendaciones.extend(lista1)
         recomendaciones.extend(lista2)
 
-    return recomendaciones        
+    return recomendaciones    
+
+#Función para dar "Me Gusta" a un contenido por un usuario
+def dar_me_gusta(db: Session, idUsuario: str, idContenido: str):
+    tupla_lista = models.ListaMeGusta(idUsuario=idUsuario,
+                                      idContenido=idContenido)
+    db.add(tupla_lista)
+    db.commit()
+    db.refresh(tupla_lista)
+    return tupla_lista
+
+#Función para quitar un contenido de la lista de "Me Gusta"
+def quitar_me_gusta(db: Session, idUsuario: str, idContenido: str) -> bool:
+    tupla_lista = db.query(models.ListaMeGusta).filter(models.ListaMeGusta.idUsuario == idUsuario, 
+                                                       models.ListaMeGusta.idContenido == idContenido).first()
+    if tupla_lista:
+        db.delete(tupla_lista)
+        db.commit()
+        return True
+    
+    return False
+
+#Función para valorar un contenido por un usuario
+def valorar_contenido(db: Session, idUsuario: str, idContenido: str, valoracion: int):
+    tupla_antigua = db.query(models.ValoracionUsuarioContenido).filter(
+                                                                models.ValoracionUsuarioContenido.idUsuario == idUsuario,
+                                                                models.ValoracionUsuarioContenido.idContenido == idContenido ).first()
+    if not valoracion:
+        return None
+    #Se hace una llamada a la API de Contenidos 
+    url = f"http://localhost:8000/contenidos/{idContenido}/valoracion"
+
+    # Parámetros del cuerpo de la solicitud
+    params = {
+        "valoracion": valoracion
+    }
+    try:
+        # Hacer la solicitud POST al endpoint
+        response = requests.put(url, params=params)
+
+        # Validar la respuesta
+        if response.status_code == 200:
+            print("Valoración añadida con éxito:", response.json())
+        else:
+            print("Error al añadir la valoración:", response.status_code, response.text)
+
+    except requests.RequestException as e:
+        print("Error al conectar con el servidor:", e)
+
+    # Si existe ya una tupla con esa valoración, se edita
+    if tupla_antigua:
+        tupla_antigua.puntuacion = valoracion
+        db.commit()
+        db.refresh(tupla_antigua)
+        return tupla_antigua
+    # Si no existe, se crea una nueva
+    tupla_nueva = models.ValoracionUsuarioContenido(idUsuario=idUsuario, idContenido=idContenido, puntuacion=valoracion)
+    db.add(tupla_nueva)
+    db.commit()
+    db.refresh(tupla_nueva)
+    return tupla_nueva    

@@ -32,4 +32,25 @@ def get_recomendaciones(idUsuario: str, db: Session = Depends(get_db)):
     recomendaciones = crud.get_recomendaciones_usuario(db=db, usuario_id=idUsuario)
     if not recomendaciones:
         raise HTTPException(status_code=404, detail="No se pudieron recuperar las recomendaciones")
-    return contenidos    
+    return recomendaciones  
+
+# Endpoint para dar "Me gusta" a un contenido
+@app.post("/usuarios/{idUsuario}/me-gusta/{idContenido}", response_model=schemas.ListaMeGusta)
+def action_megusta(idUsuario: str, idContenido: str, db: Session = Depends(get_db)):
+    return crud.dar_me_gusta(db=db, idUsuario=idUsuario, idContenido=idContenido)
+
+# Endpoint para eliminar un "Me gusta" a un contenido
+@app.delete("/usuarios/{idUsuario}/me-gusta/{idContenido}")
+def action_eliminar_me_gusta(idUsuario: str, idContenido: str, db: Session = Depends(get_db)):
+    eliminado = crud.quitar_me_gusta(db=db, idUsuario=idUsuario, idContenido=idContenido)
+    if not eliminado:
+        raise HTTPException(status_code=404, detail="Contenido no encontrado en la lista de me gusta")
+    return {"message": "Contenido eliminado de la lista de Me gusta"}  
+
+# Endpoint para añadir una puntuación a un contenido
+@app.post("/usuarios/{idUsuario}/valoraciones/{idContenido}", response_model=schemas.ValoracionUsuarioContenido)
+def action_valorar_contenido(valoracion: int, idUsuario: str, idContenido: str, db: Session = Depends(get_db)):
+    valoracionUsuarioContenido = crud.valorar_contenido(db=db, idUsuario=idUsuario, idContenido=idContenido, valoracion=valoracion)
+    if not valoracionUsuarioContenido:
+        raise HTTPException(status_code=500, detail="Error al añadir la valoración")
+    return valoracionUsuarioContenido

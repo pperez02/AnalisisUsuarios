@@ -16,3 +16,14 @@ class Contenido(BaseModel):
     valoracionPromedio: Optional[float] = None
     idSubtitulosContenido: Optional[str] = None
     idDoblajeContenido: Optional[str] = None
+
+# Esquema utilizado para las listas de "Me gusta" de los usuarios
+class ListaMeGusta(BaseModel):
+    idUsuario: str
+    idContenido: str
+
+# Esquema utilizado para validar las valoraciones dadas por los usuarios
+class ValoracionUsuarioContenido(BaseModel):
+    idUsuario: str
+    idContenido: str
+    puntuacion: int
