@@ -7,8 +7,8 @@ Autor: Grupo GA01 - ASEE
 Versión: 1.0
 Descripción: Funciones CRUD para interactuar con la base de datos
 """
-
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL_CONTENIDOS = "http://127.0.0.1:8000"
+BASE_URL_USUARIOS = "http://127.0.0.1:8001"
 
 # Función para obtener los géneros de los contenidos del historial y "me gusta" de un usuario
 def get_generos_usuario(db: Session, usuario_id: str):
@@ -16,14 +16,14 @@ def get_generos_usuario(db: Session, usuario_id: str):
     generos_puntos = {}
     
     # Obtener el usuario
-    response = requests.get(f"{BASE_URL}/usuarios").json()
+    response = requests.get(f"{BASE_URL_USUARIOS}/usuarios").json()
     for user in response:
-        if user.id == usuario_id:
+        if user['id'] == usuario_id:
             usuario = user
     
     # Obtener el historial del usuario
     if usuario:
-        historial_id = usuario.idHistorial        
+        historial_id = usuario['idHistorial']      
 
     if historial_id:
         historial = db.query(models.HistorialUsuario).filter(models.HistorialUsuario.idHistorial == historial_id).all()
@@ -31,8 +31,9 @@ def get_generos_usuario(db: Session, usuario_id: str):
     # Obtener los géneros de los contenidos en su historial
     if historial:
         for entrada in historial:
-            contenido = requests.get(f"{BASE_URL}/contenidos/{entrada.idContenido}").json()
-            genero_id = contenido.idGenero
+            contenido = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{entrada.idContenido}").json()
+            genero_id = contenido['idGenero']
+            
 
             if genero_id:
                 if genero_id not in generos_puntos:
@@ -44,8 +45,8 @@ def get_generos_usuario(db: Session, usuario_id: str):
     me_gusta = db.query(models.ListaMeGusta).filter(models.ListaMeGusta.idUsuario == usuario_id).all()
     if me_gusta:
         for entrada in me_gusta:
-            contenido = requests.get(f"{BASE_URL}/contenidos/{entrada.idContenido}").json()
-            genero_id = contenido.idGenero
+            contenido = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{entrada.idContenido}").json()
+            genero_id = contenido['idGenero']
 
             if genero_id:
                 if genero_id not in generos_puntos:
@@ -70,8 +71,8 @@ def get_recomendaciones_usuario(db: Session, usuario_id: str):
     # Obtenemos la lista de contenidos en función de esos géneros
     recomendaciones = []
     if generos:
-        lista1 = requests.get(f"{BASE_URL}/generos/{generos[0].id}").json()
-        lista2 = requests.get(f"{BASE_URL}/generos/{generos[1].id}").json()
+        lista1 = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{generos[0].id}").json()
+        lista2 = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{generos[1].id}").json()
         recomendaciones.extend(lista1)
         recomendaciones.extend(lista2)
 
