@@ -54,3 +54,13 @@ def action_valorar_contenido(valoracion: int, idUsuario: str, idContenido: str, 
     if not valoracionUsuarioContenido:
         raise HTTPException(status_code=500, detail="Error al añadir la valoración")
     return valoracionUsuarioContenido
+
+# Endpoint para obtener los contenidos más populares basados en "me gusta".
+@app.get("/contenido/tendencias", response_model=schemas.TendenciasResponse)
+def obtener_tendencias(limite: int = 2, db: Session = Depends(get_db)):
+    contenidos = crud.get_mas_me_gusta(db, limite)
+    tendencias = [
+        schemas.Tendencia(idContenido=c.idContenido, me_gusta_total=c.me_gusta_total)
+        for c in contenidos
+    ]
+    return schemas.TendenciasResponse(tendencias=tendencias)
