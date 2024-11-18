@@ -27,3 +27,10 @@ class ValoracionUsuarioContenido(BaseModel):
     idUsuario: str
     idContenido: str
     puntuacion: int
+
+class Tendencia(BaseModel):
+    idContenido: str
+    me_gusta_total: int
+
+class TendenciasResponse(BaseModel):
+    tendencias: list[Tendencia]
