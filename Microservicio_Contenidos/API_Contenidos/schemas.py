@@ -110,3 +110,22 @@ class EpisodioUpdate(BaseModel):
     numeroEpisodio: Optional[int] = None
     duracion: Optional[int] = None
     idDirector: Optional[str] = None
+
+class Reparto(BaseModel):
+    idContenido: str
+    idActor: str
+
+class RepartoUpdate(BaseModel):
+    idActor: str
+
+class Actor(BaseModel):
+    id: str
+    nombre: str
+    nacionalidad: str
+    fechaNacimiento: str
+
+class Director(BaseModel):
+    id: str
+    nombre: str
+    nacionalidad: str
+    fechaNacimiento: str
