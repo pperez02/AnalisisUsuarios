@@ -8,8 +8,8 @@ Autor: Grupo GA01 - ASEE
 Versión: 1.0
 Descripción: Funciones CRUD para interactuar con la base de datos
 """
-BASE_URL_CONTENIDOS = "http://127.0.0.1:8000"
-BASE_URL_USUARIOS = "http://127.0.0.1:8001"
+BASE_URL_CONTENIDOS = "http://localhost:8000"
+BASE_URL_USUARIOS = "http://localhost:8001"
 
 # Función para obtener los géneros de los contenidos del historial y "me gusta" de un usuario
 def get_generos_usuario(db: Session, usuario_id: str):
