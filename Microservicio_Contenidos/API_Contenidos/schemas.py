@@ -3,12 +3,15 @@ from typing import Optional
 
 class ContenidoBase(BaseModel):
     titulo: str
-    descripcion: str
+    descripcion: Optional[str]
     fechaLanzamiento: str
     idGenero: str
     valoracionPromedio: Optional[float] = None
     idSubtitulosContenido: Optional[str] = None
     idDoblajeContenido: Optional[str] = None
+
+    duracion: Optional[int]
+    idDirector: Optional[str]
 
 class ContenidoCreate(ContenidoBase):
     tipoContenido: str
