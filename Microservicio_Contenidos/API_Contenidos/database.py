@@ -12,7 +12,7 @@ Descripción: Conexión a la base de datos contenidos.db y creación de sesión
 """
 
 # URL de la base de datos (SQLite en este caso)
-SQLALCHEMY_DATABASE_URL = "sqlite:///./contenidos.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./Microservicio_Contenidos/contenidos.db"
 
 # Crear el motor para interactuar con la base de datos
 engine = create_engine(
@@ -34,7 +34,7 @@ def get_db():
         db.close()
 
 def initialize_database():
-    if not os.path.exists("./contenidos.db"):
+    if not os.path.exists("./Microservicio_Contenidos/contenidos.db"):
         # Crea las tablas si no existen
         Base.metadata.create_all(bind=engine)
         print("Base de datos creada y tablas inicializadas.")
@@ -63,6 +63,13 @@ def initialize_database():
                 db.add(doblaje_nuevo)  
                 doblaje_nuevo = models.Doblaje(idDoblaje="4", idioma="Portugués")    
                 db.add(doblaje_nuevo)
+            
+            contenidosExistentes = db.query(models.Contenido).count()
+            if contenidosExistentes == 0:
+                contenidoNuevo = models.Contenido(id="ContenidoPrueba1", tipoContenido="Pelicula", titulo="ContenidoPrueba",
+                                                   fechaLanzamiento="0000-00-00", idGenero=1, valoracionPromedio=0, idSubtitulosContenido="0", 
+                                                   idDoblajeContenido="0", duracion=120, idDirector="1")
+                db.add(contenidoNuevo)
 
             actoresExistentes = db.query(models.Actor).count()
             if actoresExistentes == 0:
