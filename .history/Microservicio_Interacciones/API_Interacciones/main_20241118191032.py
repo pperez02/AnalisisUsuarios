@@ -67,13 +67,3 @@ def get_historial(idUsuario: str, db: Session = Depends(get_db)):
     if not historial:
         raise HTTPException(status_code=404, detail="Historial del usuario no encontrado")
     return historial    
-
-# Endpoint para obtener los contenidos más populares basados en "me gusta".
-@app.get("/contenido/tendencias", response_model=schemas.TendenciasResponse)
-def obtener_tendencias(limite: int = 2, db: Session = Depends(get_db)):
-    contenidos = crud.get_mas_me_gusta(db, limite)
-    tendencias = [
-        schemas.Tendencia(idContenido=c.idContenido, me_gusta_total=c.me_gusta_total)
-        for c in contenidos
-    ]
-    return schemas.TendenciasResponse(tendencias=tendencias)

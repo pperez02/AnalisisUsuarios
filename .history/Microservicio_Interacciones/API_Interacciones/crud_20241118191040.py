@@ -1,4 +1,3 @@
-from sqlalchemy import desc, func
 from sqlalchemy.orm import Session
 from . import models, schemas
 import requests
@@ -192,16 +191,3 @@ def get_historial_usuario(db: Session, usuario_id: str):
             contenidos_historial.append(contenido)
 
     return contenidos_historial        
-
-# Obtener los contenidos con más "me gusta"
-def get_mas_me_gusta(db: Session, limite: int = 2):
-    return (
-        db.query(
-            models.ListaMeGusta.idContenido.label("idContenido"),
-            func.count(models.ListaMeGusta.idContenido).label("me_gusta_total")
-        )
-        .group_by(models.ListaMeGusta.idContenido)
-        .order_by(desc("me_gusta_total"))
-        .limit(limite)
-        .all()
-    )
