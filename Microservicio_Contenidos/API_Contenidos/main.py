@@ -189,7 +189,7 @@ def delete_genero(idGenero: str, db: Session = Depends(get_db)):
 
 @app.get("/generos/{idGenero}/contenidos", response_model=list[schemas.Contenido])
 def get_contenidos_genero(idGenero: str, db: Session = Depends(get_db)):
-    contenidos = crud.get_contenidos_por_genero(db=db, genero_id=idGenero)
+    contenidos = crud.get_contenidos_por_genero(db=db, idGenero=idGenero)
     if not contenidos:
         raise HTTPException(status_code=404, detail="No existe ningún contenido con ese genero")
     return contenidos 

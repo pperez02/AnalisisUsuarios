@@ -58,15 +58,20 @@ def action_valorar_contenido(valoracion: int, idUsuario: str, idContenido: str, 
 # Endpoint para añadir contenido al historial
 @app.post("/usuarios/{idUsuario}/historial/{idContenido}")
 def actualizar_historial(idUsuario: str, idContenido: str, db: Session = Depends(get_db)):
-    return crud.crear_entrada_historial(db=db, usuario_id=idUsuario, contenido_id=idContenido)
+    try:
+        entrada = crud.crear_entrada_historial(db=db, usuario_id=idUsuario, contenido_id=idContenido)
+        return {"message": "Contenido añadido al historial", "entrada": entrada}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Endpoint para devolver el historial del usuario
-@app.get("usuarios/{idUsuario}/historial", response_model=list[schemas.Contenido])
+@app.get("/usuarios/{idUsuario}/historial", response_model=list[schemas.Contenido])
 def get_historial(idUsuario: str, db: Session = Depends(get_db)):
-    historial = crud.get_historial_usuario(db=db, usuario_id=idUsuario)
-    if not historial:
-        raise HTTPException(status_code=404, detail="Historial del usuario no encontrado")
-    return historial    
+    try:
+        historial = crud.get_historial_usuario(db=db, usuario_id=idUsuario)
+        return historial if historial else []
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) 
 
 # Endpoint para obtener los contenidos más populares basados en "me gusta".
 @app.get("/contenido/tendencias", response_model=schemas.TendenciasResponse)
@@ -77,3 +82,28 @@ def obtener_tendencias(limite: int = 2, db: Session = Depends(get_db)):
         for c in contenidos
     ]
     return schemas.TendenciasResponse(tendencias=tendencias)
+
+# Endpoint para añadir contenido a la lista personalizada
+@app.post("/usuarios/{idUsuario}/listaPersonalizada/{idContenido}")
+def insert_content_into_LP(idUsuario: str, idContenido: str, db: Session = Depends(get_db)):
+    try:
+        LP = crud.insert_content_into_LP(db=db, usuario_id=idUsuario, contenido_id=idContenido)
+        return {"message": "Contenido añadido a lista personalizada", "LP": LP}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+# Endpoint para devolver la ListaPersonalizada de usuario
+@app.get("/usuarios/{idUsuario}/listaPersonalizada", response_model=list[schemas.Contenido])
+def get_LP_user(idUsuario: str, db: Session = Depends(get_db)):
+    try:
+        LP = crud.get_LP_user(db=db, usuario_id=idUsuario)
+        return LP if LP else []
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.delete("/usuarios/{idUsuario}/listaPersonalizada/{idContenido}")
+def delete_conent_from_user_LP(idUsuario: str, idContenido: str, db: Session = Depends(get_db)):
+    eliminado = crud.delete_conent_from_user_LP(db=db, idUsuario=idUsuario, idContenido=idContenido)
+    if not eliminado:
+        raise HTTPException(status_code=404, detail="Contenido no eliminado de ListaPersonalizada")
+    return {"message": "Contenido eliminado de ListaPersonalizada"}
