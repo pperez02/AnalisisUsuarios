@@ -31,6 +31,13 @@ def get_database():
 def get_usuarios(skip: int = 0, limit: int = 10, db: Session = Depends(get_database)):
     return crud.get_users(db, skip=skip, limit=limit)
 
+@app.get("/usuarios/{idUsuario}", response_model=schemas.User)
+def get_usuarios(idUsuario: str, db: Session = Depends(get_database)):
+    usuario = crud.get_user(db, user_id=idUsuario)
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    return usuario
+
 @app.post("/usuarios/registro", response_model=schemas.User)
 def register_user(user: schemas.UserCreate, db: Session = Depends(get_database)):
     db_user = crud.get_user_by_email(db, email=user.email)

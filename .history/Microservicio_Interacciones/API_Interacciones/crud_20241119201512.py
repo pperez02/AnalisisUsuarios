@@ -72,8 +72,8 @@ def get_recomendaciones_usuario(db: Session, usuario_id: str):
     # Obtenemos la lista de contenidos en función de esos géneros
     recomendaciones = []
     if generos:
-        lista1 = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{generos[0]}/contenidos").json()
-        lista2 = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{generos[1]}/contenidos").json()
+        lista1 = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{generos[0].id}").json()
+        lista2 = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{generos[1].id}").json()
         recomendaciones.extend(lista1)
         recomendaciones.extend(lista2)
 
@@ -141,22 +141,21 @@ def valorar_contenido(db: Session, idUsuario: str, idContenido: str, valoracion:
 
 # Función para añadir contenido al historial del usuario
 def crear_entrada_historial(db: Session, usuario_id: str, contenido_id: str):
-    # Obtener al usuario desde la API de usuarios
-    try:
-        response = requests.get(f"{BASE_URL_USUARIOS}/usuarios/{usuario_id}")
-        if response.status_code != 200:
-            raise Exception(f"Error al obtener el usuario: {response.status_code} {response.text}")
-        usuario = response.json()
-    except requests.RequestException as e:
-        raise Exception(f"Error al conectarse con la API de usuarios: {e}")
-
-    # Validar si el usuario tiene historial
-    historial_id = usuario['idHistorial']
-    if not historial_id:
-        raise Exception(f"No se encontró un historial para el usuario con ID {usuario_id}")
+    # Obtener al usuario para consultar su id de historial
+    usuario = None
+    
+    # Obtener el usuario
+    response = requests.get(f"{BASE_URL_USUARIOS}/usuarios").json()
+    for user in response:
+        if user['id'] == usuario_id:
+            usuario = user
+    
+    # Obtener el historial del usuario
+    if usuario:
+        historial_id = usuario['idHistorial']      
 
     # Crear una nueva entrada en el historial del usuario
-    try:
+    if historial_id:
         db_historial = models.HistorialUsuario(
             idHistorial=historial_id,
             idContenido=contenido_id
@@ -164,48 +163,35 @@ def crear_entrada_historial(db: Session, usuario_id: str, contenido_id: str):
         db.add(db_historial)
         db.commit()
         db.refresh(db_historial)
-        return db_historial
-    except Exception as e:
-        db.rollback()
-        raise Exception(f"Error al añadir contenido al historial en la base de datos: {e}")
+    return db_historial
 
 # Función para obtener el historial del usuario
 def get_historial_usuario(db: Session, usuario_id: str):
-    # Obtener al usuario desde la API de usuarios
-    try:
-        response = requests.get(f"{BASE_URL_USUARIOS}/usuarios/{usuario_id}")
-        if response.status_code != 200:
-            raise Exception(f"Error al obtener el usuario: {response.status_code} {response.text}")
-        usuario = response.json()
-    except requests.RequestException as e:
-        raise Exception(f"Error al conectarse con la API de usuarios: {e}")
-
-    # Validar si el usuario tiene historial
-    historial_id = usuario.get('idHistorial')
-    if not historial_id:
-        raise Exception(f"No se encontró un historial para el usuario con ID {usuario_id}")
+    # Obtener al usuario para consultar su id de historial
+    usuario = None
+    
+    # Obtener el usuario
+    response = requests.get(f"{BASE_URL_USUARIOS}/usuarios").json()
+    for user in response:
+        if user['id'] == usuario_id:
+            usuario = user
+    
+    # Obtener el historial del usuario
+    if usuario:
+        historial_id = usuario['idHistorial'] 
 
     # Obtener todas las entradas del historial del usuario
-    try:
-        historial = db.query(models.HistorialUsuario).filter(
-            models.HistorialUsuario.idHistorial == historial_id
-        ).all()
-    except Exception as e:
-        raise Exception(f"Error al obtener el historial de la base de datos: {e}")
+    if historial_id:
+        historial = db.query(models.HistorialUsuario).filter(models.HistorialUsuario.idHistorial == historial_id).all() 
 
-    # Obtener los contenidos relacionados con las entradas del historial
+    # Añadir a la lista a devolver todos los contenidos en el historiañ
     contenidos_historial = []
-    for entrada in historial:
-        try:
-            response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{entrada.idContenido}")
-            if response.status_code == 200:
-                contenidos_historial.append(response.json())
-            else:
-                print(f"Error al obtener el contenido con ID {entrada.idContenido}: {response.status_code}")
-        except requests.RequestException as e:
-            print(f"Error al conectarse con la API de contenidos para ID {entrada.idContenido}: {e}")
+    if historial:
+        for entrada in historial:
+            contenido = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{entrada.idContenido}").json()
+            contenidos_historial.append(contenido)
 
-    return contenidos_historial    
+    return contenidos_historial        
 
 # Obtener los contenidos con más "me gusta"
 def get_mas_me_gusta(db: Session, limite: int = 2):

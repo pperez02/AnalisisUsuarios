@@ -10,7 +10,7 @@ Descripción: Descripción de los esquemas utilizados para validar los datos
 
 class Contenido(BaseModel):
     titulo: str
-    descripcion: str
+    descripcion: Optional[str]
     fechaLanzamiento: str
     idGenero: str
     valoracionPromedio: Optional[float] = None

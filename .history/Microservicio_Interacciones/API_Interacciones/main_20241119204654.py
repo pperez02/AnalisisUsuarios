@@ -58,20 +58,15 @@ def action_valorar_contenido(valoracion: int, idUsuario: str, idContenido: str, 
 # Endpoint para añadir contenido al historial
 @app.post("/usuarios/{idUsuario}/historial/{idContenido}")
 def actualizar_historial(idUsuario: str, idContenido: str, db: Session = Depends(get_db)):
-    try:
-        entrada = crud.crear_entrada_historial(db=db, usuario_id=idUsuario, contenido_id=idContenido)
-        return {"message": "Contenido añadido al historial", "entrada": entrada}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return crud.crear_entrada_historial(db=db, usuario_id=idUsuario, contenido_id=idContenido)
 
 # Endpoint para devolver el historial del usuario
 @app.get("/usuarios/{idUsuario}/historial", response_model=list[schemas.Contenido])
 def get_historial(idUsuario: str, db: Session = Depends(get_db)):
-    try:
-        historial = crud.get_historial_usuario(db=db, usuario_id=idUsuario)
-        return historial if historial else []
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) 
+    historial = crud.get_historial_usuario(db=db, usuario_id=idUsuario)
+    if not historial:
+        raise HTTPException(status_code=404, detail="Historial del usuario no encontrado")
+    return historial    
 
 # Endpoint para obtener los contenidos más populares basados en "me gusta".
 @app.get("/contenido/tendencias", response_model=schemas.TendenciasResponse)

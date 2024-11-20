@@ -72,8 +72,8 @@ def get_recomendaciones_usuario(db: Session, usuario_id: str):
     # Obtenemos la lista de contenidos en función de esos géneros
     recomendaciones = []
     if generos:
-        lista1 = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{generos[0]}/contenidos").json()
-        lista2 = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{generos[1]}/contenidos").json()
+        lista1 = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{generos[0].id}").json()
+        lista2 = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{generos[1].id}").json()
         recomendaciones.extend(lista1)
         recomendaciones.extend(lista2)
 
@@ -151,7 +151,7 @@ def crear_entrada_historial(db: Session, usuario_id: str, contenido_id: str):
         raise Exception(f"Error al conectarse con la API de usuarios: {e}")
 
     # Validar si el usuario tiene historial
-    historial_id = usuario['idHistorial']
+    historial_id = usuario.get('idHistorial')
     if not historial_id:
         raise Exception(f"No se encontró un historial para el usuario con ID {usuario_id}")
 
