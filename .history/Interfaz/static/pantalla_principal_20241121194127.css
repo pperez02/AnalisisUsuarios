@@ -1,0 +1,70 @@
+/* Ajustes generales para que el contenido principal ocupe toda la pantalla disponible */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Garantiza que el footer se mantenga en el fondo */
+}
+
+/* Mejoras en los recuadros de contenido */
+.section .content-box {
+    background-image: url('/static/default-cover.jpg'); /* Imagen de portada por defecto */
+    background-size: cover; /* Ajusta la imagen al tamaño del recuadro */
+    background-position: center; /* Centra la imagen en el recuadro */
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* Texto al pie del recuadro */
+    padding: 0; /* Elimina el padding interno para la imagen */
+    color: rgba(255, 255, 255, 0.9); /* Texto con transparencia */
+    text-shadow: 1px 1px 2px black; /* Sombra para mejor legibilidad */
+}
+
+/* Texto dentro de los recuadros */
+.section .content-box span {
+    background-color: rgba(0, 0, 0, 0.6); /* Fondo oscuro para el texto */
+    width: 100%; /* Ocupa todo el ancho */
+    text-align: center;
+    padding: 5px 0;
+    font-size: 14px; /* Tamaño ajustado del texto */
+    overflow: hidden; /* Oculta texto demasiado largo */
+    white-space: nowrap;
+    text-overflow: ellipsis; /* Añade "..." si el texto es demasiado largo */
+}
+
+/* Ajuste del footer para una mejor integración */
+footer {
+    position: relative; /* Permite agregar un diseño extra */
+    font-size: 14px;
+    letter-spacing: 0.5px; /* Espaciado entre letras */
+}
+
+/* Mejora del diseño de la barra de búsqueda */
+.search-bar input {
+    font-size: 14px; /* Tamaño más pequeño para el texto */
+}
+
+.search-bar button {
+    font-size: 14px;
+    text-transform: uppercase; /* Convierte el texto en mayúsculas */
+    font-weight: bold;
+}
+
+/* Transición suave en la barra de búsqueda */
+.search-bar button:hover {
+    background-color: #d40810; /* Cambia ligeramente el color en hover */
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* Mejora de las secciones para mayor consistencia */
+.section {
+    margin-top: 20px; /* Menor espacio entre secciones */
+    padding-bottom: 10px; /* Espaciado interno al final */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Línea separadora tenue */
+}
+
+/* Estilo adicional para encabezados de las secciones */
+.section h2 {
+    font-family: 'Arial Black', sans-serif; /* Encabezados más destacados */
+    font-size: 18px;
+    text-transform: uppercase; /* Convierte el texto en mayúsculas */
+    letter-spacing: 1px;
+}
