@@ -4,92 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Películas</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #141414;
-            color: #fff;
-            margin: 0;
-            padding: 0;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: #1e1e1e;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 1.5em;
-        }
-        .perfil-button {
-            background-color: #f39c12;
-            color: #fff;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .perfil-button:hover {
-            background-color: #d4880f;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-        }
-        .movie-card {
-            display: flex;
-            background-color: #1e1e1e;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-        .movie-poster {
-            flex: 0 0 200px;
-            height: 300px;
-            background-size: cover;
-            background-position: center;
-        }
-        .movie-details {
-            flex: 1;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .movie-title {
-            font-size: 1.8em;
-            margin-bottom: 10px;
-        }
-        .movie-info {
-            font-size: 0.9em;
-            color: #ccc;
-        }
-        .movie-description {
-            margin: 15px 0;
-            line-height: 1.6;
-        }
-        .rating {
-            font-weight: bold;
-            color: #f39c12;
-        }
-        .reparto, .doblajes, .subtitulos {
-            margin-top: 20px;
-        }
-        .actor-name, .doblaje-item, .subtitulo-item {
-            font-size: 1em;
-            color: #ccc;
-            margin: 5px 0;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/detalles_pelicula.css">
 </head>
 <body>
     <!-- Encabezado -->
@@ -154,5 +69,8 @@
 
         <!-- Copia y pega este bloque para agregar más películas -->
     </div>
+    <footer>
+        <p>Derechos reservados &copy; 2024</p>
+    </footer> 
 </body>
 </html>
