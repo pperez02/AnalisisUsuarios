@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Películas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #141414;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #1e1e1e;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .perfil-button {
+            background-color: #f39c12;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .perfil-button:hover {
+            background-color: #d4880f;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .movie-card {
+            display: flex;
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        .movie-poster {
+            flex: 0 0 200px;
+            height: 300px;
+            background-size: cover;
+            background-position: center;
+        }
+        .movie-details {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .movie-title {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        .movie-info {
+            font-size: 0.9em;
+            color: #ccc;
+        }
+        .movie-description {
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+        .rating {
+            font-weight: bold;
+            color: #f39c12;
+        }
+    </style>
+</head>
+<body>
+    <!-- Encabezado -->
+    <div class="header">
+        <h1>Catálogo de Películas</h1>
+        <a href="perfil.html" class="perfil-button">Perfil</a>
+    </div>
+
+    <!-- Contenido -->
+    <div class="container">
+        <!-- Tarjeta de una película -->
+        <div class="movie-card">
+            <div class="movie-poster" style="background-image: url('https://via.placeholder.com/200x300');"></div>
+            <div class="movie-details">
+                <div>
+                    <div class="movie-title">{{ pelicula["titulo"] }}</div>
+                    <div class="movie-info">
+                        <span><strong>Género: </strong>{{ pelicula["idGenero"] }}</span> | 
+                        <span><strong>Duración: </strong> {{ pelicula["duracion"] }} minutos</span> | 
+                        <span><strong>Director: </strong>{{ pelicula["idDirector"] }}</span>
+                    </div>
+                    <div class="movie-description">
+                        {{ pelicula["descripcion"] }}
+                    </div>
+                </div>
+                <div>
+                    <span><strong>Fecha de lanzamiento:</strong> {{ pelicula["fechaLanzamiento"] }}</span><br>
+                    <span><strong>Valoración promedio:</strong> <span class="rating">{{ pelicula["valoracionPromedio"] }}</span></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Copia y pega este bloque para agregar más películas -->
+    </div>
+</body>
+</html>

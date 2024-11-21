@@ -78,3 +78,37 @@ async def registrar_usuario(request: Request, name: str = Form(...), email: str 
     
     # Podrías guardar el `user_id` para uso posterior si es necesario
     return templates.TemplateResponse("pantalla_principal.html", {"request": request, "user_id": user_id})
+
+#TODO AÑADIDO
+# Endpoint para mostrar los detalles de una película
+@app.get("/detalles_pelicula/{idContenido}", response_class=HTMLResponse)
+async def detalles_pelicula(request: Request, idContenido: str):
+    # Solicita los detalles de la película al microservicio de contenidos
+    contenido = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}")
+    
+    if contenido.status_code != 200:
+        raise HTTPException(status_code=404, detail="No se encontraron los detalles de la película.")
+      
+    # Extrae los detalles de la película del JSON de la respuesta
+    detalles_pelicula = contenido.json()
+
+    #Extraer nombre del genero a partir del id
+    genero = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{detalles_pelicula["idGenero"]}")
+    detalles_genero = genero.json()
+    nombre_genero = detalles_genero["nombre"]
+
+    #Extraer nombre del director a partir del id
+    director = requests.get(f"{BASE_URL_CONTENIDOS}/directores/{detalles_pelicula["idDirector"]}")
+    detalles_director = director.json()
+    nombre_director = detalles_director["nombre"]
+
+    #Cambiar los valores de ids por nombres
+    detalles_pelicula["idGenero"] = nombre_genero
+    #detalles_pelicula["idDirector"] = nombre_director
+    
+    # Renderiza la plantilla detalles_pelicula.html con los datos de la película
+    return templates.TemplateResponse("detalles_pelicula.html", {
+        "request": request,
+        "pelicula": detalles_pelicula
+    })
+
