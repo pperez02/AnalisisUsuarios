@@ -81,6 +81,14 @@
             font-weight: bold;
             color: #f39c12;
         }
+        .reparto, .doblajes, .subtitulos {
+            margin-top: 20px;
+        }
+        .actor-name, .doblaje-item, .subtitulo-item {
+            font-size: 1em;
+            color: #ccc;
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
@@ -110,6 +118,36 @@
                 <div>
                     <span><strong>Fecha de lanzamiento:</strong> {{ pelicula["fechaLanzamiento"] }}</span><br>
                     <span><strong>Valoración promedio:</strong> <span class="rating">{{ pelicula["valoracionPromedio"] }}</span></span>
+                </div>
+
+                <!-- Sección de Reparto -->
+                <div class="reparto">
+                    <strong>Reparto:</strong>
+                    <ul>
+                        {% for actor in reparto %}
+                            <li class="actor-name">{{ actor.nombre }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Sección de Doblajes -->
+                <div class="doblajes">
+                    <strong>Doblajes Disponibles:</strong>
+                    <ul>
+                        {% for doblaje in doblajes %}
+                            <li class="doblaje-item">{{ doblaje.idioma }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Sección de Subtítulos -->
+                <div class="subtitulos">
+                    <strong>Subtítulos Disponibles:</strong>
+                    <ul>
+                        {% for subtitulo in subtitulos %}
+                            <li class="subtitulo-item">{{ subtitulo.idioma }}</li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
         </div>

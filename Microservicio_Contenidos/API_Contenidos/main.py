@@ -59,11 +59,19 @@ def update_serie(idSerie: str, serie_data: schemas.SerieUpdate, db: Session = De
 
 @app.post("/contenidos/{idContenido}/subtitulos/{idSubtitulo}")
 def update_subtitulos(idContenido: str, idSubtitulo: str, db: Session = Depends(get_db)):
-    return crud.update_subtitulo(db=db, content_id=idContenido, subtitulo_id=idSubtitulo)   
+    return crud.update_subtitulo(db=db, content_id=idContenido, subtitulo_id=idSubtitulo)  
+
+@app.get("/contenidos/{idContenido}/subtitulos")
+def get_subtitulos(idContenido: str, db: Session = Depends(get_db)):
+    return crud.get_subtitulos(db=db, idContenido=idContenido)
 
 @app.post("/contenidos/{idContenido}/doblajes/{idDoblaje}")
 def update_doblaje(idContenido: str, idDoblaje: str, db: Session = Depends(get_db)):
-    return crud.update_doblaje(db=db, content_id=idContenido, doblaje_id=idDoblaje) 
+    return crud.update_doblaje(db=db, content_id=idContenido, doblaje_id=idDoblaje)
+
+@app.get("/contenidos/{idContenido}/doblajes")
+def get_doblajes(idContenido: str, db: Session = Depends(get_db)):
+    return crud.get_doblajes(db=db, idContenido=idContenido) 
 
 # Nuevo endpoint para eliminar contenido en distintos niveles
 @app.delete("/contenidos/{idContenido}/temporadas/{idTemporada}/episodios/{idEpisodio}", tags=["Eliminar contenido"])
@@ -202,13 +210,21 @@ def actualizar_valoracion_contenido(idContenido: str, valoracion: int, db: Sessi
         raise HTTPException(status_code=404, detail="Contenido no encontrado")
     return {"message": "Valoración del contenido actualizada exitosamente"}
     
+# Endpoint para obtener el reparto de un contenido
+
+@app.get("/contenidos/{idContenido}/reparto")
+def get_reparto(idContenido: str, db: Session = Depends(get_db)):
+    reparto = crud.get_reparto(db=db, idContenido=idContenido)
+    if not reparto:
+         raise HTTPException(status_code=404, detail="No se ha podido recuperar reparto")
+    return reparto
 #Asociar actores a una pelicula. Param: NO lista de actores, un solo actor (idActor)
 @app.post("/contenidos/{idContenido}/reparto/{idActor}", response_model=schemas.Reparto)
 def update_reparto(idContenido: str, idActor: str, db: Session = Depends(get_db)):
     reparto = crud.update_reparto(db=db, idContenido=idContenido, idActor=idActor)
 
     if not reparto:
-        raise HTTPException(status_code=404, detail="Género no encontrado")
+        raise HTTPException(status_code=404, detail="No se ha podido asociar actores a pelicula")
     return reparto
 
 #Funciones para obtener la información de un actor/director por su ID

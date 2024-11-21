@@ -104,11 +104,26 @@ async def detalles_pelicula(request: Request, idContenido: str):
 
     #Cambiar los valores de ids por nombres
     detalles_pelicula["idGenero"] = nombre_genero
-    #detalles_pelicula["idDirector"] = nombre_director
+    detalles_pelicula["idDirector"] = nombre_director
+
+    #Obtener el reparto
+    reparto = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{detalles_pelicula["id"]}/reparto")
+    detalles_reparto = reparto.json()
+
+    #Obtener los subtitulos
+    subtitulos = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{detalles_pelicula["idSubtitulosContenido"]}/subtitulos")
+    detalles_subtitulos = subtitulos.json()
+    
+    #Obtener los doblajes
+    doblajes = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{detalles_pelicula["idDoblajeContenido"]}/doblajes")
+    detalles_doblajes = doblajes.json()
     
     # Renderiza la plantilla detalles_pelicula.html con los datos de la película
     return templates.TemplateResponse("detalles_pelicula.html", {
         "request": request,
-        "pelicula": detalles_pelicula
+        "pelicula": detalles_pelicula,
+        "reparto": detalles_reparto,
+        "subtitulos": detalles_subtitulos,
+        "doblajes": detalles_doblajes
     })
 

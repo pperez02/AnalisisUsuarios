@@ -106,6 +106,16 @@ def update_subtitulo(db: Session, content_id: str, subtitulo_id: str):
 
     return db_SubtituloContenido
 
+def get_subtitulos(db: Session, idContenido: str):
+    # Realizamos la consulta uniendo las tablas SubtituloContenido y Subtitulo por idSubtitulo
+    subtitulos = (
+        db.query(models.Subtitulo)  # Seleccionamos la tabla Subtitulo desde models
+        .join(models.SubtituloContenido, models.SubtituloContenido.idSubtitulo == models.Subtitulo.idSubtitulo)  # Unimos SubtituloContenido con Subtitulo
+        .filter(models.SubtituloContenido.idSubtitulosContenido == idContenido)  # Filtramos por idContenido
+        .all()  # Ejecutamos la consulta y obtenemos todos los resultados
+    )
+    return subtitulos
+
 # Función para añadir doblajes a un contenido
 def update_doblaje(db: Session, content_id: str, doblaje_id: str):
     content_query = db.query(models.Contenido).filter(models.Contenido.id == content_id).first()
@@ -119,7 +129,18 @@ def update_doblaje(db: Session, content_id: str, doblaje_id: str):
         db.commit()
         db.refresh(db_DoblajeContenido)
 
-    return db_DoblajeContenido    
+    return db_DoblajeContenido
+
+#Funcion para obtener los doblajes
+def get_doblajes(db: Session, idContenido: str):
+    # Realizamos la consulta uniendo las tablas DoblajesContenido y Doblajes por idDoblaje
+    doblajes = (
+        db.query(models.Doblaje)  # Seleccionamos la tabla Doblaje desde models
+        .join(models.DoblajeContenido, models.DoblajeContenido.idDoblaje == models.Doblaje.idDoblaje)  # Unimos SubtituloContenido con Subtitulo
+        .filter(models.DoblajeContenido.idDoblajeContenido == idContenido)  # Filtramos por idContenido
+        .all()  # Ejecutamos la consulta y obtenemos todos los resultados
+    )
+    return doblajes  
 
 # Función para eliminar una película o serie
 def delete_content(db: Session, idContenido: str) -> bool:
@@ -350,6 +371,17 @@ def delete_genero(db: Session, genero_id: str) -> bool:
         db.delete(genero)
         db.commit()
         return True
+
+#Funcion para obtener el reparto
+def get_reparto(db: Session, idContenido: str):
+    # Realizamos la consulta uniendo las tablas Reparto y Actor por idActor
+    reparto = (
+        db.query(models.Actor)  # Seleccionamos la tabla Actor
+        .join(models.Reparto, models.Reparto.idActor == models.Actor.id)  # Unimos Reparto con Actor
+        .filter(models.Reparto.idContenido == idContenido)  # Filtramos por idContenido
+        .all()  # Ejecutamos la consulta y obtenemos todos los resultados
+    )
+    return reparto
 
 #Funcion para actualizar el reparto
 def update_reparto(db: Session, idContenido: str, idActor: str):
