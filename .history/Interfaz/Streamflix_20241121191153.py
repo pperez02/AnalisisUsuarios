@@ -85,28 +85,16 @@ async def pantalla_principal(request: Request, user_id: str):
     recomendaciones = requests.get(f"{BASE_URL_INTERACCIONES}/usuarios/{user_id}/recomendaciones").json()
     tendencias = requests.get(f"{BASE_URL_INTERACCIONES}/contenido/tendencias").json()
     historial = requests.get(f"{BASE_URL_INTERACCIONES}/usuarios/{user_id}/historial").json()
-    
-    # Obtener todos los géneros
     generos = requests.get(f"{BASE_URL_CONTENIDOS}/generos").json()
-
-    # Recuperar los contenidos por género
-    generos_con_contenidos = []
-    for genero in generos:
-        contenidos = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{genero['idGenero']}/contenidos").json()
-        generos_con_contenidos.append({
-            "nombre": genero["nombre"],
-            "contenidos": contenidos
-        })
-
+    
     # Renderizar plantilla con los datos
     return templates.TemplateResponse(
         "pantalla_principal.html",
         {
             "request": request,
-            "user_id": user_id,
             "recomendaciones": recomendaciones,
             "tendencias": tendencias,
             "historial": historial,
-            "generos_con_contenidos": generos_con_contenidos
+            "generos": generos
         }
     )

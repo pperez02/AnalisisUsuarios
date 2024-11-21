@@ -3,8 +3,8 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background-color: #000;
-    color: #fff;
+    background-color: #000; /* Fondo negro */
+    color: #fff; /* Texto blanco */
     display: flex;
     justify-content: center; /* Centra horizontalmente */
     align-items: center; /* Centra verticalmente */
@@ -13,10 +13,10 @@ body {
 
 /* Contenedor central */
 .container {
-    background-color: #1a1a1a;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
-    padding: 20px;
+    background-color: #1a1a1a; /* Fondo gris oscuro */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6); /* Sombra alrededor */
+    padding: 20px; /* Espaciado interno */
     max-width: 400px; /* Ancho máximo */
     width: 100%; /* Asegura que se adapte a tamaños pequeños */
     text-align: center; /* Centra el contenido */
@@ -118,36 +118,4 @@ body {
     padding: 15px;
     color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
-}
-
-/* Recuadros de contenido (simulación de portadas) */
-.section .content-box {
-    display: inline-block;
-    width: 120px; /* Ancho del recuadro */
-    height: 180px; /* Alto del recuadro */
-    margin: 10px; /* Separación entre recuadros */
-    background-color: #333;
-    color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
-    text-align: center;
-    font-size: 12px;
-    overflow: hidden; /* Ocultar texto largo */
-    padding: 10px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
-.section .content-box:hover {
-    transform: scale(1.05); /* Efecto de ampliación */
-}
-
-/* Footer fijo en la parte inferior */
-footer {
-    background-color: #1a1a1a;
-    color: #fff;
-    text-align: center;
-    padding: 10px;
-    margin-top: auto; /* Empuja el footer hacia abajo */
-    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.6); /* Sombra en la parte superior */
 }

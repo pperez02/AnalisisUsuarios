@@ -103,7 +103,6 @@ async def pantalla_principal(request: Request, user_id: str):
         "pantalla_principal.html",
         {
             "request": request,
-            "user_id": user_id,
             "recomendaciones": recomendaciones,
             "tendencias": tendencias,
             "historial": historial,

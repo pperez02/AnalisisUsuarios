@@ -6,9 +6,8 @@ body {
     background-color: #000;
     color: #fff;
     display: flex;
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center; /* Centra verticalmente */
-    height: 100vh; /* Altura completa de la ventana */
+    flex-direction: column; /* Para apilar elementos (contenido + footer) */
+    min-height: 100vh; /* Altura mínima para cubrir toda la pantalla */
 }
 
 /* Contenedor central */
@@ -17,9 +16,10 @@ body {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
     padding: 20px;
-    max-width: 400px; /* Ancho máximo */
-    width: 100%; /* Asegura que se adapte a tamaños pequeños */
-    text-align: center; /* Centra el contenido */
+    max-width: 800px; /* Ajustado para que sea más amplio */
+    width: 100%;
+    margin: 20px auto; /* Centrado horizontal con margen */
+    text-align: center;
 }
 
 /* Estilo del encabezado */
