@@ -114,3 +114,11 @@ def add_payment_method(idUsuario: str, metodo_pago: schemas.MetodoPagoCreate, db
     idMetodoPago = metodoPagoCreado.id
     metodoPagoUsuario = schemas.MetodoPagoUsuarioCreate(idUsuario=user.id, idMetodoPago=idMetodoPago)
     return crud.create_metodo_pago_usuario(db, metodoPagoUsuario)
+
+# Endpoint para obtener un listado con todos los planes de suscripcición existentes en la BD
+@app.get("/planes-suscripcion", response_model=list[schemas.PlanSuscripcion])
+def get_planes_suscripcion(db: Session = Depends(get_database)):
+    planes = crud.get_planes_suscripcion(db=db)
+    if not planes:
+        raise HTTPException(status_code=404, detail="No se han encontrado Planes de Suscripcion")
+    return planes

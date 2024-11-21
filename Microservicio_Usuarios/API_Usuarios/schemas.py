@@ -91,3 +91,9 @@ class MetodoPagoUsuario(MetodoPagoUsuarioBase):
 
     class Config:
         from_attributes = True
+
+class PlanSuscripcion(BaseModel):
+    id: str
+    nombre: str
+    precioMensual: float
+    numeroDispositivos: int

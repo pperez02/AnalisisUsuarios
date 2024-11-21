@@ -52,6 +52,9 @@ def update_user(db: Session, user_id: str, user_data: schemas.UserUpdate):
 def get_plan_suscripcion(db: Session, plan_id: str):
     return db.query(models.PlanSuscripcion).filter(models.PlanSuscripcion.id == plan_id).first()
 
+def get_planes_suscripcion(db: Session):
+    return db.query(models.PlanSuscripcion).all()
+
 # Crear un nuevo método de pago
 def create_metodo_pago(db: Session, metodo_pago: schemas.MetodoPagoCreate):
     db_metodo_pago = models.MetodoPago(
