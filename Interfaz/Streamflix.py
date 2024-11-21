@@ -129,6 +129,7 @@ async def detalles_pelicula(request: Request, idContenido: str):
 
 @app.get("/buscar", response_class=HTMLResponse)
 async def buscar(request: Request, query: str, tipo: str):
+    # Realizamos la búsqueda de contenidos o actores según el tipo
     if tipo == "contenido":
         response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{query}/buscar")
     elif tipo == "actor":
@@ -136,14 +137,29 @@ async def buscar(request: Request, query: str, tipo: str):
     else:
         raise HTTPException(status_code=400, detail="Tipo de búsqueda no válido")
 
+    # Si la respuesta no es exitosa (status_code != 200), manejamos el error pero no lanzamos una excepción
     if response.status_code != 200:
-        raise HTTPException(status_code=500, detail="Error al realizar la búsqueda.")
+        resultados = []
+        mensaje = "No se han encontrado resultados."
+    else:
+        resultados = response.json().get("resultados", [])
+        # Si los resultados están vacíos, ponemos el mensaje de "No se han encontrado resultados"
+        if not resultados:
+            mensaje = "No se han encontrado resultados."
+        else:
+            mensaje = ""
 
-    resultados = response.json().get("resultados", [])
+    # Renderizamos la página con los resultados, ya sea vacíos o con el mensaje
     return templates.TemplateResponse(
         "resultados_busqueda.html",
-        {"request": request, "resultados": resultados, "tipo": tipo, "query": query}
-    )
+        {
+            "request": request,
+            "resultados": resultados,
+            "tipo": tipo,
+            "query": query,
+            "mensaje": mensaje
+        }
+    ) 
 
 
 @app.get("/pantalla_principal", response_class=HTMLResponse)

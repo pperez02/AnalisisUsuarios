@@ -13,14 +13,36 @@
     <div class="container">
         <h1>Resultados de búsqueda</h1>
         <p>Búsqueda: {{ query }} - Tipo: {{ tipo }}</p>
-        <div class="results">
-            {% for item in resultados %}
-                <div class="result-item">
-                    <h3>{{ item.titulo }}</h3>
-                    <p><strong>Género:</strong> {{ item.genero }}</p>
+
+        {% if mensaje %}
+            <p class="no-results-message">{{ mensaje }}</p>  <!-- Mostrar mensaje si no hay resultados -->
+        {% else %}
+            <!-- Mostrar resultados de contenidos si los hay -->
+            {% if contenidos %}
+                <div class="results">
+                    <h2>Contenidos relacionados</h2>
+                    {% for item in contenidos %}
+                        <div class="result-item">
+                            <h3>{{ item.titulo }}</h3>
+                            <p><strong>Género:</strong> {{ item.genero }}</p>
+                        </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
-        </div>
+            {% endif %}
+
+            <!-- Mostrar resultados de actores si los hay -->
+            {% if actores %}
+                <div class="results">
+                    <h2>Actores relacionados</h2>
+                    {% for actor in actores %}
+                        <div class="result-item">
+                            <h3>{{ actor.nombre }}</h3> <!-- Asumiendo que el actor tiene un campo 'nombre' -->
+                            <p><strong>Películas relacionadas:</strong> {{ actor.peliculas | join(', ') }}</p> <!-- Aquí puedes personalizar para mostrar películas relacionadas -->
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endif %}
     </div>
 </body>
 </html>

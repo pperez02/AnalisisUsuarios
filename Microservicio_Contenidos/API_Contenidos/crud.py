@@ -496,3 +496,21 @@ def obtener_contenidos_busqueda(db: Session, busqueda: str):
         return None
     
     return resultados
+
+
+def obtener_actores_busqueda(db: Session, busqueda: str):
+    actores = db.query(models.Actor).filter(models.Actor.nombre.ilike(f"%{busqueda}%"))
+
+    
+    actores_coincidentes = [
+        {
+            "id": actor.id,
+            "nombre": actor.nombre,
+            "nacionalidad": actor.nacionalidad
+        }
+        for actor in actores
+    ]
+
+    if not actores_coincidentes:
+        return None
+    return actores_coincidentes
