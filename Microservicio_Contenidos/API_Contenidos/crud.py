@@ -365,3 +365,45 @@ def valorar_contenido(db: Session, idContenido: str, valoracion: int):
     db.commit()
     db.refresh(contenido)
     return contenido
+
+def obtener_contenidos_busqueda(db: Session, busqueda: str):
+    # Se obtienen todos los contenidos que contienen la búsqueda en el título
+    contenidos_por_titulo = db.query(models.Contenido).filter(
+        models.Contenido.titulo.ilike(f"%{busqueda}%")
+    ).all()
+
+    # Se buscan los géneros cuyo nombre incluye la búsqueda
+    generos_coincidentes = db.query(models.Genero).filter(
+        models.Genero.nombre.ilike(f"%{busqueda}%")
+    ).all()
+
+    # Crear un mapa completo de idGenero -> nombre (todos los géneros en la base de datos)
+    todos_los_generos = db.query(models.Genero).all()
+    genero_map = {genero.id: genero.nombre for genero in todos_los_generos}
+
+    # Extraer los IDs de los géneros coincidentes con la búsqueda
+    genero_ids = [genero.id for genero in generos_coincidentes]
+
+    # Buscar contenidos por género
+    contenidos_por_genero = db.query(models.Contenido).filter(
+        models.Contenido.idGenero.in_(genero_ids)
+    ).all()
+
+    # Se juntan resultados y eliminan los duplicados
+    contenidos_totales = contenidos_por_titulo + contenidos_por_genero
+    contenidos_unicos = {contenido.id: contenido for contenido in contenidos_totales}.values()
+
+    # Formatear la respuesta incluyendo el nombre del género
+    resultados = [
+        {
+            "id": contenido.id,
+            "titulo": contenido.titulo,
+            "genero": genero_map.get(contenido.idGenero, "Género desconocido")  # Siempre usa el mapa completo
+        }
+        for contenido in contenidos_unicos
+    ]
+
+    if not resultados:
+        return None
+    
+    return resultados

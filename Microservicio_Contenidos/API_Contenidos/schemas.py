@@ -113,3 +113,4 @@ class EpisodioUpdate(BaseModel):
     numeroEpisodio: Optional[int] = None
     duracion: Optional[int] = None
     idDirector: Optional[str] = None
+

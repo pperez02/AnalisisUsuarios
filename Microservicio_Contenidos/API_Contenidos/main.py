@@ -201,3 +201,13 @@ def actualizar_valoracion_contenido(idContenido: str, valoracion: int, db: Sessi
     if not valoracion_contenido:
         raise HTTPException(status_code=404, detail="Contenido no encontrado")
     return {"message": "Valoración del contenido actualizada exitosamente"} 
+
+#Endpoint para buscar contenidos por: titulo, genero 
+@app.get("/contenidos/{busqueda}/buscar")
+def buscar_contenidos(busqueda: str, db: Session = Depends(get_db)):
+    contenidos = crud.obtener_contenidos_busqueda(db=db, busqueda=busqueda)
+    if not contenidos:
+        raise HTTPException(status_code=404, detail="No existen resultados para esa búsqueda")
+    return {"resultados": contenidos}
+
+

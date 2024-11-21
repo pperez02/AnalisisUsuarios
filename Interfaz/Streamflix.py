@@ -79,6 +79,25 @@ async def registrar_usuario(request: Request, name: str = Form(...), email: str 
     # Podrías guardar el `user_id` para uso posterior si es necesario
     return templates.TemplateResponse("pantalla_principal.html", {"request": request, "user_id": user_id})
 
+@app.get("/buscar", response_class=HTMLResponse)
+async def buscar(request: Request, query: str, tipo: str):
+    if tipo == "contenido":
+        response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{query}/buscar")
+    elif tipo == "actor":
+        response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{query}/actores")
+    else:
+        raise HTTPException(status_code=400, detail="Tipo de búsqueda no válido")
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=500, detail="Error al realizar la búsqueda.")
+
+    resultados = response.json().get("resultados", [])
+    return templates.TemplateResponse(
+        "resultados_busqueda.html",
+        {"request": request, "resultados": resultados, "tipo": tipo, "query": query}
+    )
+
+
 @app.get("/pantalla_principal", response_class=HTMLResponse)
 async def pantalla_principal(request: Request, user_id: str):
     # Solicitudes a los microservicios

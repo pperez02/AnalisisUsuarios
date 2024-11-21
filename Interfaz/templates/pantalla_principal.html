@@ -6,16 +6,12 @@
     <title>Pantalla Principal</title>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="/static/pantalla_principal.css">
+    <link rel="stylesheet" href="/static/header.css">
 </head>
 <body>
+    {% include "header.html" %}  <!-- Incluir el header aquí -->
+
     <div class="container">
-        <!-- Botón para redirigir al perfil del usuario dentro del contenedor -->
-        <a href="/usuarios/{{ user_id }}/perfil" class="profile-button">Mi Perfil</a>
-
-        <!-- Barra de búsqueda -->
-        <div class="search-bar">
-
-        </div>
 
         <!-- Recomendaciones personalizadas -->
         <div class="section">

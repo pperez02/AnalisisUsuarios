@@ -69,36 +69,6 @@ body {
     margin: 0;
 }
 
-/* Barra de búsqueda */
-.search-bar {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-.search-bar input {
-    width: 70%;
-    padding: 10px;
-    border: none;
-    border-radius: 5px 0 0 5px;
-    background-color: #333;
-    color: #fff;
-}
-
-.search-bar button {
-    padding: 10px;
-    border: none;
-    border-radius: 0 5px 5px 0;
-    background-color: #e50914;
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.search-bar button:hover {
-    background-color: #f40612;
-}
-
 /* Secciones */
 .section {
     margin-top: 30px;
@@ -151,3 +121,4 @@ footer {
     margin-top: auto; /* Empuja el footer hacia abajo */
     box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.6); /* Sombra en la parte superior */
 }
+    

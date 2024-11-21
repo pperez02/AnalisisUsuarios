@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de búsqueda</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/resultados.css">
+    <link rel="stylesheet" href="/static/header.css">
+</head>
+<body>
+    {% include "header.html" %}  <!-- Incluir el header aquí -->
+    <div class="container">
+        <h1>Resultados de búsqueda</h1>
+        <p>Búsqueda: {{ query }} - Tipo: {{ tipo }}</p>
+        <div class="results">
+            {% for item in resultados %}
+                <div class="result-item">
+                    <h3>{{ item.titulo }}</h3>
+                    <p><strong>Género:</strong> {{ item.genero }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

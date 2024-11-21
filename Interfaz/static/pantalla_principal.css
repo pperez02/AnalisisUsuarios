@@ -43,7 +43,48 @@ body {
 }
 
 /* Barra de búsqueda */
+/* Barra de búsqueda */
+.search-bar {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
 
+.search-bar form {
+    display: flex;
+    align-items: center;
+    background-color: #333;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.search-bar input {
+    padding: 8px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 3px;
+    outline: none;
+    font-size: 14px;
+}
+
+.search-bar select, .search-bar button {
+    padding: 8px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.search-bar button {
+    background-color: #e50914;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.search-bar button:hover {
+    background-color: #d40810;
+}
 
 /* Recuadros de contenido (simulación de portadas) */
 .section .content-box {
