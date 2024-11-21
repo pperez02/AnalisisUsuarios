@@ -106,6 +106,16 @@ def update_subtitulo(db: Session, content_id: str, subtitulo_id: str):
 
     return db_SubtituloContenido
 
+def get_subtitulos(db: Session, idContenido: str):
+    # Realizamos la consulta uniendo las tablas SubtituloContenido y Subtitulo por idSubtitulo
+    subtitulos = (
+        db.query(models.Subtitulo)  # Seleccionamos la tabla Subtitulo desde models
+        .join(models.SubtituloContenido, models.SubtituloContenido.idSubtitulo == models.Subtitulo.idSubtitulo)  # Unimos SubtituloContenido con Subtitulo
+        .filter(models.SubtituloContenido.idSubtitulosContenido == idContenido)  # Filtramos por idContenido
+        .all()  # Ejecutamos la consulta y obtenemos todos los resultados
+    )
+    return subtitulos
+
 # Función para añadir doblajes a un contenido
 def update_doblaje(db: Session, content_id: str, doblaje_id: str):
     content_query = db.query(models.Contenido).filter(models.Contenido.id == content_id).first()
@@ -119,7 +129,18 @@ def update_doblaje(db: Session, content_id: str, doblaje_id: str):
         db.commit()
         db.refresh(db_DoblajeContenido)
 
-    return db_DoblajeContenido    
+    return db_DoblajeContenido
+
+#Funcion para obtener los doblajes
+def get_doblajes(db: Session, idContenido: str):
+    # Realizamos la consulta uniendo las tablas DoblajesContenido y Doblajes por idDoblaje
+    doblajes = (
+        db.query(models.Doblaje)  # Seleccionamos la tabla Doblaje desde models
+        .join(models.DoblajeContenido, models.DoblajeContenido.idDoblaje == models.Doblaje.idDoblaje)  # Unimos SubtituloContenido con Subtitulo
+        .filter(models.DoblajeContenido.idDoblajeContenido == idContenido)  # Filtramos por idContenido
+        .all()  # Ejecutamos la consulta y obtenemos todos los resultados
+    )
+    return doblajes  
 
 # Función para eliminar una película o serie
 def delete_content(db: Session, idContenido: str) -> bool:
@@ -350,7 +371,75 @@ def delete_genero(db: Session, genero_id: str) -> bool:
         db.delete(genero)
         db.commit()
         return True
-    return False    
+
+#Funcion para obtener el reparto
+def get_reparto(db: Session, idContenido: str):
+    # Realizamos la consulta uniendo las tablas Reparto y Actor por idActor
+    reparto = (
+        db.query(models.Actor)  # Seleccionamos la tabla Actor
+        .join(models.Reparto, models.Reparto.idActor == models.Actor.id)  # Unimos Reparto con Actor
+        .filter(models.Reparto.idContenido == idContenido)  # Filtramos por idContenido
+        .all()  # Ejecutamos la consulta y obtenemos todos los resultados
+    )
+    return reparto
+
+#Funcion para actualizar el reparto
+def update_reparto(db: Session, idContenido: str, idActor: str):
+    db_contenido = db.query(models.Contenido).filter(models.Contenido.id == idContenido).first()
+    db_actor = db.query(models.Actor).filter(models.Actor.id == idActor).first()
+    if db_contenido and db_actor:
+        db_reparto = models.Reparto (
+            idContenido = db_contenido.id,
+            idActor = db_actor.id
+        )
+        db.add(db_reparto)
+        db.commit()
+        db.refresh(db_reparto)
+
+    return db_reparto
+
+def get_actor(db: Session, idActor: str):
+    actor = db.query(models.Actor).filter(models.Actor.id == idActor).first()
+    return actor
+
+def get_director(db: Session, idDirector: str):
+    director = db.query(models.Director).filter(models.Director.id == idDirector).first()
+    return director
+
+def get_content_by_actor(db: Session, idActor: str):
+    #Obtener los idContenido de Reparto en los que existe el idActor
+    idsContenido_by_actor = db.query(models.Reparto.idContenido).filter(models.Reparto.idActor == idActor).all()
+
+    #Extraer solo los idContenido de los resultados obtenidos
+    contenido_ids = [contenido.idContenido for contenido in idsContenido_by_actor]
+
+    #Recuperar los contenidos correspondientes a esos idContenido
+    contenidos = db.query(models.Contenido).filter(models.Contenido.id.in_(contenido_ids)).all()
+
+    return contenidos
+
+def get_content_by_director(db: Session, idDirector: str):
+    # Recuperar los contenidos dentro de la tabla contenidos con ese idDirector
+    contenidos = db.query(models.Contenido).filter(models.Contenido.idDirector == idDirector ).all()
+    return contenidos
+
+def get_actors_by_content(db: Session, idContenido: str):
+    #Obtener los idActores de Reparto en los que existe el idContenido
+    idsActor_by_content = db.query(models.Reparto.idActor).filter(models.Reparto.idContenido == idContenido).all()
+
+    #Extraer solo los idActor de los resultados obtenidos
+    actors_ids = [actor.idActor for actor in idsActor_by_content]
+
+    #Recuperar los actores correspondientes a esos idActor
+    actors = db.query(models.Actor).filter(models.Actor.id.in_(actors_ids)).all()
+
+    return actors
+
+def get_director_by_content(db: Session, idContenido: str):
+    # Recuperar el director dentro de la tabla contenidos con ese idContenido
+    id_director = db.query(models.Contenido.idDirector).filter(models.Contenido.id == idContenido )
+    director = db.query(models.Director).filter(models.Director.id == id_director).first()
+    return director
 
 # Función para obtener los contenidos de un género específico
 def get_contenidos_por_genero(db: Session, idGenero: str):

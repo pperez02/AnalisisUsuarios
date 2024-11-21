@@ -59,11 +59,19 @@ def update_serie(idSerie: str, serie_data: schemas.SerieUpdate, db: Session = De
 
 @app.post("/contenidos/{idContenido}/subtitulos/{idSubtitulo}")
 def update_subtitulos(idContenido: str, idSubtitulo: str, db: Session = Depends(get_db)):
-    return crud.update_subtitulo(db=db, content_id=idContenido, subtitulo_id=idSubtitulo)   
+    return crud.update_subtitulo(db=db, content_id=idContenido, subtitulo_id=idSubtitulo)  
+
+@app.get("/contenidos/{idContenido}/subtitulos")
+def get_subtitulos(idContenido: str, db: Session = Depends(get_db)):
+    return crud.get_subtitulos(db=db, idContenido=idContenido)
 
 @app.post("/contenidos/{idContenido}/doblajes/{idDoblaje}")
 def update_doblaje(idContenido: str, idDoblaje: str, db: Session = Depends(get_db)):
-    return crud.update_doblaje(db=db, content_id=idContenido, doblaje_id=idDoblaje) 
+    return crud.update_doblaje(db=db, content_id=idContenido, doblaje_id=idDoblaje)
+
+@app.get("/contenidos/{idContenido}/doblajes")
+def get_doblajes(idContenido: str, db: Session = Depends(get_db)):
+    return crud.get_doblajes(db=db, idContenido=idContenido) 
 
 # Nuevo endpoint para eliminar contenido en distintos niveles
 @app.delete("/contenidos/{idContenido}/temporadas/{idTemporada}/episodios/{idEpisodio}", tags=["Eliminar contenido"])
@@ -211,3 +219,57 @@ def buscar_contenidos(busqueda: str, db: Session = Depends(get_db)):
     return {"resultados": contenidos}
 
 
+    
+# Endpoint para obtener el reparto de un contenido
+
+@app.get("/contenidos/{idContenido}/reparto")
+def get_reparto(idContenido: str, db: Session = Depends(get_db)):
+    reparto = crud.get_reparto(db=db, idContenido=idContenido)
+    if not reparto:
+         raise HTTPException(status_code=404, detail="No se ha podido recuperar reparto")
+    return reparto
+#Asociar actores a una pelicula. Param: NO lista de actores, un solo actor (idActor)
+@app.post("/contenidos/{idContenido}/reparto/{idActor}", response_model=schemas.Reparto)
+def update_reparto(idContenido: str, idActor: str, db: Session = Depends(get_db)):
+    reparto = crud.update_reparto(db=db, idContenido=idContenido, idActor=idActor)
+
+    if not reparto:
+        raise HTTPException(status_code=404, detail="No se ha podido asociar actores a pelicula")
+    return reparto
+
+#Funciones para obtener la información de un actor/director por su ID
+@app.get("/actores/{idActor}", response_model=schemas.Actor)
+def get_actor(idActor: str, db: Session = Depends(get_db)):
+    actor = crud.get_actor(db=db, idActor=idActor)
+    if actor is None:
+        raise HTTPException(status_code=404, detail="Actor no encontrado")
+    return actor
+
+@app.get("/directores/{idDirector}", response_model=schemas.Director)
+def get_director(idDirector: str, db: Session = Depends(get_db)):
+    director = crud.get_director(db=db, idDirector=idDirector)
+    if director is None:
+        raise HTTPException(status_code=404, detail="Director no encontrado")
+    return director
+
+#Funciones para obtener los contenidos relacionados con un actor/director por su ID
+@app.get("/actores/{idActor}/contenidos")
+def get_content_by_actor(idActor: str, db: Session = Depends(get_db)):
+    content = crud.get_content_by_actor(db=db, idActor=idActor)
+    return content
+
+@app.get("/directores/{idDirector}/contenidos")
+def get_content_by_director(idDirector: str, db: Session = Depends(get_db)):
+    content = crud.get_content_by_director(db=db, idDirector=idDirector)
+    return content
+
+#Funciones para obtener los actores/director relacionados con un contenido
+@app.get("/contenidos/{idContenido}/reparto")
+def get_actors_by_content(idContenido: str, db: Session = Depends(get_db)):
+    actors = crud.get_actors_by_content(db=db, idContenido=idContenido)
+    return actors
+
+@app.get("/contenidos/{idContenido}/director")
+def get_director_by_content(idContenido: str, db: Session = Depends(get_db)):
+    director = crud.get_director_by_content(db=db, idContenido=idContenido)
+    return director
