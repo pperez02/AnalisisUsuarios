@@ -193,3 +193,52 @@ async def pantalla_principal(request: Request, user_id: str):
             "generos_con_contenidos": generos_con_contenidos
         }
     )
+
+@app.get("/usuarios/{user_id}/perfil", response_class=HTMLResponse)
+async def get_user_profile(request: Request, user_id: str):
+    """Llama al endpoint /perfil para obtener el perfil de un usuario y lo renderiza en HTML"""
+    response = requests.get(f"{BASE_URL_USUARIOS}/usuarios/{user_id}")
+    me_gusta_response = requests.get(f"{BASE_URL_INTERACCIONES}/usuarios/{user_id}/me-gusta")
+    
+    if response.status_code == 200 and me_gusta_response.status_code == 200:
+        # Obtiene los datos del perfil del usuario
+        user_profile = response.json()
+        
+        # Obtiene la lista de contenidos "Me Gusta" y la convierte a una lista de objetos ContenidoMeGusta
+        me_gusta_data = me_gusta_response.json()
+        contenidos_me_gusta = [
+            {
+                'id': contenido['id'],
+                'titulo': contenido['titulo'],
+                'descripcion': contenido.get('descripcion', ''),
+                'fechaLanzamiento': contenido['fechaLanzamiento'],
+                'idGenero': contenido['idGenero'],
+                'valoracionPromedio': contenido.get('valoracionPromedio', None),
+                'idSubtitulosContenido': contenido.get('idSubtitulosContenido', None),
+                'idDoblajeContenido': contenido.get('idDoblajeContenido', None)
+            }
+            for contenido in me_gusta_data
+        ]
+
+        # Renderiza la plantilla HTML con los datos del perfil y los "Me Gusta"
+        return templates.TemplateResponse(
+            "perfil.html",  # Plantilla HTML que renderizará los datos
+            {
+                "request": request,
+                "user_id": user_id,
+                "nombre": user_profile['nombre'],
+                "email": user_profile['email'],
+                "password": user_profile['password'],
+                "me_gusta": contenidos_me_gusta  # Pasa la lista de contenidos "Me Gusta"
+            }
+        )
+    else:
+        # En caso de error, muestra un mensaje de error en la plantilla
+        error_message = f"Error al obtener el perfil del usuario: {response.status_code}"
+        return templates.TemplateResponse(
+            "perfil.html",
+            {
+                "request": request,
+                "error_message": error_message,
+            }
+        )

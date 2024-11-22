@@ -34,3 +34,13 @@ class Tendencia(BaseModel):
 
 class TendenciasResponse(BaseModel):
     tendencias: list[Tendencia]
+
+class ContenidoMeGusta(BaseModel):
+    id: str
+    titulo: str
+    descripcion: Optional[str]
+    fechaLanzamiento: str
+    idGenero: str
+    valoracionPromedio: Optional[float] = None
+    idSubtitulosContenido: Optional[str] = None
+    idDoblajeContenido: Optional[str] = None

@@ -79,6 +79,24 @@ def get_recomendaciones_usuario(db: Session, usuario_id: str):
 
     return recomendaciones    
 
+def mostrar_me_gusta(db: Session, usuario_id: str):
+    query = db.query(models.ListaMeGusta).filter(models.ListaMeGusta.idUsuario == usuario_id).all()
+    # Validar la respuesta
+    if query:
+        print("Mostrando lista de Me Gusta...", query)
+    else:
+        print("Error al mostrar la lista de Me Gusta.")
+
+    me_gusta = []
+    for item in query:
+        try:
+            contenido = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{item.idContenido}").json()
+            if contenido:
+                me_gusta.append(contenido)
+        except requests.RequestException as e:
+            print(f"Error al obtener el contenido con ID {item.idContenido}: {e}")
+    return me_gusta
+
 #Función para dar "Me Gusta" a un contenido por un usuario
 def dar_me_gusta(db: Session, idUsuario: str, idContenido: str):
     tupla_lista = models.ListaMeGusta(idUsuario=idUsuario,

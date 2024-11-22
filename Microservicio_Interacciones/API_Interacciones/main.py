@@ -34,6 +34,13 @@ def get_recomendaciones(idUsuario: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No se pudieron recuperar las recomendaciones")
     return recomendaciones  
 
+@app.get("/usuarios/{idUsuario}/me-gusta", response_model=list[schemas.ContenidoMeGusta])
+def mostrar_megusta(idUsuario: str, db: Session = Depends(get_db)):
+    me_gusta = crud.mostrar_me_gusta(db=db, usuario_id=idUsuario)    
+    if not me_gusta:
+        raise HTTPException(status_code=404, detail="No se pudieron recuperar los me gusta")
+    return me_gusta
+
 # Endpoint para dar "Me gusta" a un contenido
 @app.post("/usuarios/{idUsuario}/me-gusta/{idContenido}", response_model=schemas.ListaMeGusta)
 def action_megusta(idUsuario: str, idContenido: str, db: Session = Depends(get_db)):
