@@ -9,10 +9,11 @@
     <link rel="stylesheet" href="/static/header.css">
 </head>
 <body>
-    {% include "header.html" %}
+    {% include "header.html" %}  <!-- Incluir el header aquí -->
 
     <div class="container">
         {% if mensaje %}
+            <!-- Mostrar mensaje general si es necesario -->
             <div class="message-box">
                 <p class="message-text">
                     {{ mensaje }}
@@ -24,7 +25,7 @@
         {% if recomendaciones %}
         <div class="section">
             <h2>Recomendaciones personalizadas</h2>
-            <div class="content-list">
+            <div class="content-wrapper">
                 {% for contenido in recomendaciones %}
                     <a href="/contenidos/{{ contenido.id }}" class="content-box">
                         {{ contenido.titulo }}
@@ -40,7 +41,7 @@
         {% if tendencias %}
         <div class="section">
             <h2>Tendencias</h2>
-            <div class="content-list">
+            <div class="content-wrapper">
                 {% for tendencia in tendencias %}
                     <a href="/contenidos/{{ tendencia.id }}" class="content-box">
                         {{ tendencia.titulo }} - Me gusta: {{ tendencia.me_gusta_total }}
@@ -56,7 +57,7 @@
         {% if historial %}
         <div class="section">
             <h2>Tu historial</h2>
-            <div class="content-list">
+            <div class="content-wrapper">
                 {% for item in historial %}
                     <a href="/contenidos/{{ item.id }}" class="content-box">
                         {{ item.titulo }}
@@ -73,7 +74,7 @@
         {% for genero in generos_con_contenidos %}
         <div class="section">
             <h2>{{ genero.nombre }}</h2>
-            <div class="content-list">
+            <div class="content-wrapper">
                 {% for contenido in genero.contenidos %}
                     <a href="/contenidos/{{ contenido.id }}" class="content-box">
                         {{ contenido.titulo }}

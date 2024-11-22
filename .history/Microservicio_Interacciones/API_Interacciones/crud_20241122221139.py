@@ -83,7 +83,7 @@ def get_recomendaciones_usuario(db: Session, usuario_id: str):
     if generos:
         lista1 = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{generos[0]}/contenidos").json()
         recomendaciones.extend(lista1)
-        if len(generos) == 2:
+        if generos[1]:
             lista2 = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{generos[1]}/contenidos").json()
             recomendaciones.extend(lista2)
 

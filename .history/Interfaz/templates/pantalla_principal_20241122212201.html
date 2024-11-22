@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pantalla Principal</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/pantalla_principal.css">
+    <link rel="stylesheet" href="/static/header.css">
+</head>
+<body>
+    {% include "header.html" %}  <!-- Incluir el header aquí -->
+
+    <div class="container">
+
+        <!-- Recomendaciones personalizadas -->
+        <div class="section">
+            <h2>Recomendaciones personalizadas</h2>
+            {% for contenido in recomendaciones %}
+                <a href="/contenidos/{{ contenido.idContenido }}" class="content-box">
+                    {{ contenido.nombre }}
+                </a>
+            {% endfor %}
+        </div>
+
+        <!-- Tendencias -->
+        <div class="section">
+            <h2>Tendencias</h2>
+            {% for tendencia in tendencias %}
+                <a href="/contenidos/{{ tendencia.idContenido }}" class="content-box">
+                    {{ tendencia.nombre }} - Me gusta: {{ tendencia.me_gusta_total }}
+                </a>
+            {% endfor %}
+        </div>
+
+        <!-- Historial -->
+        <div class="section">
+            <h2>Tu historial</h2>
+            {% for item in historial %}
+                <a href="/contenidos/{{ item.idContenido }}" class="content-box">
+                    {{ item.nombre }}
+                </a>
+            {% endfor %}
+        </div>
+
+        <!-- Géneros -->
+        <pre>
+            {{ generos_con_contenidos | tojson }}
+        </pre>        
+
+
+        {% for genero in generos_con_contenidos %}
+        <div class="section">
+            <h2>{{ genero.nombre }}</h2>
+            {% for contenido in genero.contenidos %}
+                //TODO Cambiar la URL para que redireccione a la pagina de detalles adecuada
+                <a href="/contenidos/{{ contenido.idContenido }}" class="content-box">
+                    {{ contenido.nombre }}
+                </a>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <footer>
+        <p>Derechos reservados &copy; 2024</p>
+    </footer>    
+</body>
+</html>

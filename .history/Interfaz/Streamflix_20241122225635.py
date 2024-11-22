@@ -2,7 +2,6 @@ from fastapi import FastAPI, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import RedirectResponse
 import requests
 
 # Comando de ejecución: uvicorn Streamflix:app --reload --host localhost --port 8003
@@ -101,7 +100,7 @@ async def login(request: Request, email: str = Form(...), password: str = Form(.
     user_id = user_data.get("id")
     
     # Redirigimos al endpoint de pantalla principal con el `user_id`
-    return RedirectResponse(url=f"/pantalla_principal?user_id={user_id}", status_code=303)
+    return await pantalla_principal(request, user_id=user_id)
 
 
 
@@ -121,33 +120,29 @@ async def obtener_planes():
 
 @app.post("/registro")
 async def registrar_usuario(
-    request: Request, 
-    name: str = Form(...), 
-    email: str = Form(...), 
-    password: str = Form(...), 
-    language: str = Form(None), 
+    name: str = Form(...),
+    email: str = Form(...),
+    password: str = Form(...),
+    language: str = Form(None),
     subscription_plan: str = Form(...)
 ):
-    # Datos para el microservicio de usuarios
     data = {
         "nombre": name,
         "email": email,
         "password": password,
         "idioma": language,
-        "idPlanSuscripcion": subscription_plan
+        "idPlanSuscripcion": subscription_plan,
     }
     response = requests.post(f"{BASE_URL_USUARIOS}/usuarios/registro", json=data)
-    
+
     if response.status_code != 200:
         raise HTTPException(status_code=500, detail="Error al registrar el usuario.")
-    
-    # Guardamos el id del usuario retornado
+
     user_data = response.json()
     user_id = user_data.get("id")
-    
-    # Redirigimos al endpoint de pantalla principal con el `user_id`
-    return RedirectResponse(url=f"/pantalla_principal?user_id={user_id}", status_code=303)
 
+    # Redirige a la pantalla principal con el user_id como parámetro
+    return RedirectResponse(url=f"/pantalla_principal?user_id={user_id}", status_code=303)
 
 # Endpoint para mostrar los detalles de una película
 @app.get("/detalles_pelicula/{idContenido}", response_class=HTMLResponse)

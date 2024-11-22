@@ -12,39 +12,6 @@ header {
     align-items: center;
 }
 
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    align-items: center;
-    padding: 1rem 2rem;
-    background-color: #141414;
-    border-bottom: 1px solid #333;
-}
-
-.navbar .logo a {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #e50914; /* Rojo icónico de Netflix */
-    text-decoration: none;
-}
-
-.navbar ul {
-    list-style: none;
-    display: flex;
-    gap: 1rem;
-}
-
-.navbar ul li a {
-    color: #e5e5e5;
-    text-decoration: none;
-    font-size: 1rem;
-}
-
-.navbar ul li a:hover {
-    color: #e50914;
-}
-
 /* Barra de búsqueda centrada en el header */
 .search-bar {
     display: flex;

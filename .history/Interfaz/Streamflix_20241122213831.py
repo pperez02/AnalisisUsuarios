@@ -2,77 +2,17 @@ from fastapi import FastAPI, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import RedirectResponse
 import requests
 
 # Comando de ejecución: uvicorn Streamflix:app --reload --host localhost --port 8003
 
-#Creación de la API de interfaz
+
 app = FastAPI()
 
 BASE_URL_CONTENIDOS = "http://127.0.0.1:8000"
 BASE_URL_USUARIOS = "http://127.0.0.1:8001"
 BASE_URL_INTERACCIONES = "http://127.0.0.1:8002"
 
-#Métodos auxiliares
-def cargar_datos(user_id: str):
-    """
-    Obtiene y organiza los datos necesarios para la pantalla principal.
-    """
-    mensajes = []  # Lista para almacenar mensajes personalizados
-    recomendaciones = []
-    tendencias = []
-    historial = []
-    generos = []
-    generos_con_contenidos = []
-
-    # Realizamos las solicitudes a los microservicios
-    recomendaciones_response = requests.get(f"{BASE_URL_INTERACCIONES}/usuarios/{user_id}/recomendaciones")
-    if recomendaciones_response.ok:
-        recomendaciones = recomendaciones_response.json()
-    else:
-        mensajes.append("No se pudieron obtener las recomendaciones personalizadas.")
-    
-    tendencias_response = requests.get(f"{BASE_URL_INTERACCIONES}/contenido/tendencias")
-    if tendencias_response.ok:
-        tendencias = tendencias_response.json()
-    else:
-        mensajes.append("No se pudieron obtener las tendencias.")
-
-    historial_response = requests.get(f"{BASE_URL_INTERACCIONES}/usuarios/{user_id}/historial")
-    if historial_response.ok:
-        historial = historial_response.json()
-    else:
-        mensajes.append("No se pudo recuperar el historial de usuario.")
-
-    generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
-    if generos_response.ok:
-        generos = generos_response.json()
-    else:
-        mensajes.append("No se pudieron obtener los géneros.")
-
-    # Recuperar los contenidos por género
-    for genero in generos:
-        contenidos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{genero['id']}/contenidos")
-        if contenidos_response.ok:
-            generos_con_contenidos.append({
-                "nombre": genero["nombre"],
-                "contenidos": contenidos_response.json()
-            })
-        else:
-            mensajes.append(f"No se pudieron obtener los contenidos para el género {genero['nombre']}.")
-
-    # Si no hay mensajes, significa que todo salió bien
-    if not mensajes:
-        mensajes.append("Los datos se cargaron correctamente.")
-
-    return {
-        "recomendaciones": recomendaciones,
-        "tendencias": tendencias,
-        "historial": historial,
-        "generos_con_contenidos": generos_con_contenidos,
-        "mensaje": " | ".join(mensajes)  # Unimos todos los mensajes en una sola cadena
-    }
 
 # Configuración de rutas estáticas para CSS
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -100,10 +40,8 @@ async def login(request: Request, email: str = Form(...), password: str = Form(.
     user_data = response.json()
     user_id = user_data.get("id")
     
-    # Redirigimos al endpoint de pantalla principal con el `user_id`
-    return RedirectResponse(url=f"/pantalla_principal?user_id={user_id}", status_code=303)
-
-
+    # Redirigimos a la página principal
+    return templates.TemplateResponse("pantalla_principal.html", {"request": request, "user_id": user_id})
 
 # Endpoint para mostrar la página de registro
 @app.get("/registro_usuario", response_class=HTMLResponse)
@@ -119,16 +57,10 @@ async def obtener_planes():
         raise HTTPException(status_code=500, detail="No se pudieron obtener los planes.")
     return response.json()
 
+# Endpoint para registrar un nuevo usuario
 @app.post("/registro")
-async def registrar_usuario(
-    request: Request, 
-    name: str = Form(...), 
-    email: str = Form(...), 
-    password: str = Form(...), 
-    language: str = Form(None), 
-    subscription_plan: str = Form(...)
-):
-    # Datos para el microservicio de usuarios
+async def registrar_usuario(request: Request, name: str = Form(...), email: str = Form(...), password: str = Form(...), language: str = Form(None), subscription_plan: str = Form(...)):
+    # Aquí haces una solicitud para registrar al usuario en tu microservicio
     data = {
         "nombre": name,
         "email": email,
@@ -137,7 +69,6 @@ async def registrar_usuario(
         "idPlanSuscripcion": subscription_plan
     }
     response = requests.post(f"{BASE_URL_USUARIOS}/usuarios/registro", json=data)
-    
     if response.status_code != 200:
         raise HTTPException(status_code=500, detail="Error al registrar el usuario.")
     
@@ -145,9 +76,8 @@ async def registrar_usuario(
     user_data = response.json()
     user_id = user_data.get("id")
     
-    # Redirigimos al endpoint de pantalla principal con el `user_id`
-    return RedirectResponse(url=f"/pantalla_principal?user_id={user_id}", status_code=303)
-
+    # Podrías guardar el `user_id` para uso posterior si es necesario
+    return templates.TemplateResponse("pantalla_principal.html", {"request": request, "user_id": user_id})
 
 # Endpoint para mostrar los detalles de una película
 @app.get("/detalles_pelicula/{idContenido}", response_class=HTMLResponse)
@@ -235,23 +165,43 @@ logging.basicConfig(level=logging.INFO)
 
 @app.get("/pantalla_principal", response_class=HTMLResponse)
 async def pantalla_principal(request: Request, user_id: str):
-    datos = cargar_datos(user_id)  # Centralizamos la lógica aquí
-    mensaje = datos.get("mensaje", "Error al cargar los datos")
-    
-    # Renderizamos la pantalla principal
+    recomendaciones_response = requests.get(f"{BASE_URL_INTERACCIONES}/usuarios/{user_id}/recomendaciones")
+    tendencias_response = requests.get(f"{BASE_URL_INTERACCIONES}/contenido/tendencias")
+    historial_response = requests.get(f"{BASE_URL_INTERACCIONES}/usuarios/{user_id}/historial")
+    generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
+
+    if not (recomendaciones_response.ok 
+        and tendencias_response.ok 
+        and historial_response.ok 
+        and generos_response.ok):
+        mensaje = "No se han encontrado resultados." 
+
+    generos = generos_response.json()
+    logging.info(f"Géneros obtenidos: {generos}")
+
+    generos_con_contenidos = []
+    for genero in generos:
+        contenidos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{genero['id']}/contenidos")
+        if contenidos_response.ok:
+            contenidos = contenidos_response.json()
+            logging.info(f"Contenidos para el género {genero['nombre']}: {contenidos}")
+            generos_con_contenidos.append({
+                "nombre": genero['nombre'],
+                "contenidos": contenidos
+            })
+
     return templates.TemplateResponse(
         "pantalla_principal.html",
         {
             "request": request,
             "user_id": user_id,
-            "recomendaciones": datos["recomendaciones"],
-            "tendencias": datos["tendencias"],
-            "historial": datos["historial"],
-            "generos_con_contenidos": datos["generos_con_contenidos"],
-            "mensaje": mensaje,
+            "recomendaciones": recomendaciones_response.json(),
+            "tendencias": tendencias_response.json(),
+            "historial": historial_response.json(),
+            "generos_con_contenidos": generos_con_contenidos,
+            "mensaje": mensaje
         }
     )
-
 
 
 @app.get("/usuarios/{user_id}/perfil", response_class=HTMLResponse)

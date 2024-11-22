@@ -2,7 +2,6 @@ from fastapi import FastAPI, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import RedirectResponse
 import requests
 
 # Comando de ejecución: uvicorn Streamflix:app --reload --host localhost --port 8003
@@ -101,7 +100,7 @@ async def login(request: Request, email: str = Form(...), password: str = Form(.
     user_id = user_data.get("id")
     
     # Redirigimos al endpoint de pantalla principal con el `user_id`
-    return RedirectResponse(url=f"/pantalla_principal?user_id={user_id}", status_code=303)
+    return await pantalla_principal(request, user_id=user_id)
 
 
 
@@ -146,7 +145,7 @@ async def registrar_usuario(
     user_id = user_data.get("id")
     
     # Redirigimos al endpoint de pantalla principal con el `user_id`
-    return RedirectResponse(url=f"/pantalla_principal?user_id={user_id}", status_code=303)
+    return await pantalla_principal(request, user_id=user_id)
 
 
 # Endpoint para mostrar los detalles de una película

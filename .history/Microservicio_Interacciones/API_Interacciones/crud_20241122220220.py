@@ -23,23 +23,18 @@ def get_generos_usuario(db: Session, usuario_id: str):
             usuario = user
     
     # Obtener el historial del usuario
-    historial_id = None
     if usuario:
         historial_id = usuario['idHistorial']      
 
-    historial = None
     if historial_id:
         historial = db.query(models.HistorialUsuario).filter(models.HistorialUsuario.idHistorial == historial_id).all()
 
     # Obtener los géneros de los contenidos en su historial
     if historial:
         for entrada in historial:
-            contenido_response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{entrada.idContenido}")
-            if not contenido_response.ok:
-                return None
-            else:
-                contenido = contenido_response.json()             
+            contenido = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{entrada.idContenido}").json()
             genero_id = contenido['idGenero']
+            
 
             if genero_id:
                 if genero_id not in generos_puntos:
@@ -51,11 +46,7 @@ def get_generos_usuario(db: Session, usuario_id: str):
     me_gusta = db.query(models.ListaMeGusta).filter(models.ListaMeGusta.idUsuario == usuario_id).all()
     if me_gusta:
         for entrada in me_gusta:
-            contenido_response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{entrada.idContenido}")
-            if not contenido_response.ok:
-                return None
-            else:
-                contenido = contenido_response.json()    
+            contenido = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{entrada.idContenido}").json()
             genero_id = contenido['idGenero']
 
             if genero_id:
@@ -82,10 +73,9 @@ def get_recomendaciones_usuario(db: Session, usuario_id: str):
     recomendaciones = []
     if generos:
         lista1 = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{generos[0]}/contenidos").json()
+        lista2 = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{generos[1]}/contenidos").json()
         recomendaciones.extend(lista1)
-        if len(generos) == 2:
-            lista2 = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{generos[1]}/contenidos").json()
-            recomendaciones.extend(lista2)
+        recomendaciones.extend(lista2)
 
     return recomendaciones    
 

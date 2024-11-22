@@ -15,7 +15,6 @@ header {
 .navbar {
     display: flex;
     justify-content: space-between;
-    width: 100%;
     align-items: center;
     padding: 1rem 2rem;
     background-color: #141414;

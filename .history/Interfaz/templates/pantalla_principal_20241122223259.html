@@ -9,10 +9,11 @@
     <link rel="stylesheet" href="/static/header.css">
 </head>
 <body>
-    {% include "header.html" %}
+    {% include "header.html" %}  <!-- Incluir el header aquí -->
 
     <div class="container">
         {% if mensaje %}
+            <!-- Mostrar mensaje general si es necesario -->
             <div class="message-box">
                 <p class="message-text">
                     {{ mensaje }}
@@ -24,13 +25,11 @@
         {% if recomendaciones %}
         <div class="section">
             <h2>Recomendaciones personalizadas</h2>
-            <div class="content-list">
-                {% for contenido in recomendaciones %}
-                    <a href="/contenidos/{{ contenido.id }}" class="content-box">
-                        {{ contenido.titulo }}
-                    </a>
-                {% endfor %}
-            </div>
+            {% for contenido in recomendaciones %}
+                <a href="/contenidos/{{ contenido.id }}" class="content-box">
+                    {{ contenido.titulo }}
+                </a>
+            {% endfor %}
         </div>
         {% else %}
             <p class="no-results-message">No se encontraron recomendaciones.</p>
@@ -40,13 +39,11 @@
         {% if tendencias %}
         <div class="section">
             <h2>Tendencias</h2>
-            <div class="content-list">
-                {% for tendencia in tendencias %}
-                    <a href="/contenidos/{{ tendencia.id }}" class="content-box">
-                        {{ tendencia.titulo }} - Me gusta: {{ tendencia.me_gusta_total }}
-                    </a>
-                {% endfor %}
-            </div>
+            {% for tendencia in tendencias %}
+                <a href="/contenidos/{{ tendencia.id }}" class="content-box">
+                    {{ tendencia.titulo }} - Me gusta: {{ tendencia.me_gusta_total }}
+                </a>
+            {% endfor %}
         </div>
         {% else %}
             <p class="no-results-message">No hay tendencias disponibles.</p>
@@ -56,13 +53,11 @@
         {% if historial %}
         <div class="section">
             <h2>Tu historial</h2>
-            <div class="content-list">
-                {% for item in historial %}
-                    <a href="/contenidos/{{ item.id }}" class="content-box">
-                        {{ item.titulo }}
-                    </a>
-                {% endfor %}
-            </div>
+            {% for item in historial %}
+                <a href="/contenidos/{{ item.id }}" class="content-box">
+                    {{ item.titulo }}
+                </a>
+            {% endfor %}
         </div>
         {% else %}
             <p class="no-results-message">Tu historial está vacío o no se pudo recuperar.</p>
@@ -73,13 +68,11 @@
         {% for genero in generos_con_contenidos %}
         <div class="section">
             <h2>{{ genero.nombre }}</h2>
-            <div class="content-list">
-                {% for contenido in genero.contenidos %}
-                    <a href="/contenidos/{{ contenido.id }}" class="content-box">
-                        {{ contenido.titulo }}
-                    </a>
-                {% endfor %}
-            </div>
+            {% for contenido in genero.contenidos %}
+                <a href="/contenidos/{{ contenido.id }}" class="content-box">
+                    {{ contenido.titulo }}
+                </a>
+            {% endfor %}
         </div>
         {% endfor %}
         {% else %}

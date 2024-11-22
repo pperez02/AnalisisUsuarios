@@ -6,10 +6,23 @@
     <title>Perfil de Usuario</title>
     <!-- Ruta del CSS -->
     <link rel="stylesheet" href="/static/perfil.css">
-    <link rel="stylesheet" href="/static/header.css">
 </head>
 <body>
-    {% include "header.html" %}
+    <!-- Encabezado -->
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <a href="/pantalla_principal">Streamflix</a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/catalogo">Catálogo</a></li>
+                    <li><a href="/perfil">Perfil</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
     <!-- Contenido Principal -->
     <main>

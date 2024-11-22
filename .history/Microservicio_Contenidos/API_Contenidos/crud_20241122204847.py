@@ -335,7 +335,7 @@ def update_episodio(db: Session,  idContenido: str, idTemporada: str, idEpisodio
 
 # Función para consultar todos los géneros de la base de datos
 def get_generos(db: Session):
-    return db.query(models.Genero).all()
+    return db.query(models.Genero),all()
 
 # Función para consultar los datos de un género
 def get_genero(db: Session, genero_id: str):
