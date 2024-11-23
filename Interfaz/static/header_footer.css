@@ -126,13 +126,14 @@ header {
     background-color: #f40612; /* Rojo más brillante en hover */
 }
 
-/* Estilo del footer */
+/* Asegura que el footer esté siempre al final del contenedor principal */
 footer {
-    width: 100%; /* Ocupa toda la anchura */
-    background-color: #141414; /* Fondo oscuro */
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #141414;
     color: #777;
     text-align: center;
-    padding: 1rem;
+    padding: auto;
     border-top: 1px solid #333;
-    margin-top: auto; /* Asegura que el footer quede al final */
 }
