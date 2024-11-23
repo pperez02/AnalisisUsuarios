@@ -6,7 +6,7 @@
     <title>Perfil de Usuario</title>
     <!-- Ruta del CSS -->
     <link rel="stylesheet" href="/static/perfil.css">
-    <link rel="stylesheet" href="/static/header.css">
+    <link rel="stylesheet" href="/static/header_footer.css">
 </head>
 <body>
     {% include "header.html" %}
@@ -139,13 +139,9 @@
             }
             </script>            
         </section>
-
+        {% include "footer.html" %}
     </main>
-
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2024 Streamflix. Todos los derechos reservados.</p>
-    </footer>
+    
     <script>
 
         //Primer paso de la página: Cargar todos los datos del usuario para poder mostrarlos

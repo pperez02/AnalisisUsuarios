@@ -6,11 +6,10 @@
     <title>Resultados de búsqueda</title>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="/static/resultados.css">
-    <link rel="stylesheet" href="/static/header_footer.css">
+    <link rel="stylesheet" href="/static/header.css">
 </head>
 <body>
-    {% include "header.html" %}
-
+    {% include "header.html" %}  <!-- Incluir el header aquí -->
     <div class="container">
         <h1>Resultados de búsqueda</h1>
         <p>Búsqueda: {{ query }} - Tipo: {{ tipo }}</p>
@@ -45,7 +44,5 @@
             {% endif %}
         {% endif %}
     </div>
-
-    {% include "footer.html" %}
 </body>
 </html>

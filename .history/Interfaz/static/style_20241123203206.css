@@ -48,7 +48,7 @@ main {
 /* Estilo de los campos de entrada */
 .container input, .container select {
     width: 100%; /* Ocupar todo el ancho */
-    height: 30px;
+    padding: 10px; /* Espaciado interno */
     margin-bottom: 15px; /* Espaciado inferior */
     border: none; /* Sin borde */
     border-radius: 5px; /* Bordes redondeados */

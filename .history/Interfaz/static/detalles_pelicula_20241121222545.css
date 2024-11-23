@@ -12,6 +12,30 @@ h1 {
     margin: 0;
 }
 
+/* Encabezado */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #111;
+}
+
+.perfil-button {
+    background-color: #e50914; /* Rojo Netflix */
+    color: #fff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.perfil-button:hover {
+    background-color: #f40612; /* Rojo más brillante en hover */
+}
+
 /* Contenedor de la película */
 .container {
     display: flex;
@@ -98,4 +122,13 @@ h1 {
     font-size: 20px;
     font-weight: bold;
     color: #e50914; /* Rojo Netflix */
+}
+
+/* Pie de página */
+footer {
+    text-align: center;
+    font-size: 14px;
+    padding: 20px;
+    background-color: #111;
+    color: #fff;
 }

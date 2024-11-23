@@ -103,17 +103,6 @@ body {
     background-color: #444;
 }
 
-/* Ajusta el contenedor para mantener la coherencia */
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Asegura altura mínima completa */
-}
-
-main {
-    flex: 1; /* Expande el contenido principal para empujar el footer hacia abajo */
-}
-
 /* Estilos responsivos */
 @media (max-width: 1200px) {
     .content-list {
