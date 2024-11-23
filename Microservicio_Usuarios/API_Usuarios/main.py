@@ -103,7 +103,9 @@ def get_user_payment_methods(idUsuario: str, db: Session = Depends(get_database)
     user = crud.get_user(db, user_id=idUsuario)
     if user is None:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    return crud.get_metodos_pago_usuario(db, user_id=idUsuario)
+    
+    metodosPagoUsuario = crud.get_metodos_pago_usuario(db, user_id=idUsuario)
+    return metodosPagoUsuario
 
 @app.post("/usuarios/{idUsuario}/metodos-pago", response_model=schemas.MetodoPagoUsuarioCreate)
 def add_payment_method(idUsuario: str, metodo_pago: schemas.MetodoPagoCreate, db: Session = Depends(get_database)):
@@ -112,8 +114,7 @@ def add_payment_method(idUsuario: str, metodo_pago: schemas.MetodoPagoCreate, db
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     metodoPagoCreado = crud.create_metodo_pago(db, metodo_pago)
     idMetodoPago = metodoPagoCreado.id
-    metodoPagoUsuario = schemas.MetodoPagoUsuarioCreate(idUsuario=user.id, idMetodoPago=idMetodoPago)
-    return crud.create_metodo_pago_usuario(db, metodoPagoUsuario)
+    return crud.create_metodo_pago_usuario(db, idUsuario=user.id, idMetodoPago=idMetodoPago)
 
 # Endpoint para obtener un listado con todos los planes de suscripcición existentes en la BD
 @app.get("/planes-suscripcion", response_model=list[schemas.PlanSuscripcion])

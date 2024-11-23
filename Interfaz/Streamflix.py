@@ -252,34 +252,40 @@ async def pantalla_principal(request: Request, user_id: str):
         }
     )
 
-
-
 @app.get("/usuarios/{user_id}/perfil", response_class=HTMLResponse)
 async def get_user_profile(request: Request, user_id: str):
     """Llama al endpoint /perfil para obtener el perfil de un usuario y lo renderiza en HTML"""
     response = requests.get(f"{BASE_URL_USUARIOS}/usuarios/{user_id}")
     me_gusta_response = requests.get(f"{BASE_URL_INTERACCIONES}/usuarios/{user_id}/me-gusta")
     
-    if response.status_code == 200 and me_gusta_response.status_code == 200:
+    if response.status_code == 200:
         # Obtiene los datos del perfil del usuario
         user_profile = response.json()
-        
-        # Obtiene la lista de contenidos "Me Gusta" y la convierte a una lista de objetos ContenidoMeGusta
-        me_gusta_data = me_gusta_response.json()
-        contenidos_me_gusta = [
-            {
-                'id': contenido['id'],
-                'titulo': contenido['titulo'],
-                'descripcion': contenido.get('descripcion', ''),
-                'fechaLanzamiento': contenido['fechaLanzamiento'],
-                'idGenero': contenido['idGenero'],
-                'valoracionPromedio': contenido.get('valoracionPromedio', None),
-                'idSubtitulosContenido': contenido.get('idSubtitulosContenido', None),
-                'idDoblajeContenido': contenido.get('idDoblajeContenido', None)
-            }
-            for contenido in me_gusta_data
-        ]
 
+        # Inicializa los datos de "Me Gusta"
+        contenidos_me_gusta = []
+        mensaje_me_gusta = None
+
+        if me_gusta_response.status_code == 200:
+            # Obtiene la lista de contenidos "Me Gusta" y la convierte a una lista de objetos ContenidoMeGusta
+            me_gusta_data = me_gusta_response.json()
+            contenidos_me_gusta = [
+                {
+                    'id': contenido['id'],
+                    'titulo': contenido['titulo'],
+                    'descripcion': contenido.get('descripcion', ''),
+                    'fechaLanzamiento': contenido['fechaLanzamiento'],
+                    'idGenero': contenido['idGenero'],
+                    'valoracionPromedio': contenido.get('valoracionPromedio', None),
+                    'idSubtitulosContenido': contenido.get('idSubtitulosContenido', None),
+                    'idDoblajeContenido': contenido.get('idDoblajeContenido', None)
+                }
+                for contenido in me_gusta_data
+            ]
+        else:
+            # Si no hay "Me Gusta", guarda un mensaje indicando que no existen
+            mensaje_me_gusta = "No existen 'Me Gusta' para este usuario."
+        
         # Renderiza la plantilla HTML con los datos del perfil y los "Me Gusta"
         return templates.TemplateResponse(
             "perfil.html",  # Plantilla HTML que renderizará los datos
@@ -289,11 +295,12 @@ async def get_user_profile(request: Request, user_id: str):
                 "nombre": user_profile['nombre'],
                 "email": user_profile['email'],
                 "password": user_profile['password'],
-                "me_gusta": contenidos_me_gusta  # Pasa la lista de contenidos "Me Gusta"
+                "me_gusta": contenidos_me_gusta,  # Pasa la lista de contenidos "Me Gusta"
+                "mensaje_me_gusta": mensaje_me_gusta  # Pasa el mensaje en caso de que no haya "Me Gusta"
             }
         )
     else:
-        # En caso de error, muestra un mensaje de error en la plantilla
+        # En caso de error al obtener los datos del perfil
         error_message = f"Error al obtener el perfil del usuario: {response.status_code}"
         return templates.TemplateResponse(
             "perfil.html",
@@ -302,3 +309,201 @@ async def get_user_profile(request: Request, user_id: str):
                 "error_message": error_message,
             }
         )
+
+
+@app.delete("/interacciones/me-gusta")
+async def eliminar_interaccion(request: Request):
+    """
+    Endpoint para manejar la eliminación de una interacción "Me Gusta"
+    en el sistema de interacciones.
+    """
+    # Leer el cuerpo de la solicitud
+    datos = await request.json()
+
+    # Extraer idUsuario e idContenido
+    idUsuario = datos.get("idUsuario")
+    idContenido = datos.get("idContenido")
+
+    # Validar que los datos requeridos estén presentes
+    if not idUsuario or not idContenido:
+        raise HTTPException(status_code=400, detail="Faltan datos obligatorios: idUsuario o idContenido")
+
+    # Construir la URL de la API de interacciones
+    url = f"{BASE_URL_INTERACCIONES}/usuarios/{idUsuario}/me-gusta/{idContenido}"
+
+    # Realizar la petición DELETE a la API de interacciones
+    try:
+        response = requests.delete(url)
+
+        # Verificar el estado de la respuesta
+        if response.status_code == 200:
+            return {"message": "Interacción eliminada correctamente"}
+        elif response.status_code == 404:
+            raise HTTPException(status_code=404, detail="Interacción no encontrada")
+        else:
+            raise HTTPException(status_code=500, detail="Error al eliminar la interacción")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al comunicarse con la API de interacciones: {str(e)}")
+    
+@app.post("/usuarios/{id_usuario}/perfil")
+async def actualizar_perfil(request: Request, id_usuario: str):
+    """
+    Endpoint para actualizar el perfil de un usuario.
+    """
+    data = await request.form()
+
+    # Extraemos los datos del JSON recibido
+    nombre = data.get('name')
+    password = data.get('password')
+    email = data.get('email')  # Aunque no editable, se puede validar
+    idioma = data.get('language')
+
+    # Construir el payload para la API externa
+    payload = {
+        "nombre": nombre,
+        "password": password,
+        "email": email,
+        "idioma": idioma
+    }
+
+    # URL del endpoint de la API externa para actualizar el perfil
+    api_url = f"{BASE_URL_USUARIOS}/usuarios/{id_usuario}/perfil"
+
+    try:
+        # Enviar la solicitud PUT a la API externa
+        response = requests.put(api_url, json=payload)
+
+        # Comprobar el estado de la respuesta de la API
+        if response.status_code == 200:
+            data = response.json()
+            return RedirectResponse(url=f"/usuarios/{id_usuario}/perfil", status_code=303)
+        else:
+            raise HTTPException(status_code=response.status_code, detail="Error al actualizar el perfil en la API externa")
+
+    except requests.exceptions.RequestException as e:
+        # Manejar errores de red o conexión
+        raise HTTPException(status_code=500, detail=f"Error al comunicarse con la API externa: {str(e)}")
+    
+
+@app.get("/perfil_usuario/{user_id}")
+async def obtener_perfil_usuario(user_id: str):
+    """
+    Obtiene los datos del perfil del usuario desde la API de usuarios.
+    """
+    try:
+        # Hacer una solicitud GET al servicio de usuarios para obtener el perfil
+        response = requests.get(f"{BASE_URL_USUARIOS}/usuarios/{user_id}")
+        
+        if response.status_code != 200:
+            raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+        # Obtener los datos del usuario
+        user_data = response.json()
+        
+        # Devolver los datos del usuario
+        return {
+            "nombre": user_data["nombre"],
+            "email": user_data["email"],
+            "idioma": user_data.get("idioma", "es"),  # Asumir 'es' si no está presente
+        }
+    except requests.exceptions.RequestException as e:
+        # En caso de error al hacer la petición a la API de usuarios
+        raise HTTPException(status_code=500, detail=f"Error al obtener el perfil del usuario: {str(e)}")
+    
+
+@app.get("/usuarios/{userId}/me-gusta")
+def obtener_me_gusta(userId: str):
+
+    try:
+        # Hacer una solicitud GET al servicio de usuarios para obtener el perfil
+        response = requests.get(f"{BASE_URL_INTERACCIONES}/usuarios/{userId}/me-gusta")
+        
+        if response.status_code != 200:
+            raise HTTPException(status_code=404, detail="No se han encontrado contenidos a los que el usuario le haya dado me gusta")
+
+        # Obtener los datos del usuario
+        contenidos = response.json()
+        print(contenidos)
+        
+        # Devolver los datos del usuario
+        return contenidos
+    except requests.exceptions.RequestException as e:
+        # En caso de error al hacer la petición a la API de usuarios
+        raise HTTPException(status_code=500, detail=f"Error al obtener el perfil del usuario: {str(e)}")
+
+@app.get("/usuarios/{user_id}/metodos-pago")
+async def get_user_payment_methods(user_id: str):
+    """
+    Este endpoint obtiene los métodos de pago de un usuario a través de la API de usuarios
+    y devuelve una lista con los métodos de pago (Tarjeta o PayPal).
+    """
+    # Hacemos la petición GET a la API de usuarios para obtener los métodos de pago
+    try:
+        response = requests.get(f"{BASE_URL_USUARIOS}/usuarios/{user_id}/metodos-pago")
+        
+        # Verificamos si la respuesta fue exitosa
+        if response.status_code == 200:
+            payment_methods = response.json()
+            # Formateamos la respuesta según el esquema necesario
+            formatted_methods = []
+            for method in payment_methods:
+                if method['tipo'] == 'Tarjeta de Crédito':
+                    formatted_methods.append({
+                        'tipo': method['tipo'],
+                        'numeroTarjeta': method.get('numeroTarjeta'),
+                        'emailPaypal': None
+                    })
+                elif method['tipo'] == 'Paypal':
+                    formatted_methods.append({
+                        'tipo': method['tipo'],
+                        'numeroTarjeta': None,
+                        'emailPaypal': method.get('emailPaypal')
+                    })
+            return formatted_methods
+        else:
+            raise HTTPException(status_code=response.status_code, detail="Error al obtener métodos de pago del usuario")
+    
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(status_code=500, detail=f"Error al comunicar con la API externa: {str(e)}")
+
+@app.post("/usuarios/{user_id}/metodos-pago")
+async def add_payment_method(user_id: str, request: Request):
+    try:
+        # Obtener los datos del formulario
+        form_data = await request.form()
+        payment_method = form_data.get("payment-method")
+        payment_details = form_data.get("payment-details")
+
+        # Preparar los datos según el tipo de método de pago
+        if payment_method == "credit_card":
+            numeroTarjeta = form_data.get("numeroTarjeta")
+            data = {
+                "tipo": "Tarjeta de Crédito",
+                "numeroTarjeta": numeroTarjeta,
+                "emailPaypal": None  # No se utiliza para tarjeta de crédito
+            }
+        elif payment_method == "paypal":
+            email = form_data.get("email")
+            data = {
+                "tipo": "Paypal",
+                "numeroTarjeta": None,  # No se utiliza para PayPal
+                "emailPaypal": email
+            }
+        else:
+            raise HTTPException(status_code=400, detail="Método de pago no válido")
+
+        # Realizar la solicitud POST al servicio de la API de usuarios para agregar el método de pago
+        response = requests.post(
+            f"{BASE_URL_USUARIOS}/usuarios/{user_id}/metodos-pago",
+            json=data
+        )
+
+        if response.status_code != 200:
+            raise HTTPException(status_code=500, detail="Error al agregar el método de pago")
+        print("Redirigiendo...")
+        return RedirectResponse(url=f"/usuarios/{user_id}/perfil", status_code=303)
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+

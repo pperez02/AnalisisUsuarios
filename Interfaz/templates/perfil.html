@@ -16,17 +16,17 @@
         <!-- Sección del Perfil -->
         <section class="profile-card">
             <h2>Información Personal</h2>
-            <form action="/usuarios/{{ user_id }}" id="profile-form">
+            <form action="/usuarios/{{ user_id }}/perfil" id="profile-form" method="POST">
                 <label for="name">Nombre:</label>
                 <input type="text" id="name" name="name" value="{{nombre}}" class="form-input" required>
 
                 <br>
-                <label for="name">Contraseña:</label>
+                <label for="password">Contraseña:</label>
                 <input type="password" id="password" name="password" value="{{password}}" class="form-input" required>
                 
                 <br>
                 <label for="email">Correo Electrónico:</label>
-                <input type="email" id="email" name="email" value="{{email}}" class="form-input" readonly>
+                <input type="email" id="email" name="email" value="{{email}}" class="form-input" required>
                 
                 <br>
                 <label for="language">Idioma:</label>
@@ -37,25 +37,63 @@
                 </select>
 
                 <br>
-                <button type="button" id="update-profile-btn" class="btn">Actualizar Perfil</button>
+                <button type="submit" class="btn">Actualizar Perfil</button>
             </form>
         </section>
 
+        <!-- Sección de Métodos de Pago -->
+        <section class="payment-methods-section">
+            <h2>Métodos de Pago</h2>
+            <ul id="payment-methods-list">
+                <!-- Los métodos de pago se cargarán aquí -->
+            </ul>
+        </section>
+
         <!-- Sección del Método de Pago -->
+        <!-- Tras el formulario, existe un script que permite visualizar los inputs de texto diferentes dependiendo del tipo de metodo de pago escogido -->
         <section class="payment-section profile-card">
-            <h2>Método de Pago</h2>
-            <form id="payment-form">
+            <h2>Añadir Método de Pago</h2>
+            <form action="/usuarios/{{ user_id }}/metodos-pago" id="payment-form" method="POST">
                 <label for="payment-method">Método de Pago:</label>
-                <select id="payment-method" name="payment-method" class="form-select">
+                <select id="payment-method" name="payment-method" class="form-select" onchange="togglePaymentFields()">
                     <option value="credit_card">Tarjeta de Crédito</option>
                     <option value="paypal">PayPal</option>
                 </select>
-
-                <label for="payment-details">Detalles:</label>
-                <input type="text" id="payment-details" name="payment-details" class="form-input">
-
-                <button type="button" id="update-payment-btn" class="btn">Actualizar Método de Pago</button>
+            
+                <!-- Campo para el número de tarjeta (visible solo si se selecciona 'credit_card') -->
+                <div id="credit-card-fields" style="display:none;">
+                    <label for="numeroTarjeta">Número de Tarjeta:</label>
+                    <input type="text" id="numeroTarjeta" name="numeroTarjeta" class="form-input">
+                </div>
+            
+                <!-- Campo para el email de PayPal (visible solo si se selecciona 'paypal') -->
+                <div id="paypal-fields" style="display:none;">
+                    <label for="email">Correo de PayPal:</label>
+                    <input type="email" id="email" name="email" class="form-input">
+                </div>
+            
+                <button type="submit" id="update-payment-btn" class="btn">Añadir Método de Pago</button>
             </form>
+            
+            <script>
+                function togglePaymentFields() {
+                    const paymentMethod = document.getElementById("payment-method").value;
+                    const creditCardFields = document.getElementById("credit-card-fields");
+                    const paypalFields = document.getElementById("paypal-fields");
+            
+                    if (paymentMethod === "credit_card") {
+                        creditCardFields.style.display = "block";
+                        paypalFields.style.display = "none";
+                    } else if (paymentMethod === "paypal") {
+                        creditCardFields.style.display = "none";
+                        paypalFields.style.display = "block";
+                    }
+                }
+            
+                // Inicializar el estado de los campos al cargar la página
+                window.onload = togglePaymentFields;
+            </script>
+            
         </section>
 
         <!-- Sección de Me Gusta -->
@@ -63,14 +101,11 @@
             <h2>Contenido Marcado con "Me Gusta"</h2>
             <ul>
                 {% for item in me_gusta %}
-                    <li>
-                        <a href="#" 
-                           data-id-usuario="user_id" 
-                           data-id-contenido="{{ item.id }}"
-                           onclick="confirmarEliminar(this)">
-                            {{ item.titulo }}
-                            {{item.id}}
-                        </a>
+                    <li class="like-item">
+                        <span class="like-title">{{ item.titulo }}</span>
+                        <button class="btn remove-btn" data-id-usuario="{{ user_id }}" data-id-contenido="{{ item.id }}" onclick="confirmarEliminar(this)">
+                            Eliminar
+                        </button>
                     </li>
                 {% endfor %}
             </ul>
@@ -78,30 +113,33 @@
                 async function confirmarEliminar(element) {
                     const idUsuario = element.getAttribute("data-id-usuario");
                     const idContenido = element.getAttribute("data-id-contenido");
-            
+
                     // Mostrar un cuadro de diálogo de confirmación
                     const confirmar = confirm("¿Estás seguro de que deseas eliminar este contenido de tu lista de 'Me gusta'?");
-            
+
                     if (confirmar) {
                         // Si el usuario confirma, realiza la petición al endpoint
-                        const url = `/usuarios/${idUsuario}/me-gusta/${idContenido}`;
-            
-                        const response = await fetch(url, {
+                        const response = await fetch("/interacciones/me-gusta", {
                             method: "DELETE",
-                        });
-            
-                        if (response.ok) {
-                            alert("Contenido eliminado de la lista de Me gusta");
-                            // Elimina visualmente el elemento de la lista
-                            element.parentNode.remove();
-                        } else {
-                            const data = await response.json();
-                            alert(data.detail || "Error al eliminar el contenido");
-                        }
+                            headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ idUsuario, idContenido }),
+                    });
+
+                    if (response.ok) {
+                        alert("Contenido eliminado de la lista de Me gusta");
+                        // Elimina visualmente el elemento de la lista
+                        element.parentNode.remove();
+                    } else {
+                        const data = await response.json();
+                        alert(data.detail || "Error al eliminar el contenido");
                     }
                 }
+            }
             </script>            
         </section>
+
     </main>
 
     <!-- Footer -->
@@ -109,19 +147,22 @@
         <p>&copy; 2024 Streamflix. Todos los derechos reservados.</p>
     </footer>
     <script>
-        const userId = "{{user_id}}"
-        // Cargar datos del usuario
-        fetch(`/usuarios/${userId}`)
+
+        //Primer paso de la página: Cargar todos los datos del usuario para poder mostrarlos
+        const userId = "{{ user_id }}"; // ID del usuario
+
+        // Cargar datos del usuario desde la API de la interfaz
+        fetch(`/perfil_usuario/${userId}`)
             .then(response => response.json())
             .then(user => {
-                document.getElementById("nombre").value = user.nombre;
+                document.getElementById("name").value = user.nombre;
                 document.getElementById("email").value = user.email;
-                document.getElementById("idioma").value = user.idioma || "es";
+                document.getElementById("language").value = user.idioma || "es";
             })
             .catch(error => console.error("Error al cargar el perfil:", error));
 
         // Cargar contenidos marcados como "me gusta"
-        fetch(`/usuarios/{userId}/me-gusta/{idContenido}`)
+        fetch(`/usuarios/${userId}/me-gusta`)
             .then(response => response.json())
             .then(data => {
                 const likesList = document.getElementById("likes-list");
@@ -132,40 +173,25 @@
                 });
             })
             .catch(error => console.error("Error al cargar los contenidos:", error));
-
-        // Actualizar perfil
-        document.getElementById("update-profile-btn").addEventListener("click", () => {
-            const updatedData = {
-                nombre: document.getElementById("nombre").value,
-                idioma: document.getElementById("idioma").value
-            };
-
-            fetch(`/usuarios/${userId}/perfil`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(updatedData)
+        
+        // Cargar datos de los métodos de pago del usuario para listarlas
+        fetch(`/usuarios/${userId}/metodos-pago`, {
+            method: "GET"
+        })
+            .then(response => response.json())
+            .then(paymentMethods => {
+                const paymentList = document.getElementById("payment-methods-list");
+                paymentMethods.forEach(method => {
+                    const listItem = document.createElement("li");
+                    if (method.tipo === "Tarjeta de Crédito") {
+                        listItem.textContent = `Tarjeta de Crédito: ${method.numeroTarjeta}`;
+                    } else if (method.tipo === "Paypal") {
+                        listItem.textContent = `Paypal: ${method.emailPaypal}`;
+                    }
+                    paymentList.appendChild(listItem);
+                });
             })
-                .then(response => response.json())
-                .then(result => alert(result.message))
-                .catch(error => console.error("Error al actualizar perfil:", error));
-        });
-
-        // Actualizar método de pago
-        document.getElementById("update-payment-btn").addEventListener("click", () => {
-            const paymentData = {
-                tipo: document.getElementById("payment-method").value,
-                numeroTarjeta: document.getElementById("payment-details").value,
-            };
-
-            fetch(`/usuarios/${userId}/metodos-pago`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(paymentData)
-            })
-                .then(response => response.json())
-                .then(result => alert("Método de pago actualizado correctamente"))
-                .catch(error => console.error("Error al actualizar el método de pago:", error));
-        });
+            .catch(error => console.error("Error al cargar los métodos de pago:", error));
     </script>
 </body>
 </html>
