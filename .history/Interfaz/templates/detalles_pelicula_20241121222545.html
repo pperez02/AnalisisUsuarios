@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Películas</title>
+    <link rel="stylesheet" href="/static/detalles_pelicula.css">
+</head>
+<body>
+    <!-- Encabezado -->
+    <div class="header">
+        <h1>Catálogo de Películas</h1>
+        <a href="perfil.html" class="perfil-button">Perfil</a>
+    </div>
+
+    <!-- Contenido -->
+    <div class="container">
+        <!-- Tarjeta de una película -->
+        <div class="movie-card">
+            <div class="movie-poster" style="background-image: url('https://via.placeholder.com/200x300');"></div>
+            <div class="movie-details">
+                <div>
+                    <div class="movie-title">{{ pelicula["titulo"] }}</div>
+                    <div class="movie-info">
+                        <span><strong>Género: </strong>{{ pelicula["idGenero"] }}</span> | 
+                        <span><strong>Duración: </strong> {{ pelicula["duracion"] }} minutos</span> | 
+                        <span><strong>Director: </strong>{{ pelicula["idDirector"] }}</span>
+                    </div>
+                    <div class="movie-description">
+                        {{ pelicula["descripcion"] }}
+                    </div>
+                </div>
+                <div>
+                    <span><strong>Fecha de lanzamiento:</strong> {{ pelicula["fechaLanzamiento"] }}</span><br>
+                    <span><strong>Valoración promedio:</strong> <span class="rating">{{ pelicula["valoracionPromedio"] }}</span></span>
+                </div>
+
+                <!-- Sección de Reparto -->
+                <div class="reparto">
+                    <strong>Reparto:</strong>
+                    <ul>
+                        {% for actor in reparto %}
+                            <li class="actor-name">{{ actor.nombre }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Sección de Doblajes -->
+                <div class="doblajes">
+                    <strong>Doblajes Disponibles:</strong>
+                    <ul>
+                        {% for doblaje in doblajes %}
+                            <li class="doblaje-item">{{ doblaje.idioma }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Sección de Subtítulos -->
+                <div class="subtitulos">
+                    <strong>Subtítulos Disponibles:</strong>
+                    <ul>
+                        {% for subtitulo in subtitulos %}
+                            <li class="subtitulo-item">{{ subtitulo.idioma }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Copia y pega este bloque para agregar más películas -->
+    </div>
+    <footer>
+        <p>Derechos reservados &copy; 2024</p>
+    </footer> 
+</body>
+</html>

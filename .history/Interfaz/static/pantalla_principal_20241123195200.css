@@ -103,30 +103,6 @@ body {
     background-color: #444;
 }
 
-/* Asegura que el footer esté siempre al final del contenedor principal */
-footer {
-    position: relative; /* Elimina la fijación al viewport */
-    margin-top: 20px; /* Espaciado adicional por encima del footer */
-    bottom: 0; /* Alinea al fondo del contenedor */
-    width: 100%; /* Asegura que ocupe todo el ancho */
-    background-color: #141414; /* Conserva el fondo oscuro */
-    color: #777;
-    text-align: center;
-    padding: 1rem;
-    border-top: 1px solid #333;
-}
-
-/* Ajusta el contenedor para mantener la coherencia */
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Asegura altura mínima completa */
-}
-
-main {
-    flex: 1; /* Expande el contenido principal para empujar el footer hacia abajo */
-}
-
 /* Estilos responsivos */
 @media (max-width: 1200px) {
     .content-list {

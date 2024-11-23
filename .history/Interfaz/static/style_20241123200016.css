@@ -11,25 +11,16 @@ body {
     height: 100vh; /* Altura completa de la ventana */
 }
 
-main {
-    flex: 1; /* Permite que el main ocupe el espacio restante entre el header y el footer */
-    display: flex;
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center; /* Centra verticalmente */
-    min-height: calc(100vh - 100px); /* Asegura que ocupe la altura restante, considerando un header fijo de 100px */
-    padding: 20px; /* Espaciado interno para evitar que el formulario quede pegado a los bordes */
-    background-color: #000; /* Fondo negro para mantener la estética */
-}
-
 /* Contenedor central */
 .container {
-    max-width: 400px; /* Ancho máximo del formulario */
-    width: 100%; /* Asegura que se adapte a pantallas pequeñas */
-    background-color: #1a1a1a; /* Fondo del formulario */
-    padding: 20px;
+    background-color: #1a1a1a;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
-    text-align: center;
+    padding: 20px;
+    margin: auto;
+    max-width: 400px; /* Ancho máximo */
+    width: 100%; /* Asegura que se adapte a tamaños pequeños */
+    text-align: center; /* Centra el contenido */
 }
 
 /* Estilo del encabezado */
