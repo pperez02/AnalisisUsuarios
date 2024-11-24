@@ -123,7 +123,7 @@ def get_todoseries(db: Session = Depends(get_db)):
     series = crud.get_todoseries(db=db)
     return series
 
-@app.get("/todopeliculas", response_model=list[schemas.Contenido])
+@app.get("7todopeliculas", response_model=list[schemas.Contenido])
 def get_todopeliculas(db: Session = Depends(get_db)):
     peliculas = crud.get_todopeliculas(db=db)
     return peliculas

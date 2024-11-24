@@ -509,17 +509,8 @@ async def add_payment_method(user_id: str, request: Request):
 
 @app.get("/menu_admin", response_class=HTMLResponse)
 async def menu_admin(request: Request):
-    peliculas_response = requests.get(f"{BASE_URL_CONTENIDOS}/todopeliculas")
-    if peliculas_response.status_code == 200:
-        peliculas = peliculas_response.json()
     # Renderizamos el menu de admin.
-    return templates.TemplateResponse(
-        "menu_admin.html",
-        {
-            "request": request,
-            "peliculas": peliculas,
-        }
-    )
+    return templates.TemplateResponse("menu_admin.html",{"request": request,})
 
 @app.get("/usuarios", response_class=HTMLResponse)
 async def lista_usuarios(request: Request):
