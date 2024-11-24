@@ -251,17 +251,10 @@ async def pantalla_principal(request: Request, user_id: str):
         }
     )
 
-@app.get("/admin_menu", response_class=HTMLResponse)
+@app.get("/menu_admin", response_class=HTMLResponse)
 async def menu_admin(request: Request):
-    # Recupera el mensaje de éxito de las cookies
-    success_message = request.cookies.get("success_message")
-    response = templates.TemplateResponse("admin_menu.html", {
-        "request": request,
-        "message": success_message
-    })
-    # Borra la cookie para que no se muestre de nuevo
-    response.delete_cookie("success_message")
-    return response
+    # Renderizamos el menu de admin.
+    return templates.TemplateResponse("menu_admin.html",{"request": request,})
 
 @app.get("/usuarios/{user_id}/perfil", response_class=HTMLResponse)
 async def get_user_profile(request: Request, user_id: str):
@@ -519,7 +512,7 @@ async def add_payment_method(user_id: str, request: Request):
 
 # Funciones para la gestión del administrador
 
-@app.get("/admin_usuarios", response_class=HTMLResponse)
+@app.get("/usuarios", response_class=HTMLResponse)
 async def lista_usuarios(request: Request):
     # Realizamos la solicitud al microservicio de usuarios
     response = requests.get(f"{BASE_URL_USUARIOS}/usuarios")
@@ -536,112 +529,10 @@ async def lista_usuarios(request: Request):
         }
     )
 
-@app.get("/admin_crear_pelicula", response_class=HTMLResponse)
-async def crear_pelicula_form(request: Request):
-    """
-    Muestra el formulario para crear una película.
-    """
-    # Obtener los géneros y directores desde el microservicio de contenidos
-    generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
-
-    generos = generos_response.json() if generos_response.status_code == 200 else []
-
-    return templates.TemplateResponse("admin_crear_pelicula.html", {
-        "request": request,
-        "generos": generos,
-    })
-
-@app.post("/admin_crear_pelicula", response_class=HTMLResponse)
-async def crear_pelicula(
-    request: Request,
-    titulo: str = Form(...),
-    descripcion: str = Form(...),
-    fecha_lanzamiento: str = Form(...),
-    id_genero: str = Form(...),
-    duracion: int = Form(...)
-):
-    """
-    Procesa el formulario para crear una película.
-    """
-    data = {
-        "tipoContenido": "Pelicula",
-        "titulo": titulo,
-        "descripcion": descripcion,
-        "fechaLanzamiento": fecha_lanzamiento,
-        "idGenero": id_genero,
-        "valoracionPromedio": 0.0,
-        "idSubtitulosContenido": "1",
-        "idDoblajeContenido": "1",
-        "duracion": duracion,
-        "idDirector": "1"
-    }
-
-    response = requests.post(f"{BASE_URL_CONTENIDOS}/peliculas", json=data)
-
-    if response.status_code == 200:
-        redirect_response = RedirectResponse(url="/admin_menu", status_code=303)
-        redirect_response.set_cookie(key="success_message", value="Película creada exitosamente", max_age=5)
-        return redirect_response
-    else:
-        return templates.TemplateResponse("admin_crear_pelicula.html", {
-        "request": request,
-        "error_message": "Error al crear la película. Por favor, inténtelo de nuevo."
-    })
-
-@app.get("/admin_crear_serie", response_class=HTMLResponse)
-async def crear_serie_form(request: Request):
-    """
-    Muestra el formulario para crear una película.
-    """
-    # Obtener los géneros y directores desde el microservicio de contenidos
-    generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
-
-    generos = generos_response.json() if generos_response.status_code == 200 else []
-
-    return templates.TemplateResponse("admin_crear_serie.html", {
-        "request": request,
-        "generos": generos,
-    })
-
-@app.post("/admin_crear_serie", response_class=HTMLResponse)
-async def crear_serie(
-    request: Request,
-    titulo: str = Form(...),
-    descripcion: str = Form(...),
-    fecha_lanzamiento: str = Form(...),
-    id_genero: str = Form(...),
-):
-    """
-    Procesa el formulario para crear una película.
-    """
-    data = {
-        "tipoContenido": "Serie",
-        "titulo": titulo,
-        "descripcion": descripcion,
-        "fechaLanzamiento": fecha_lanzamiento,
-        "idGenero": id_genero,
-        "valoracionPromedio": 0.0,
-        "idSubtitulosContenido": "1",
-        "idDoblajeContenido": "1",
-        "duracion": None,
-        "idDirector": None
-    }
-
-    response = requests.post(f"{BASE_URL_CONTENIDOS}/series", json=data)
-
-    if response.status_code == 200:
-        redirect_response = RedirectResponse(url="/admin_menu", status_code=303)
-        redirect_response.set_cookie(key="success_message", value="Serie creada exitosamente", max_age=5)
-        return redirect_response
-    else:
-        return templates.TemplateResponse("admin_crear_serie.html", {
-        "request": request,
-        "error_message": "Error al crear la serie. Por favor, inténtelo de nuevo."
-    })
 @app.get("/administrador/series/{idSerie}", response_class=HTMLResponse)
 async def get_actualizar_serie(request: Request, idSerie: str):
-    response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}")
-    generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
+    response = requests.get(f"{BASE_URL_CONTENIDOS}/series/{idSerie}")
+    generos_response = request.get(f"{BASE_URL_CONTENIDOS}/generos")
     
     if response.status_code == 200:
         # Obtiene los datos de la serie
@@ -680,7 +571,8 @@ async def get_actualizar_serie(request: Request, idSerie: str):
                 "descripcion": serie_data['descripcion'],
                 "fecLanzamiento": serie_data['fechaLanzamiento'],
                 "idGenero": serie_data['idGenero'],
-                "generos": generos # Pasa la lista de todos los géneros para elegir
+                "generos": generos,  # Pasa la lista de todos los géneros para elegir
+                "duracion": serie_data['duracion']
             }
         )
     else:
@@ -694,7 +586,7 @@ async def get_actualizar_serie(request: Request, idSerie: str):
             }
         )
 
-@app.post("/administrador/update_serie/{idSerie}", response_class=HTMLResponse)
+@app.post("/administrador/series/{idSerie}", response_class=HTMLResponse)
 async def actualizar_serie(request: Request, idSerie: str):
     """
     Endpoint para actualizar el perfil de un usuario.
@@ -706,214 +598,25 @@ async def actualizar_serie(request: Request, idSerie: str):
     descripcion = data.get('descripcion')
     fechaLanzamiento = data.get('fecLanzamiento') 
     idGenero = data.get('genero')
-
-    # Construir el payload para la API externa
-    payload = {
-        "titulo": titulo,
-        "descripcion": descripcion,
-        "fechaLanzamiento": fechaLanzamiento,
-        "idGenero": idGenero
-    }
-
-    # URL del endpoint de la API externa para actualizar la serie
-    api_url = f"{BASE_URL_CONTENIDOS}/series/{idSerie}"
+    duracion = data.get('duracion')
 
     try:
-        # Enviar la solicitud PUT a la API externa
-        response = requests.put(api_url, json=payload)
-
-        # Comprobar el estado de la respuesta de la API
-        if response.status_code == 200:
-            data = response.json()
-            return RedirectResponse(url=f"/administrador/series/{idSerie}", status_code=303)
-        else:
-            raise HTTPException(status_code=response.status_code, detail="Error al actualizar la serie")
-
-    except requests.exceptions.RequestException as e:
-        # Manejar errores de red o conexión
-        raise HTTPException(status_code=500, detail=f"Error al comunicarse con la API externa: {str(e)}")        
-
-@app.get("/admin_crear_pelicula", response_class=HTMLResponse)
-async def crear_pelicula_form(request: Request):
-    """
-    Muestra el formulario para crear una película.
-    """
-    # Obtener los géneros y directores desde el microservicio de contenidos
-    generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
-
-    generos = generos_response.json() if generos_response.status_code == 200 else []
-
-    return templates.TemplateResponse("admin_crear_pelicula.html", {
-        "request": request,
-        "generos": generos,
-    })
-
-@app.post("/admin_crear_pelicula", response_class=HTMLResponse)
-async def crear_pelicula(
-    request: Request,
-    titulo: str = Form(...),
-    descripcion: str = Form(...),
-    fecha_lanzamiento: str = Form(...),
-    id_genero: str = Form(...),
-    duracion: int = Form(...)
-):
-    """
-    Procesa el formulario para crear una película.
-    """
-    data = {
-        "tipoContenido": "Pelicula",
-        "titulo": titulo,
-        "descripcion": descripcion,
-        "fechaLanzamiento": fecha_lanzamiento,
-        "idGenero": id_genero,
-        "valoracionPromedio": 0.0,
-        "idSubtitulosContenido": "1",
-        "idDoblajeContenido": "1",
-        "duracion": duracion,
-        "idDirector": "1"
-    }
-
-    response = requests.post(f"{BASE_URL_CONTENIDOS}/peliculas", json=data)
-
-    if response.status_code == 200:
-        redirect_response = RedirectResponse(url="/admin_menu", status_code=303)
-        redirect_response.set_cookie(key="success_message", value="Película creada exitosamente", max_age=5)
-        return redirect_response
-    else:
-        return templates.TemplateResponse("admin_crear_pelicula.html", {
-        "request": request,
-        "error_message": "Error al crear la película. Por favor, inténtelo de nuevo."
-    })
-
-@app.get("/admin_crear_serie", response_class=HTMLResponse)
-async def crear_serie_form(request: Request):
-    """
-    Muestra el formulario para crear una película.
-    """
-    # Obtener los géneros y directores desde el microservicio de contenidos
-    generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
-
-    generos = generos_response.json() if generos_response.status_code == 200 else []
-
-    return templates.TemplateResponse("admin_crear_serie.html", {
-        "request": request,
-        "generos": generos,
-    })
-
-@app.post("/admin_crear_serie", response_class=HTMLResponse)
-async def crear_serie(
-    request: Request,
-    titulo: str = Form(...),
-    descripcion: str = Form(...),
-    fecha_lanzamiento: str = Form(...),
-    id_genero: str = Form(...),
-):
-    """
-    Procesa el formulario para crear una película.
-    """
-    data = {
-        "tipoContenido": "Serie",
-        "titulo": titulo,
-        "descripcion": descripcion,
-        "fechaLanzamiento": fecha_lanzamiento,
-        "idGenero": id_genero,
-        "valoracionPromedio": 0.0,
-        "idSubtitulosContenido": "1",
-        "idDoblajeContenido": "1",
-        "duracion": None,
-        "idDirector": None
-    }
-
-    response = requests.post(f"{BASE_URL_CONTENIDOS}/series", json=data)
-
-    if response.status_code == 200:
-        redirect_response = RedirectResponse(url="/admin_menu", status_code=303)
-        redirect_response.set_cookie(key="success_message", value="Serie creada exitosamente", max_age=5)
-        return redirect_response
-    else:
-        return templates.TemplateResponse("admin_crear_serie.html", {
-        "request": request,
-        "error_message": "Error al crear la serie. Por favor, inténtelo de nuevo."
-    })
-@app.get("/administrador/series/{idSerie}", response_class=HTMLResponse)
-async def get_actualizar_serie(request: Request, idSerie: str):
-    response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}")
-    generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
-    
-    if response.status_code == 200:
-        # Obtiene los datos de la serie
-        serie_data = response.json()
-        generos = []
-
-        if generos_response.status_code == 200:
-            # Obtiene la lista de géneros y la convierte a una lista de objetos Genero
-            generos_data = generos_response.json()
-            generos = [
-                {
-                    'id': genero['id'],
-                    'nombre': genero['nombre'],
-                    'descripcion': genero.get('descripcion', '')
-                }
-                for genero in generos_data
-            ]
-        else:
-            # En caso de error al obtener los géneros
-            error_message = f"Error al obtener los géneros de la base de datos: {response.status_code}"
-            return templates.TemplateResponse(
-                "admin_actualizar_serie.html",
-                {
-                    "request": request,
-                    "error_message": error_message
-                }
-            )    
-
-        # Renderiza la plantilla HTML con los datos de la serie
-        return templates.TemplateResponse(
-            "admin_actualizar_serie.html",  # Plantilla HTML que renderizará los datos
-            {
-                "request": request,
-                "serie_id": idSerie,
-                "titulo": serie_data['titulo'],
-                "descripcion": serie_data['descripcion'],
-                "fecLanzamiento": serie_data['fechaLanzamiento'],
-                "idGenero": serie_data['idGenero'],
-                "generos": generos # Pasa la lista de todos los géneros para elegir
-            }
-        )
-    else:
-        # En caso de error al obtener los datos de la serie
-        error_message = f"Error al obtener los datos de la serie: {response.status_code}"
-        return templates.TemplateResponse(
-            "admin_actualizar_serie.html",
-            {
-                "request": request,
-                "error_message": error_message,
-            }
-        )
-
-@app.post("/administrador/update_serie/{idSerie}", response_class=HTMLResponse)
-async def actualizar_serie(request: Request, idSerie: str):
-    """
-    Endpoint para actualizar el perfil de un usuario.
-    """
-    data = await request.form()
-
-    # Extraemos los datos del JSON recibido
-    titulo = data.get('titulo')
-    descripcion = data.get('descripcion')
-    fechaLanzamiento = data.get('fecLanzamiento') 
-    idGenero = data.get('genero')
+        # Convertir duracion a un número
+        duracion = int(duracion)
+    except ValueError:
+        return {"error": "La duración debe ser un número válido."}    
 
     # Construir el payload para la API externa
     payload = {
-        "titulo": titulo,
-        "descripcion": descripcion,
-        "fechaLanzamiento": fechaLanzamiento,
-        "idGenero": idGenero
+        "titulo": nombre,
+        "descripcion": password,
+        "fechaLanzamiento": email,
+        "idGenero": idioma,
+        "duracion": duracion
     }
 
-    # URL del endpoint de la API externa para actualizar la serie
-    api_url = f"{BASE_URL_CONTENIDOS}/series/{idSerie}"
+    # URL del endpoint de la API externa para actualizar el perfil
+    api_url = f"{BASE_URL_CONTENIDOS}/generos/{idSerie}"
 
     try:
         # Enviar la solicitud PUT a la API externa
