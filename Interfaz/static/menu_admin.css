@@ -11,7 +11,8 @@
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    gap: 30px; /* Reduce el espacio entre las columnas */
+    gap: 30px;
+    /* Reduce el espacio entre las columnas */
 }
 
 /* Estilos para cada sección */
@@ -61,7 +62,8 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 60px; /* Define una altura fija */
+    height: 60px;
+    /* Define una altura fija */
 }
 
 .navbar {
@@ -77,7 +79,8 @@ header {
 .navbar .logo a {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #e50914; /* Rojo icónico de Netflix */
+    color: #e50914;
+    /* Rojo icónico de Netflix */
     text-decoration: none;
 }
 
@@ -100,19 +103,22 @@ header {
 /* Estilos responsivos */
 @media (max-width: 1200px) {
     .content-list {
-        flex-direction: row; /* En pantallas medianas, los recuadros se alinean horizontalmente */
+        flex-direction: row;
+        /* En pantallas medianas, los recuadros se alinean horizontalmente */
         justify-content: space-evenly;
     }
 }
 
 @media (max-width: 900px) {
     .content-list {
-        flex-direction: column; /* En pantallas pequeñas, los recuadros se alinean verticalmente */
+        flex-direction: column;
+        /* En pantallas pequeñas, los recuadros se alinean verticalmente */
     }
 }
 
 @media (max-width: 600px) {
     .content-list {
-        flex-direction: column; /* En pantallas muy pequeñas, los recuadros se alinean verticalmente */
+        flex-direction: column;
+        /* En pantallas muy pequeñas, los recuadros se alinean verticalmente */
     }
 }

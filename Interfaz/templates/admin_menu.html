@@ -23,6 +23,9 @@
 
 <body>
     <div class="container">
+        {% if message %}
+            <div style="color: green; font-weight: bold;">{{ message }}</div>
+        {% endif %}
         <!-- Contenedor con grid -->
         <div class="grid">
             <!-- Sección Usuarios -->
@@ -37,8 +40,8 @@
             <div class="section">
                 <h2>Contenidos</h2>
                 <ul>
-                    <li><a href="#">Crear película</a></li>
-                    <li><a href="#">Crear serie</a></li>
+                    <li><a href="/admin_crear_pelicula">Crear película</a></li>
+                    <li><a href="/admin_crear_serie">Crear serie</a></li>
                     <li><a href="#">Crear temporada</a></li>
                     <li><a href="#">Crear episodio</a></li>
                     <li><a href="#">Crear género</a></li>

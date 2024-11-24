@@ -251,10 +251,17 @@ async def pantalla_principal(request: Request, user_id: str):
         }
     )
 
-@app.get("/menu_admin", response_class=HTMLResponse)
+@app.get("/admin_menu", response_class=HTMLResponse)
 async def menu_admin(request: Request):
-    # Renderizamos el menu de admin.
-    return templates.TemplateResponse("menu_admin.html",{"request": request,})
+    # Recupera el mensaje de éxito de las cookies
+    success_message = request.cookies.get("success_message")
+    response = templates.TemplateResponse("admin_menu.html", {
+        "request": request,
+        "message": success_message
+    })
+    # Borra la cookie para que no se muestre de nuevo
+    response.delete_cookie("success_message")
+    return response
 
 @app.get("/usuarios/{user_id}/perfil", response_class=HTMLResponse)
 async def get_user_profile(request: Request, user_id: str):
@@ -511,7 +518,7 @@ async def add_payment_method(user_id: str, request: Request):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/usuarios", response_class=HTMLResponse)
+@app.get("/admin_usuarios", response_class=HTMLResponse)
 async def lista_usuarios(request: Request):
     # Realizamos la solicitud al microservicio de usuarios
     response = requests.get(f"{BASE_URL_USUARIOS}/usuarios")
@@ -527,3 +534,106 @@ async def lista_usuarios(request: Request):
             "usuarios": usuarios,
         }
     )
+
+@app.get("/admin_crear_pelicula", response_class=HTMLResponse)
+async def crear_pelicula_form(request: Request):
+    """
+    Muestra el formulario para crear una película.
+    """
+    # Obtener los géneros y directores desde el microservicio de contenidos
+    generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
+
+    generos = generos_response.json() if generos_response.status_code == 200 else []
+
+    return templates.TemplateResponse("admin_crear_pelicula.html", {
+        "request": request,
+        "generos": generos,
+    })
+
+@app.post("/admin_crear_pelicula", response_class=HTMLResponse)
+async def crear_pelicula(
+    request: Request,
+    titulo: str = Form(...),
+    descripcion: str = Form(...),
+    fecha_lanzamiento: str = Form(...),
+    id_genero: str = Form(...),
+    duracion: int = Form(...)
+):
+    """
+    Procesa el formulario para crear una película.
+    """
+    data = {
+        "tipoContenido": "Pelicula",
+        "titulo": titulo,
+        "descripcion": descripcion,
+        "fechaLanzamiento": fecha_lanzamiento,
+        "idGenero": id_genero,
+        "valoracionPromedio": 0.0,
+        "idSubtitulosContenido": "1",
+        "idDoblajeContenido": "1",
+        "duracion": duracion,
+        "idDirector": "1"
+    }
+
+    response = requests.post(f"{BASE_URL_CONTENIDOS}/peliculas", json=data)
+
+    if response.status_code == 200:
+        redirect_response = RedirectResponse(url="/admin_menu", status_code=303)
+        redirect_response.set_cookie(key="success_message", value="Película creada exitosamente", max_age=5)
+        return redirect_response
+    else:
+        return templates.TemplateResponse("admin_crear_pelicula.html", {
+        "request": request,
+        "error_message": "Error al crear la película. Por favor, inténtelo de nuevo."
+    })
+
+@app.get("/admin_crear_serie", response_class=HTMLResponse)
+async def crear_serie_form(request: Request):
+    """
+    Muestra el formulario para crear una película.
+    """
+    # Obtener los géneros y directores desde el microservicio de contenidos
+    generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
+
+    generos = generos_response.json() if generos_response.status_code == 200 else []
+
+    return templates.TemplateResponse("admin_crear_serie.html", {
+        "request": request,
+        "generos": generos,
+    })
+
+@app.post("/admin_crear_serie", response_class=HTMLResponse)
+async def crear_serie(
+    request: Request,
+    titulo: str = Form(...),
+    descripcion: str = Form(...),
+    fecha_lanzamiento: str = Form(...),
+    id_genero: str = Form(...),
+):
+    """
+    Procesa el formulario para crear una película.
+    """
+    data = {
+        "tipoContenido": "Serie",
+        "titulo": titulo,
+        "descripcion": descripcion,
+        "fechaLanzamiento": fecha_lanzamiento,
+        "idGenero": id_genero,
+        "valoracionPromedio": 0.0,
+        "idSubtitulosContenido": "1",
+        "idDoblajeContenido": "1",
+        "duracion": None,
+        "idDirector": None
+    }
+
+    response = requests.post(f"{BASE_URL_CONTENIDOS}/series", json=data)
+
+    if response.status_code == 200:
+        redirect_response = RedirectResponse(url="/admin_menu", status_code=303)
+        redirect_response.set_cookie(key="success_message", value="Serie creada exitosamente", max_age=5)
+        return redirect_response
+    else:
+        return templates.TemplateResponse("admin_crear_serie.html", {
+        "request": request,
+        "error_message": "Error al crear la serie. Por favor, inténtelo de nuevo."
+    })
