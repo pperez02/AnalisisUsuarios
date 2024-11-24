@@ -1649,7 +1649,10 @@ async def actualizar_directores(request: Request):
     # Verifica si la respuesta fue exitosa
     if response.status_code == 200:
         directores = response.json()  # Obtenemos la lista de directores como JSON
-        return templates.TemplateResponse("actualizar_directores.html", {"request": request, "directores": directores})
+        return templates.TemplateResponse("actualizar_directores.html", {
+            "request": request, 
+            "directores": directores,
+            })
     else:
         return {"error": "No se pudo obtener la lista de directores"}
     
@@ -1674,6 +1677,5 @@ async def actualizar_director(request: Request):
         response = requests.put(f"{BASE_URL_CONTENIDOS}/directores/{director['id']}", json=director)
         if response.status_code != 200:
             raise HTTPException(status_code=response.status_code, detail="Error al actualizar director")
-
     # Redirigimos a la página de actualización de directores
-    return RedirectResponse(url="/directores/actualizar", status_code=303)
+    return RedirectResponse(url=f"/directores/actualizar", status_code=303)
