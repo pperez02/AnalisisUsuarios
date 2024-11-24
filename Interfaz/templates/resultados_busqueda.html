@@ -26,6 +26,7 @@
                         <div class="result-item">
                             <h3>{{ item.titulo }}</h3>
                             <p><strong>Género:</strong> {{ item.genero }}</p>
+                            <a href="/detalles_pelicula/{{ item.id }}" class="details-button">Detalles</a>
                         </div>
                     {% endfor %}
                 </div>

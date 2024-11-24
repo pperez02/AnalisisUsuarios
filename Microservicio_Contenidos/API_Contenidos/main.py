@@ -220,6 +220,7 @@ def buscar_contenidos(busqueda: str, db: Session = Depends(get_db)):
     contenidos = crud.obtener_contenidos_busqueda(db=db, busqueda=busqueda)
     if not contenidos:
         raise HTTPException(status_code=404, detail="No existen resultados para esa búsqueda")
+    
     return {"resultados": contenidos}
 
 #Endpoint para buscar actores por: nombre

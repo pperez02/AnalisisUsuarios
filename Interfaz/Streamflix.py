@@ -101,7 +101,9 @@ async def login(request: Request, email: str = Form(...), password: str = Form(.
     user_id = user_data.get("id")
     
     # Redirigimos al endpoint de pantalla principal con el `user_id`
-    return RedirectResponse(url=f"/pantalla_principal?user_id={user_id}", status_code=303)
+    response_redirect = RedirectResponse(url=f"/pantalla_principal?user_id={user_id}", status_code=303)
+    response_redirect.set_cookie(key="user_id", value=user_id)
+    return response_redirect
 
 
 
@@ -152,6 +154,10 @@ async def registrar_usuario(
 # Endpoint para mostrar los detalles de una película
 @app.get("/detalles_pelicula/{idContenido}", response_class=HTMLResponse)
 async def detalles_pelicula(request: Request, idContenido: str):
+
+    #Obtenemos el id del usuario
+    user_id = request.cookies.get("user_id")
+
     # Solicita los detalles de la película al microservicio de contenidos
     contenido = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}")
     
@@ -193,43 +199,62 @@ async def detalles_pelicula(request: Request, idContenido: str):
         "pelicula": detalles_pelicula,
         "reparto": detalles_reparto,
         "subtitulos": detalles_subtitulos,
-        "doblajes": detalles_doblajes
+        "doblajes": detalles_doblajes,
+        "user_id": user_id
     })
 
 
 @app.get("/buscar", response_class=HTMLResponse)
 async def buscar(request: Request, query: str, tipo: str):
-    # Realizamos la búsqueda de contenidos o actores según el tipo
+
+    user_id = request.cookies.get("user_id")
+
+    contenidos = []  # Variable para almacenar contenidos
+    actores = []     # Variable para almacenar actores
+    mensaje = ""
+
     if tipo == "contenido":
+        # Búsqueda de contenidos
         response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{query}/buscar")
+        if response.status_code == 200:
+            contenidos = response.json().get("resultados", [])
     elif tipo == "actor":
+        # Búsqueda de actores
         response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{query}/actores")
+        if response.status_code == 200:
+            actores = response.json().get("resultados", [])
+    elif tipo == "todos":
+        # Búsqueda combinada
+        response_contenido = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{query}/buscar")
+        response_actor = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{query}/actores")
+
+        # Almacenar resultados si las respuestas son exitosas
+        if response_contenido.status_code == 200:
+            contenidos = response_contenido.json().get("resultados", [])
+        if response_actor.status_code == 200:
+            actores = response_actor.json().get("resultados", [])
     else:
         raise HTTPException(status_code=400, detail="Tipo de búsqueda no válido")
 
-    # Si la respuesta no es exitosa (status_code != 200), manejamos el error pero no lanzamos una excepción
-    if response.status_code != 200:
-        resultados = []
+    # Si no hay resultados en ninguno de los tipos, asignamos un mensaje
+    if not contenidos and not actores:
         mensaje = "No se han encontrado resultados."
-    else:
-        resultados = response.json().get("resultados", [])
-        # Si los resultados están vacíos, ponemos el mensaje de "No se han encontrado resultados"
-        if not resultados:
-            mensaje = "No se han encontrado resultados."
-        else:
-            mensaje = ""
 
-    # Renderizamos la página con los resultados, ya sea vacíos o con el mensaje
+    # Renderizamos la página con los resultados separados
     return templates.TemplateResponse(
         "resultados_busqueda.html",
         {
             "request": request,
-            "resultados": resultados,
+            "user_id": user_id,
+            "contenidos": contenidos,
+            "actores": actores,
             "tipo": tipo,
             "query": query,
             "mensaje": mensaje
         }
-    ) 
+    )
+
+
 import logging
 logging.basicConfig(level=logging.INFO)
 
