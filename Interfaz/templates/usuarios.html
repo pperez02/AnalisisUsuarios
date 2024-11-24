@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Usuarios</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/menu_admin.css">
+</head>
+
+<header>
+    <div class="navbar">
+        <div class="logo">
+            <a href=#>Streamflix: Lista de usuarios</a>
+        </div>
+        <nav>
+            <ul>
+                <a href="/menu_admin">Volver al menú de administrador</a>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<body>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Idioma</th>
+            <th>Plan de Suscripción</th>
+        </tr>
+        {% for usuario in usuarios %}
+        <tr>
+            <td>{{ usuario.id }}</td>
+            <td>{{ usuario.nombre }}</td>
+            <td>{{ usuario.email }}</td>
+            <td>{{ usuario.idioma }}</td>
+            <td>{{ usuario.idPlanSuscripcion }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
