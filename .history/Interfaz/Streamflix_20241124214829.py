@@ -253,12 +253,11 @@ async def pantalla_principal(request: Request, user_id: str):
 
 @app.get("/admin_menu", response_class=HTMLResponse)
 async def admin_menu(request: Request):
-
-    print("Entrando al menú de admin")
     # Recupera el mensaje de éxito de las cookies
-    print("Hola")
+    success_message = request.cookies.get("success_message")
     response = templates.TemplateResponse("admin_menu.html", {
-        "request": request
+        "request": request,
+        "message": success_message
     })
     # Borra la cookie para que no se muestre de nuevo
     response.delete_cookie("success_message")
