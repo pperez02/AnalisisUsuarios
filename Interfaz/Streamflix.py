@@ -126,6 +126,77 @@ async def detalles_pelicula(request: Request, idContenido: str):
         "doblajes": detalles_doblajes
     })
 
+# Endpoint para mostrar los detalles de un contenido
+@app.get("/detalles_contenido/{idContenido}", response_class=HTMLResponse)
+async def detalles_contenido(request: Request, idContenido: str):
+    # Solicita los detalles del contenido al microservicio de contenidos
+    contenido = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}")
+    
+    if contenido.status_code != 200:
+        raise HTTPException(status_code=404, detail="No se encontraron los detalles de la película.")
+      
+    # Extrae los detalles de la película del JSON de la respuesta
+    detalles_contenido = contenido.json()
+
+    #Extraer nombre del genero a partir del id
+    genero = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{detalles_contenido["idGenero"]}")
+    detalles_genero = genero.json()
+    nombre_genero = detalles_genero["nombre"]
+
+    if detalles_contenido["tipoContenido"] == "Pelicula":
+        #Extraer nombre del director a partir del id
+        director = requests.get(f"{BASE_URL_CONTENIDOS}/directores/{detalles_contenido["idDirector"]}")
+        detalles_director = director.json()
+        nombre_director = detalles_director["nombre"]
+        detalles_contenido["idDirector"] = nombre_director
+        temporadas = None
+        todos_los_episodios = None
+    else:
+        # Obtener las temporadas y los capítulos de una serie
+        temps_caps = requests.get(f"{BASE_URL_CONTENIDOS}/series/{detalles_contenido['id']}")
+        detalles_temps_caps = temps_caps.json()
+
+        # Obtener todas las temporadas
+        temporadas = detalles_temps_caps["Temporadas"]
+
+        # Lista para almacenar todos los episodios
+        todos_los_episodios = []
+
+        # Recorrer las temporadas para acceder a los episodios
+        for temporada in temporadas:
+            episodios = temporada["Episodios"]  # Acceder a los episodios de la temporada
+            todos_los_episodios.extend(episodios)  # Agregar todos los episodios a la lista
+
+
+
+    #Cambiar los valores de ids por nombres
+    detalles_contenido["idGenero"] = nombre_genero
+    
+
+    #Obtener el reparto
+    reparto = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{detalles_contenido["id"]}/reparto")
+    detalles_reparto = reparto.json()
+
+    #Obtener los subtitulos
+    subtitulos = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{detalles_contenido["idSubtitulosContenido"]}/subtitulos")
+    detalles_subtitulos = subtitulos.json()
+    
+    #Obtener los doblajes
+    doblajes = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{detalles_contenido["idDoblajeContenido"]}/doblajes")
+    detalles_doblajes = doblajes.json()
+
+
+    # Renderiza la plantilla detalles_pelicula.html con los datos de la película
+    return templates.TemplateResponse("detalles_contenido.html", {
+        "request": request,
+        "detalles_contenido": detalles_contenido,
+        "reparto": detalles_reparto,
+        "subtitulos": detalles_subtitulos,
+        "doblajes": detalles_doblajes,
+        "temporadas": temporadas,
+        "episodios": todos_los_episodios
+    })
+
 
 @app.get("/buscar", response_class=HTMLResponse)
 async def buscar(request: Request, query: str, tipo: str):

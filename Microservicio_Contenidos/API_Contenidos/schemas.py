@@ -9,6 +9,7 @@ class ContenidoBase(BaseModel):
     valoracionPromedio: Optional[float] = None
     idSubtitulosContenido: Optional[str] = None
     idDoblajeContenido: Optional[str] = None
+    tipoContenido: str
 
     duracion: Optional[int]
     idDirector: Optional[str]

@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, String, ForeignKey, Float, Integer, PrimaryKeyConstraint
+from sqlalchemy import Column, String, ForeignKey, Float, Integer, PrimaryKeyConstraint, ForeignKeyConstraint
 from .database import Base
 
 """

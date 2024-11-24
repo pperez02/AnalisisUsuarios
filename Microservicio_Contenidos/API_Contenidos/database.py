@@ -52,6 +52,17 @@ def initialize_database():
                 db.add(subtitulo_nuevo)  
                 subtitulo_nuevo = models.Subtitulo(idSubtitulo="4", idioma="Portugués")    
                 db.add(subtitulo_nuevo)      
+
+            subtitulosContenidoExistentes = db.query(models.SubtituloContenido).count()
+            if subtitulosContenidoExistentes == 0:
+                subtitulosContenidoNuevo = models.SubtituloContenido(idSubtitulosContenido="1", idSubtitulo="1")
+                db.add(subtitulosContenidoNuevo)
+                subtitulosContenidoNuevo = models.SubtituloContenido(idSubtitulosContenido="1", idSubtitulo="2")
+                db.add(subtitulosContenidoNuevo)
+                subtitulosContenidoNuevo = models.SubtituloContenido(idSubtitulosContenido="1", idSubtitulo="3")
+                db.add(subtitulosContenidoNuevo)
+                subtitulosContenidoNuevo = models.SubtituloContenido(idSubtitulosContenido="1", idSubtitulo="4")
+                db.add(subtitulosContenidoNuevo)
             
             doblajesExistentes = db.query(models.Subtitulo).count()
             if doblajesExistentes == 0:
@@ -63,14 +74,64 @@ def initialize_database():
                 db.add(doblaje_nuevo)  
                 doblaje_nuevo = models.Doblaje(idDoblaje="4", idioma="Portugués")    
                 db.add(doblaje_nuevo)
+
+            doblajesContenidoExistentes = db.query(models.DoblajeContenido).count()
+            if doblajesContenidoExistentes == 0:
+                doblajesContenidoNuevo = models.DoblajeContenido(idDoblajeContenido="1", idDoblaje="1")
+                db.add(doblajesContenidoNuevo)
+                doblajesContenidoNuevo = models.DoblajeContenido(idDoblajeContenido="1", idDoblaje="2")
+                db.add(doblajesContenidoNuevo)
+                doblajesContenidoNuevo = models.DoblajeContenido(idDoblajeContenido="1", idDoblaje="3")
+                db.add(doblajesContenidoNuevo)
+                doblajesContenidoNuevo = models.DoblajeContenido(idDoblajeContenido="1", idDoblaje="4")
+                db.add(doblajesContenidoNuevo)
+
+            generosExistentes = db.query(models.Genero).count()
+            if generosExistentes == 0:
+                generoNuevo = models.Genero(id="1", nombre="Drama", descripcion="Descripcion de drama: llorar")
+                db.add(generoNuevo)
             
             contenidosExistentes = db.query(models.Contenido).count()
             if contenidosExistentes == 0:
-                contenidoNuevo = models.Contenido(id="ContenidoPrueba1", tipoContenido="Pelicula", titulo="ContenidoPrueba",
-                                                   fechaLanzamiento="0000-00-00", idGenero=1, valoracionPromedio=0, idSubtitulosContenido="0", 
-                                                   idDoblajeContenido="0", duracion=120, idDirector="1")
+                contenidoNuevo = models.Contenido(id="ContenidoPrueba1", tipoContenido="Pelicula", titulo="ContenidoPrueba", descripcion="Descripcion de prueba",
+                                                   fechaLanzamiento="0000-00-00", idGenero=1, valoracionPromedio=0, idSubtitulosContenido="1", 
+                                                   idDoblajeContenido="1", duracion=120, idDirector="1")
+                db.add(contenidoNuevo)
+                contenidoNuevo = models.Contenido(id="1", tipoContenido="Serie", titulo="Los Soprano", descripcion="Descripcion de los soprano",
+                                                   fechaLanzamiento="0000-00-00", idGenero=1, valoracionPromedio=0, idSubtitulosContenido="1", 
+                                                   idDoblajeContenido="1")
                 db.add(contenidoNuevo)
 
+            temporadasExistentes = db.query(models.Temporada).count()
+            if temporadasExistentes == 0:
+                temporadaNueva = models.Temporada(idContenido="1", idTemporada="1", numeroTemporada="1")
+                db.add(temporadaNueva)
+                temporadaNueva = models.Temporada(idContenido="1", idTemporada="2", numeroTemporada="3")
+                db.add(temporadaNueva)
+                temporadaNueva = models.Temporada(idContenido="1", idTemporada="3", numeroTemporada="3")
+                db.add(temporadaNueva)
+
+            episodiosExistentes = db.query(models.Episodio).count()
+            if episodiosExistentes == 0:
+                episodioNuevo = models.Episodio(idContenido="1", idTemporada="1", idEpisodio="1", 
+                                                idDirector="1", numeroEpisodio="1", duracion="15")
+                db.add(episodioNuevo)
+                episodioNuevo = models.Episodio(idContenido="1", idTemporada="1", idEpisodio="2",
+                                                 idDirector="1", numeroEpisodio="2", duracion="16")
+                db.add(episodioNuevo)
+                episodioNuevo = models.Episodio(idContenido="1", idTemporada="2", idEpisodio="3",
+                                                 idDirector="1", numeroEpisodio="1", duracion="17")
+                db.add(episodioNuevo)
+                episodioNuevo = models.Episodio(idContenido="1", idTemporada="2", idEpisodio="4",
+                                                 idDirector="1", numeroEpisodio="2", duracion="11")
+                db.add(episodioNuevo)
+                episodioNuevo = models.Episodio(idContenido="1", idTemporada="3", idEpisodio="5",
+                                                 idDirector="1", numeroEpisodio="1", duracion="20")
+                db.add(episodioNuevo)
+                episodioNuevo = models.Episodio(idContenido="1", idTemporada="3", idEpisodio="6",
+                                                 idDirector="1", numeroEpisodio="2", duracion="21")
+                db.add(episodioNuevo)
+                
             actoresExistentes = db.query(models.Actor).count()
             if actoresExistentes == 0:
                 #Pelicula de prueba para vincular a los nuevos Actores
