@@ -1,0 +1,119 @@
+/* Estilos globales */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #000;
+    color: #fff;
+}
+
+h1 {
+    font-size: 32px;
+    margin: 0;
+}
+
+/* Encabezado */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #111;
+}
+
+/* Contenedor de la película */
+.container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+/* Tarjeta de película */
+.movie-card {
+    display: flex;
+    background-color: #1a1a1a;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* Imagen de la película */
+.movie-poster {
+    width: 200px;
+    height: 300px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+    margin-right: 20px;
+}
+
+/* Detalles de la película */
+.movie-details {
+    flex: 1;
+}
+
+/* Título de la película */
+.movie-title {
+    font-size: 36px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Información adicional de la película (género, duración, director) */
+.movie-info {
+    font-size: 18px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.movie-info span {
+    color: #aaa;
+}
+
+/* Descripción de la película */
+.movie-description {
+    font-size: 16px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+/* Sección de reparto, doblajes y subtítulos en una sola línea */
+.reparto, .doblajes, .subtitulos {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.reparto ul, .doblajes ul, .subtitulos ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.reparto li, .doblajes li, .subtitulos li {
+    margin-right: 20px;
+    font-size: 16px;
+}
+
+.reparto strong, .doblajes strong, .subtitulos strong {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+/* Valoración de la película */
+.rating {
+    font-size: 20px;
+    font-weight: bold;
+    color: #e50914; /* Rojo Netflix */
+}
+
+/* Pie de página */
+footer {
+    text-align: center;
+    font-size: 14px;
+    padding: 20px;
+    background-color: #111;
+    color: #fff;
+}

@@ -1,0 +1,138 @@
+/* Espaciado para que el contenido no se solape con el header */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    padding-top: 100px; /* Esto da espacio suficiente para que el contenido no se solape con el header */
+}
+
+main {
+    flex: 1; /* Este estilo hace que el `<main>` ocupe todo el espacio disponible entre el header y el footer */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centra el contenido verticalmente */
+    align-items: center; /* Centra el contenido horizontalmente */
+}
+
+/* Estilo para el header (fijo en la parte superior) */
+header {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    position: fixed;   /* Esto asegura que se quede fijo en la parte superior */
+    width: 100%;       /* Aseguramos que ocupe todo el ancho */
+    top: 0;            /* Fijamos la posición al inicio de la página */
+    z-index: 1000;     /* Nos aseguramos de que esté por encima de otros elementos */
+    display: flex;
+    justify-content: center;  /* Centra todo el contenido del header */
+    align-items: center;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #141414;
+    border-bottom: 1px solid #333;
+}
+
+.navbar .logo a {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #e50914; /* Rojo icónico de Netflix */
+    text-decoration: none;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+}
+
+.navbar ul li a {
+    color: #e5e5e5;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.navbar ul li a:hover {
+    color: #e50914;
+}
+
+/* Barra de búsqueda centrada en el header */
+.search-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;  /* Espacio entre los elementos de la barra de búsqueda */
+    max-width: 800px;  /* Limitar el tamaño de la barra de búsqueda */
+    width: 100%;
+}
+
+.search-bar input,
+.search-bar select {
+    padding: 10px;
+    margin: 5px;
+    font-size: 16px;
+    width: auto;
+}
+
+.search-bar button {
+    padding: 10px 20px;
+    margin: 5px;
+    background-color: #5c6bc0;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.search-bar button:hover {
+    background-color: #3f51b5;
+}
+
+/* Estilo del botón de perfil */
+.profile-button {
+    background-color: #f40612; /* Color rojo similar al del botón de buscar */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none; /* Quita el subrayado */
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    margin: 1%
+}
+
+/* Efecto al pasar el ratón sobre el botón de perfil */
+.profile-button:hover {
+    background-color: #e50914; /* Rojo más brillante */
+}
+
+.perfil-button {
+    background-color: #e50914; /* Rojo Netflix */
+    color: #fff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.perfil-button:hover {
+    background-color: #f40612; /* Rojo más brillante en hover */
+}
+
+/* Footer */
+footer {
+    width: 100%; /* Hace que el footer ocupe toda la anchura de la pantalla */
+    position: relative; /* Esto asegura que el footer no se superponga si usas otros estilos */
+    left: 0; /* Garantiza que el footer esté alineado al borde izquierdo */
+    margin-top: auto; /* Empuja el footer al final si el contenido no llena la pantalla */
+    background-color: #141414; /* Mantiene el fondo oscuro como en tu diseño */
+    color: #777; /* Estilo del texto */
+    padding: 1rem; /* Espaciado interno */
+    text-align: center; /* Centra el contenido del texto */
+    border-top: 1px solid #333; /* Línea decorativa en la parte superior */
+}

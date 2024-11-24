@@ -1,0 +1,140 @@
+/* General body styling */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #000; /* Fondo completamente negro */
+}
+
+/* Contenedor */
+.container {
+    background-color: #1a1a1a; /* Fondo gris oscuro */
+    margin: auto;
+    width: 90%; /* 90% del ancho de la pantalla */
+    max-width: 1200px;
+    height: auto; /* Ajusta la altura según el contenido */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    position: relative;
+    overflow-y: auto; /* Scroll si el contenido es demasiado grande */
+}
+
+/* Estilo para las secciones con los recuadros de contenido */
+.section {
+    margin-top: 25px; /* Más espacio entre secciones */
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Recuadros de contenido (simulación de portadas) */
+.content-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Espacio entre los recuadros */
+    justify-content: start; /* Alineación hacia la izquierda */
+}
+
+/* Recuadro de contenido */
+.content-box {
+    background-image: url('/static/default-cover.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding: 0;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 1px 1px 2px black;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    width: 100%; /* Se ajusta al 100% de la columna disponible */
+    max-width: 220px; /* Limitamos el tamaño máximo */
+    height: 220px; /* Más alto */
+    transition: transform 0.3s ease-in-out;
+    margin: 0; /* Elimina el margen adicional */
+}
+
+/* Mejoras visuales para los recuadros */
+.content-box span {
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    text-align: center;
+    padding: 8px 0;
+    font-size: 14px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* Efecto hover para los recuadros */
+.content-box:hover {
+    transform: scale(1.1); /* Efecto hover más marcado */
+}
+
+/* Estilo para los encabezados de las secciones */
+.section h2 {
+    font-family: 'Arial Black', sans-serif;
+    font-size: 20px; /* Encabezados más grandes */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #e50914;
+}
+
+/* Estilo de los recuadros de contenido */
+.content-box {
+    display: block; /* Cambiado a bloque */
+    height: 180px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+    text-align: center;
+    font-size: 14px;
+    padding: 10px;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+/* Efecto hover para los recuadros */
+.content-box:hover {
+    transform: scale(1.05);
+    background-color: #444;
+}
+
+/* Estilos responsivos */
+@media (max-width: 1200px) {
+    .content-list {
+        flex-direction: row; /* En pantallas medianas, los recuadros se alinean horizontalmente */
+        justify-content: space-evenly;
+    }
+}
+
+@media (max-width: 900px) {
+    .content-list {
+        flex-direction: column; /* En pantallas pequeñas, los recuadros se alinean verticalmente */
+    }
+}
+
+@media (max-width: 600px) {
+    .content-list {
+        flex-direction: column; /* En pantallas muy pequeñas, los recuadros se alinean verticalmente */
+    }
+}
+
+/* Estilo para el pie de página */
+footer {
+    background-color: #1a1a1a;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+footer p {
+    margin: 0;
+    font-size: 14px;
+}

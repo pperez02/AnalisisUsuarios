@@ -74,3 +74,20 @@ def get_metodo_pago(db: Session, metodo_pago_id: str):
 # Obtener todos los métodos de pago
 def get_metodos_pago(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.MetodoPago).offset(skip).limit(limit).all()
+
+def get_metodos_pago_usuario(db: Session, user_id: str):
+
+    metodosPagoUsuario = db.query(models.MetodoPagoUsuario).filter(models.MetodoPagoUsuario.idUsuario == user_id).all()
+
+    if not metodosPagoUsuario:
+        return None
+    
+    metodos_pago = db.query(models.MetodoPago).filter(models.MetodoPago.id.in_([mpu.idMetodoPago for mpu in metodosPagoUsuario])).all()
+    return metodos_pago
+
+def create_metodo_pago_usuario(db: Session, idUsuario: str, idMetodoPago: str):
+    metodoPagoUsuario = models.MetodoPagoUsuario(idUsuario=idUsuario, idMetodoPago=idMetodoPago)
+    db.add(metodoPagoUsuario)
+    db.commit()
+    db.refresh(metodoPagoUsuario)
+    return metodoPagoUsuario

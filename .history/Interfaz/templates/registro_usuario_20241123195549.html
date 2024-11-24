@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Usuario</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/header_footer.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Formulario de Registro</h1>
+        <form action="/registro" method="post">
+            <label for="name">Nombre:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Correo electrónico:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="language">Idioma (Opcional):</label>
+            <input type="text" id="language" name="language">
+
+            <!-- Planes de suscripción -->
+            <label for="subscription_plan">Seleccionar plan:</label>
+            <select id="subscription_plan" name="subscription_plan" required>
+                <!-- Los planes se cargarán aquí dinámicamente con JavaScript -->
+            </select>
+
+            <button type="submit">Registrar</button>
+        </form>
+    </div>
+
+    <script>
+        // Cargar los planes de suscripción desde la API
+        fetch('/planes_suscripcion')
+            .then(response => response.json())
+            .then(data => {
+                const subscriptionSelect = document.getElementById("subscription_plan");
+
+                data.forEach(plan => {
+                    const option = document.createElement("option");
+                    option.value = plan.id;
+                    option.text = plan.nombre;
+                    subscriptionSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error al cargar los planes:', error));
+    </script>
+
+    {% include "footer.html" %}
+</body>
+</html>

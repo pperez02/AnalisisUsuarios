@@ -1,0 +1,26 @@
+<!-- header.html -->
+<header>
+    <div class="logo">
+        <a href="/pantalla_principal">Streamflix</a>
+    </div>
+    <div class="search-bar">
+        <form action="/buscar" method="get">
+            <input type="text" name="query" placeholder="Buscar contenido o actor..." required>
+            <select name="tipo" required>
+                <option value="contenido">Contenido</option>
+                <option value="actor">Actor</option>
+                <option value="todos">Todos</option>
+            </select>
+            <button type="submit">Buscar</button>
+        </form>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/catalogo">Catálogo</a></li>
+            <li><a href="/usuarios/{{ user_id }}/perfil">Perfil</a></li>
+        </ul>
+    </nav>
+    <!-- Botón para redirigir al perfil del usuario dentro del contenedor -->
+    <a href="/usuarios/{{ user_id }}/perfil" class="profile-button">Mi Perfil</a>
+</header>

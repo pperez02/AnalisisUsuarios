@@ -1,0 +1,124 @@
+/* Contenedor general */
+.container {
+    max-width: 100%;
+    margin: 20px auto;
+    background: #000;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Diseño en grid para las secciones */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 30px;
+    /* Reduce el espacio entre las columnas */
+}
+
+/* Estilos para cada sección */
+.section {
+    background-color: #000;
+    border-radius: 2px;
+    padding: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.section h2 {
+    color: #e50914;
+    border-bottom: 2px solid #e50914;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    margin: 5px 0;
+}
+
+ul li a {
+    text-decoration: none;
+    color: #007BFF;
+}
+
+ul li a:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
+
+/* Estilo para el header (fijo en la parte superior) */
+header {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+    /* Define una altura fija */
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #141414;
+    border-bottom: 1px solid #333;
+}
+
+.navbar .logo a {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #e50914;
+    /* Rojo icónico de Netflix */
+    text-decoration: none;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+}
+
+.navbar ul li a {
+    color: #e5e5e5;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.navbar ul li a:hover {
+    color: #e50914;
+}
+
+/* Estilos responsivos */
+@media (max-width: 1200px) {
+    .content-list {
+        flex-direction: row;
+        /* En pantallas medianas, los recuadros se alinean horizontalmente */
+        justify-content: space-evenly;
+    }
+}
+
+@media (max-width: 900px) {
+    .content-list {
+        flex-direction: column;
+        /* En pantallas pequeñas, los recuadros se alinean verticalmente */
+    }
+}
+
+@media (max-width: 600px) {
+    .content-list {
+        flex-direction: column;
+        /* En pantallas muy pequeñas, los recuadros se alinean verticalmente */
+    }
+}

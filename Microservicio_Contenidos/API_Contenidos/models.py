@@ -10,8 +10,6 @@ la base de datos
 """
 
 # Microservicio Contenidos
-
-#TODO Comprobar si en la DB la herencia funciona como en el código. //TODO de momento está quitada 
 class Contenido(Base):
     __tablename__ = "Contenido"
 
@@ -37,7 +35,6 @@ class Temporada(Base):
     idTemporada = Column(String, default=lambda: str(uuid.uuid4()), index=True)
     numeroTemporada = Column(Integer)
 
-    #TODO comprobar si con las primarykeys anda, o si hay que especificar el 'PrimaryKeyConstraint'
     __table_args__ = (
         PrimaryKeyConstraint('idContenido', 'idTemporada'),
     )
@@ -52,7 +49,6 @@ class Episodio(Base):
     numeroEpisodio = Column(Integer)
     duracion = Column(Integer)  # En minutos
 
-    #TODO comprobar si con las primarykeys anda, o si hay que especificar el 'PrimaryKeyConstraint'
     __table_args__ = (
         PrimaryKeyConstraint('idContenido', 'idTemporada', 'idEpisodio'),
     )
@@ -113,7 +109,7 @@ class SubtituloContenido(Base):
 class Subtitulo(Base):
     __tablename__ = "Subtitulo"
 
-    idSubtitulo = Column(String, primary_key=True) #TODO
+    idSubtitulo = Column(String, primary_key=True)
     idioma = Column(String)
 
 class DoblajeContenido(Base):
