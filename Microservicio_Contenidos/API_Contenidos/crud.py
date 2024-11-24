@@ -443,8 +443,8 @@ def create_director(db: Session, director: schemas.DirectorCreate):
 def update_actor(db: Session, idActor: str, actor: schemas.ActorUpdate):
     actor_query = db.query(models.Actor).filter(models.Actor.id == idActor).first()
     if actor_query:
-        actor_query.nombre=actor.nombre,
-        actor_query.nacionalidad=actor.nacionalidad,
+        actor_query.nombre=actor.nombre
+        actor_query.nacionalidad=actor.nacionalidad
         actor_query.fechaNacimiento=actor.fechaNacimiento
         db.commit()
         db.refresh(actor_query)
@@ -454,8 +454,8 @@ def update_actor(db: Session, idActor: str, actor: schemas.ActorUpdate):
 def update_director(db: Session, idDirector: str, director: schemas.DirectorUpdate):
     director_query = db.query(models.Director).filter(models.Director.id == idDirector).first()
     if director_query:
-        director_query.nombre=director.nombre,
-        director_query.nacionalidad=director.nacionalidad,
+        director_query.nombre=director.nombre
+        director_query.nacionalidad=director.nacionalidad
         director_query.fechaNacimiento=director.fechaNacimiento
         db.commit()
         db.refresh(director_query)
