@@ -295,39 +295,3 @@ def get_actors_by_content(idContenido: str, db: Session = Depends(get_db)):
 def get_director_by_content(idContenido: str, db: Session = Depends(get_db)):
     director = crud.get_director_by_content(db=db, idContenido=idContenido)
     return director
-
-#Funciones para obtener todos los actores o directores de la base de datos
-@app.get("/actores", response_model=list[schemas.Actor])
-def get_actores(db: Session = Depends(get_db)):
-    return crud.get_actores(db=db)
-
-@app.get("/directores", response_model=list[schemas.Director])
-def get_actores(db: Session = Depends(get_db)):
-    return crud.get_directores(db=db)
-
-#Funciones para eliminar un actor o director de la base de datos
-@app.delete("/actores/{idActor}")
-def borrar_actor(idActor: str, db: Session = Depends(get_db)):
-    """
-    Endpoint para borrar un actor por su ID.
-    """
-
-    eliminado = crud.eliminar_actor(db=db, idActor=idActor)
-
-    if not eliminado: 
-        return {"message": "El actor no existe o no se pudo eliminar"}
-
-    return {"message": "Actor eliminado correctamente"}
-
-@app.delete("/directores/{idDirector}")
-def borrar_actor(idDirector: str, db: Session = Depends(get_db)):
-    """
-    Endpoint para borrar un director por su ID.
-    """
-
-    eliminado = crud.eliminar_director(db=db, idDirector=idDirector)
-
-    if not eliminado: 
-        return {"message": "El director no existe o no se pudo eliminar"}
-
-    return {"message": "Director eliminado correctamente"}
