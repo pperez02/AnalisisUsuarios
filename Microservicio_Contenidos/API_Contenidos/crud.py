@@ -517,3 +517,31 @@ def obtener_actores_busqueda(db: Session, busqueda: str):
     if not actores_coincidentes:
         return None
     return actores_coincidentes
+
+
+def get_actores(db: Session):
+    return db.query(models.Actor).all()
+
+def get_directores(db: Session):
+    return db.query(models.Director).all()
+
+def eliminar_actor(db: Session, idActor: str) -> bool:
+    # Buscar al actor en la base de datos
+    actor = db.query(models.Actor).filter(models.Actor.id == idActor).first()
+    if not actor:
+        return False
+
+    db.delete(actor)
+    db.commit()  # Confirmar los cambios en la base de datos
+    return True
+
+def eliminar_director(db: Session, idDirector: str) -> bool:
+    # Buscar al director en la base de datos
+    director = db.query(models.Director).filter(models.Director.id == idDirector).first()
+    if not director:
+        return False
+
+    db.delete(director)
+    db.commit()  # Confirmar los cambios en la base de datos
+    return True
+

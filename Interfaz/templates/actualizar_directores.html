@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualizar Directores</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/menu_admin.css">
+    <link rel="stylesheet" href="/static/borrar_directores.css">
+</head>
+
+<header>
+    <div class="navbar">
+        <div class="logo">
+            <a href=#>Streamflix: Menu Administrador</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/" class="return-button">Volver al inicio</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<body>
+    <h1>Actualizar Directores</h1>
+    <form action="/director/actualizar" method="POST">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for director in directores %}
+                <tr>
+                    <td>{{ director.id }}</td>
+                    <td><input type="text" name="nombre_{{ director.id }}" value="{{ director.nombre }}" required></td>
+                    <td><input type="text" name="nacionalidad_{{ director.id }}" value="{{ director.nacionalidad }}" required></td>
+                    <td><input type="text" name="fechaNacimiento_{{ director.id }}" value="{{ director.fechaNacimiento }}" required></td>
+                    <td>
+                        <button type="submit" name="id_director" value="{{ director.id }}">Actualizar</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+</body>
+</html>
