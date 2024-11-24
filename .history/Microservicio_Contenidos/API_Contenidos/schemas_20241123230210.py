@@ -133,10 +133,8 @@ class ActorCreate(BaseModel):
     nacionalidad: str
     fechaNacimiento: str
 
-class ActorUpdate(BaseModel):
-    nombre: str
-    nacionalidad: str
-    fechaNacimiento: str        
+class ActorUpdate(ActorCreate):
+    pass        
 
 class Director(BaseModel):
     id: str

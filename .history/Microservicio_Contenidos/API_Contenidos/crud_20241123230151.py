@@ -106,16 +106,6 @@ def update_subtitulo(db: Session, content_id: str, subtitulo_id: str):
 
     return db_SubtituloContenido
 
-def get_subtitulos(db: Session, idContenido: str):
-    # Realizamos la consulta uniendo las tablas SubtituloContenido y Subtitulo por idSubtitulo
-    subtitulos = (
-        db.query(models.Subtitulo)  # Seleccionamos la tabla Subtitulo desde models
-        .join(models.SubtituloContenido, models.SubtituloContenido.idSubtitulo == models.Subtitulo.idSubtitulo)  # Unimos SubtituloContenido con Subtitulo
-        .filter(models.SubtituloContenido.idSubtitulosContenido == idContenido)  # Filtramos por idContenido
-        .all()  # Ejecutamos la consulta y obtenemos todos los resultados
-    )
-    return subtitulos
-
 # Función para añadir doblajes a un contenido
 def update_doblaje(db: Session, content_id: str, doblaje_id: str):
     content_query = db.query(models.Contenido).filter(models.Contenido.id == content_id).first()
@@ -129,18 +119,7 @@ def update_doblaje(db: Session, content_id: str, doblaje_id: str):
         db.commit()
         db.refresh(db_DoblajeContenido)
 
-    return db_DoblajeContenido
-
-#Funcion para obtener los doblajes
-def get_doblajes(db: Session, idContenido: str):
-    # Realizamos la consulta uniendo las tablas DoblajesContenido y Doblajes por idDoblaje
-    doblajes = (
-        db.query(models.Doblaje)  # Seleccionamos la tabla Doblaje desde models
-        .join(models.DoblajeContenido, models.DoblajeContenido.idDoblaje == models.Doblaje.idDoblaje)  # Unimos SubtituloContenido con Subtitulo
-        .filter(models.DoblajeContenido.idDoblajeContenido == idContenido)  # Filtramos por idContenido
-        .all()  # Ejecutamos la consulta y obtenemos todos los resultados
-    )
-    return doblajes  
+    return db_DoblajeContenido    
 
 # Función para eliminar una película o serie
 def delete_content(db: Session, idContenido: str) -> bool:
@@ -206,14 +185,6 @@ def get_all_contenidos(db: Session):
                 resultado_contenidos.append(serie)
 
     return resultado_contenidos
-
-# Consulta de todas las series
-def get_todoseries(db: Session):
-    return db.query(models.Contenido).filter(models.Contenido.tipoContenido == "Serie")
-
-# Consulta de todas las series
-def get_todopeliculas(db: Session):
-    return db.query(models.Contenido).filter(models.Contenido.tipoContenido == "Pelicula")
 
 def get_contenido_by_id(db: Session, id_contenido: str):
     return db.query(models.Contenido).filter(models.Contenido.id == id_contenido).first()    
@@ -341,9 +312,6 @@ def update_episodio(db: Session,  idContenido: str, idTemporada: str, idEpisodio
 
     return episodio_actual
 
-# Función para consultar todos los géneros de la base de datos
-def get_generos(db: Session):
-    return db.query(models.Genero).all()
 
 # Función para consultar los datos de un género
 def get_genero(db: Session, genero_id: str):
@@ -382,17 +350,6 @@ def delete_genero(db: Session, genero_id: str) -> bool:
         db.delete(genero)
         db.commit()
         return True
-
-#Funcion para obtener el reparto
-def get_reparto(db: Session, idContenido: str):
-    # Realizamos la consulta uniendo las tablas Reparto y Actor por idActor
-    reparto = (
-        db.query(models.Actor)  # Seleccionamos la tabla Actor
-        .join(models.Reparto, models.Reparto.idActor == models.Actor.id)  # Unimos Reparto con Actor
-        .filter(models.Reparto.idContenido == idContenido)  # Filtramos por idContenido
-        .all()  # Ejecutamos la consulta y obtenemos todos los resultados
-    )
-    return reparto
 
 #Funcion para actualizar el reparto
 def update_reparto(db: Session, idContenido: str, idActor: str):
@@ -486,8 +443,8 @@ def create_director(db: Session, director: schemas.DirectorCreate):
 def update_actor(db: Session, idActor: str, actor: schemas.ActorUpdate):
     actor_query = db.query(models.Actor).filter(models.Actor.id == idActor).first()
     if actor_query:
-        actor_query.nombre=actor.nombre
-        actor_query.nacionalidad=actor.nacionalidad
+        actor_query.nombre=actor.nombre,
+        actor_query.nacionalidad=actor.nacionalidad,
         actor_query.fechaNacimiento=actor.fechaNacimiento
         db.commit()
         db.refresh(actor_query)
@@ -497,8 +454,8 @@ def update_actor(db: Session, idActor: str, actor: schemas.ActorUpdate):
 def update_director(db: Session, idDirector: str, director: schemas.DirectorUpdate):
     director_query = db.query(models.Director).filter(models.Director.id == idDirector).first()
     if director_query:
-        director_query.nombre=director.nombre
-        director_query.nacionalidad=director.nacionalidad
+        director_query.nombre=director.nombre,
+        director_query.nacionalidad=director.nacionalidad,
         director_query.fechaNacimiento=director.fechaNacimiento
         db.commit()
         db.refresh(director_query)
@@ -532,91 +489,3 @@ def valorar_contenido(db: Session, idContenido: str, valoracion: int):
     db.commit()
     db.refresh(contenido)
     return contenido
-
-def obtener_contenidos_busqueda(db: Session, busqueda: str):
-    # Se obtienen todos los contenidos que contienen la búsqueda en el título
-    contenidos_por_titulo = db.query(models.Contenido).filter(
-        models.Contenido.titulo.ilike(f"%{busqueda}%")
-    ).all()
-
-    # Se buscan los géneros cuyo nombre incluye la búsqueda
-    generos_coincidentes = db.query(models.Genero).filter(
-        models.Genero.nombre.ilike(f"%{busqueda}%")
-    ).all()
-
-    # Crear un mapa completo de idGenero -> nombre (todos los géneros en la base de datos)
-    todos_los_generos = db.query(models.Genero).all()
-    genero_map = {genero.id: genero.nombre for genero in todos_los_generos}
-
-    # Extraer los IDs de los géneros coincidentes con la búsqueda
-    genero_ids = [genero.id for genero in generos_coincidentes]
-
-    # Buscar contenidos por género
-    contenidos_por_genero = db.query(models.Contenido).filter(
-        models.Contenido.idGenero.in_(genero_ids)
-    ).all()
-
-    # Se juntan resultados y eliminan los duplicados
-    contenidos_totales = contenidos_por_titulo + contenidos_por_genero
-    contenidos_unicos = {contenido.id: contenido for contenido in contenidos_totales}.values()
-
-    # Formatear la respuesta incluyendo el nombre del género
-    resultados = [
-        {
-            "id": contenido.id,
-            "titulo": contenido.titulo,
-            "genero": genero_map.get(contenido.idGenero, "Género desconocido")  # Siempre usa el mapa completo
-        }
-        for contenido in contenidos_unicos
-    ]
-
-    if not resultados:
-        return None
-    
-    return resultados
-
-
-def obtener_actores_busqueda(db: Session, busqueda: str):
-    actores = db.query(models.Actor).filter(models.Actor.nombre.ilike(f"%{busqueda}%"))
-
-    
-    actores_coincidentes = [
-        {
-            "id": actor.id,
-            "nombre": actor.nombre,
-            "nacionalidad": actor.nacionalidad
-        }
-        for actor in actores
-    ]
-
-    if not actores_coincidentes:
-        return None
-    return actores_coincidentes
-
-
-def get_actores(db: Session):
-    return db.query(models.Actor).all()
-
-def get_directores(db: Session):
-    return db.query(models.Director).all()
-
-def eliminar_actor(db: Session, idActor: str) -> bool:
-    # Buscar al actor en la base de datos
-    actor = db.query(models.Actor).filter(models.Actor.id == idActor).first()
-    if not actor:
-        return False
-
-    db.delete(actor)
-    db.commit()  # Confirmar los cambios en la base de datos
-    return True
-
-def eliminar_director(db: Session, idDirector: str) -> bool:
-    # Buscar al director en la base de datos
-    director = db.query(models.Director).filter(models.Director.id == idDirector).first()
-    if not director:
-        return False
-
-    db.delete(director)
-    db.commit()  # Confirmar los cambios en la base de datos
-    return True
-

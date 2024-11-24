@@ -59,19 +59,11 @@ def update_serie(idSerie: str, serie_data: schemas.SerieUpdate, db: Session = De
 
 @app.post("/contenidos/{idContenido}/subtitulos/{idSubtitulo}")
 def update_subtitulos(idContenido: str, idSubtitulo: str, db: Session = Depends(get_db)):
-    return crud.update_subtitulo(db=db, content_id=idContenido, subtitulo_id=idSubtitulo)  
-
-@app.get("/contenidos/{idContenido}/subtitulos")
-def get_subtitulos(idContenido: str, db: Session = Depends(get_db)):
-    return crud.get_subtitulos(db=db, idContenido=idContenido)
+    return crud.update_subtitulo(db=db, content_id=idContenido, subtitulo_id=idSubtitulo)   
 
 @app.post("/contenidos/{idContenido}/doblajes/{idDoblaje}")
 def update_doblaje(idContenido: str, idDoblaje: str, db: Session = Depends(get_db)):
-    return crud.update_doblaje(db=db, content_id=idContenido, doblaje_id=idDoblaje)
-
-@app.get("/contenidos/{idContenido}/doblajes")
-def get_doblajes(idContenido: str, db: Session = Depends(get_db)):
-    return crud.get_doblajes(db=db, idContenido=idContenido) 
+    return crud.update_doblaje(db=db, content_id=idContenido, doblaje_id=idDoblaje) 
 
 # Nuevo endpoint para eliminar contenido en distintos niveles
 @app.delete("/contenidos/{idContenido}/temporadas/{idTemporada}/episodios/{idEpisodio}", tags=["Eliminar contenido"])
@@ -117,16 +109,6 @@ def get_peliculas(idContenido: str, db: Session = Depends(get_db)):
 def obtener_todos_los_contenidos(db: Session = Depends(get_db)):
     contenidos = crud.get_all_contenidos(db)
     return contenidos
-
-@app.get("/todoseries", response_model=list[schemas.Contenido])
-def get_todoseries(db: Session = Depends(get_db)):
-    series = crud.get_todoseries(db=db)
-    return series
-
-@app.get("/todopeliculas", response_model=list[schemas.Contenido])
-def get_todopeliculas(db: Session = Depends(get_db)):
-    peliculas = crud.get_todopeliculas(db=db)
-    return peliculas
 
 @app.get("/contenidos/{idContenido}", response_model=schemas.Contenido)
 def get_contenido(idContenido: str, db: Session = Depends(get_db)):
@@ -181,15 +163,11 @@ def update_episodio(idContenido: str, idTemporada: str, idEpisodio: str, episodi
         raise HTTPException(status_code=404, detail="Episodio no actualizado")
     return {"message": "Episodio actualizado exitosamente"}
 
+
 @app.get("/generos/{idGenero}", response_model=schemas.Genero)
 def get_genero(idGenero: str, db: Session = Depends(get_db)):
     genero = crud.get_genero(db=db, genero_id=idGenero)
     return genero
-
-@app.get("/generos", response_model=list[schemas.Genero])
-def get_generos(db: Session = Depends(get_db)):
-    generos = crud.get_generos(db=db)
-    return generos
 
 @app.post("/generos", response_model=schemas.Genero)
 def create_genero(genero: schemas.GeneroCreate, db: Session = Depends(get_db)):
@@ -222,41 +200,15 @@ def actualizar_valoracion_contenido(idContenido: str, valoracion: int, db: Sessi
     valoracion_contenido = crud.valorar_contenido(db=db, idContenido=idContenido, valoracion=valoracion)
     if not valoracion_contenido:
         raise HTTPException(status_code=404, detail="Contenido no encontrado")
-    return {"message": "Valoración del contenido actualizada exitosamente"} 
-
-#Endpoint para buscar contenidos por: titulo, genero 
-@app.get("/contenidos/{busqueda}/buscar")
-def buscar_contenidos(busqueda: str, db: Session = Depends(get_db)):
-    contenidos = crud.obtener_contenidos_busqueda(db=db, busqueda=busqueda)
-    if not contenidos:
-        raise HTTPException(status_code=404, detail="No existen resultados para esa búsqueda")
-    return {"resultados": contenidos}
-
-#Endpoint para buscar actores por: nombre
-@app.get("/contenidos/{busqueda}/actores")
-def buscar_actores(busqueda: str, db: Session = Depends(get_db)):
-    actores = crud.obtener_actores_busqueda(db=db, busqueda=busqueda)
-    if not actores:
-        raise HTTPException(status_code=404, detail="No existen actores para esa búsqueda")
-    return {"resultados": actores}
-
+    return {"message": "Valoración del contenido actualizada exitosamente"}
     
-# Endpoint para obtener el reparto de un contenido
-
-@app.get("/contenidos/{idContenido}/reparto")
-def get_reparto(idContenido: str, db: Session = Depends(get_db)):
-    reparto = crud.get_reparto(db=db, idContenido=idContenido)
-    if not reparto:
-         raise HTTPException(status_code=404, detail="No se ha podido recuperar reparto")
-    return reparto
-
 #Asociar actores a una pelicula. Param: NO lista de actores, un solo actor (idActor)
 @app.post("/contenidos/{idContenido}/reparto/{idActor}", response_model=schemas.Reparto)
 def update_reparto(idContenido: str, idActor: str, db: Session = Depends(get_db)):
     reparto = crud.update_reparto(db=db, idContenido=idContenido, idActor=idActor)
 
     if not reparto:
-        raise HTTPException(status_code=404, detail="No se ha podido asociar actores a pelicula")
+        raise HTTPException(status_code=404, detail="Género no encontrado")
     return reparto
 
 #Funciones para obtener la información de un actor/director por su ID
@@ -332,39 +284,3 @@ def delete_director(idDirector: str, db: Session = Depends(get_db)):
     if not success:
         raise HTTPException(status_code=404, detail="Director no encontrado")
     return {"message": "Director eliminado exitosamente"}
-
-#Funciones para obtener todos los actores o directores de la base de datos
-@app.get("/actores", response_model=list[schemas.Actor])
-def get_actores(db: Session = Depends(get_db)):
-    return crud.get_actores(db=db)
-
-@app.get("/directores", response_model=list[schemas.Director])
-def get_actores(db: Session = Depends(get_db)):
-    return crud.get_directores(db=db)
-
-#Funciones para eliminar un actor o director de la base de datos
-@app.delete("/actores/{idActor}")
-def borrar_actor(idActor: str, db: Session = Depends(get_db)):
-    """
-    Endpoint para borrar un actor por su ID.
-    """
-
-    eliminado = crud.eliminar_actor(db=db, idActor=idActor)
-
-    if not eliminado: 
-        return {"message": "El actor no existe o no se pudo eliminar"}
-
-    return {"message": "Actor eliminado correctamente"}
-
-@app.delete("/directores/{idDirector}")
-def borrar_actor(idDirector: str, db: Session = Depends(get_db)):
-    """
-    Endpoint para borrar un director por su ID.
-    """
-
-    eliminado = crud.eliminar_director(db=db, idDirector=idDirector)
-
-    if not eliminado: 
-        return {"message": "El director no existe o no se pudo eliminar"}
-
-    return {"message": "Director eliminado correctamente"}
