@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +16,7 @@
         </div>
         <nav>
             <ul>
-                <li><a href="/"class="return-button">Volver al inicio</a></li>
+                <li><a href="/" class="return-button">Volver al inicio</a></li>
             </ul>
         </nav>
     </div>
@@ -32,7 +33,7 @@
             <div class="section">
                 <h2>Usuarios</h2>
                 <ul>
-                    <li><a href="/usuarios">Listar todos los usuarios</a></li>
+                    <li><a href="/admin_usuarios">Listar todos los usuarios</a></li>
                 </ul>
             </div>
 
@@ -51,10 +52,18 @@
                             <li>
                                 {{pelicula.titulo}}
                             </li>
-                        {% endfor %}
+                            {% endfor %}
                         </ul>
                     </li>
-                    <li><a href="#">Actualizar serie</a></li>
+                    <li><a href="#">Actualizar serie</a>
+                        <ul>
+                            {% for serie in series %}
+                            <li>
+                                {{serie.titulo}}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
                     <li><a href="#">Actualizar temporada</a></li>
                     <li><a href="#">Actualizar episodio</a></li>
                     <li><a href="#">Actualizar género</a></li>
@@ -74,13 +83,30 @@
                 <ul>
                     <li><a href="#">Crear actor</a></li>
                     <li><a href="#">Crear director</a></li>
-                    <li><a href="#">Actualizar actor</a></li>
-                    <li><a href="#">Actualizar director</a></li>
-                    <li><a href="#">Borrar actor</a></li>
-                    <li><a href="#">Borrar director</a></li>
+                    <li><a href="#">Actualizar actor</a>
+                        <ul>
+                            {% for actor in actores %}
+                            <li>
+                                {{actor.nombre}}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li><a href="/directores/actualizar">Actualizar director</a>
+                        <ul>
+                            {% for director in directores %}
+                            <li>
+                                {{director.nombre}}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li><a href="/actores/borrar">Borrar actor</a></li>
+                    <li><a href="/directores/borrar">Borrar director</a></li>
                 </ul>
             </div>
         </div>
     </div>
 </body>
+
 </html>

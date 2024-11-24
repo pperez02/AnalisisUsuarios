@@ -454,8 +454,75 @@ def get_director_by_content(db: Session, idContenido: str):
 
 # Función para obtener los contenidos de un género específico
 def get_contenidos_por_genero(db: Session, idGenero: str):
-    return db.query(models.Contenido).filter(models.Contenido.idGenero == idGenero).all() 
+    return db.query(models.Contenido).filter(models.Contenido.idGenero == idGenero).all()
 
+# Función para crear un actor
+def create_actor(db: Session, actor: schemas.ActorCreate):
+    db_actor = models.Actor (
+        nombre=actor.nombre,
+        nacionalidad=actor.nacionalidad,
+        fechaNacimiento=actor.fechaNacimiento
+    )
+    db.add(db_actor)
+    db.commit()
+    db.refresh(db_actor)
+    
+    return db_actor
+
+# Función para crear un director
+def create_director(db: Session, director: schemas.DirectorCreate):
+    db_director = models.Director (
+        nombre=director.nombre,
+        nacionalidad=director.nacionalidad,
+        fechaNacimiento=director.fechaNacimiento
+    )
+    db.add(db_director)
+    db.commit()
+    db.refresh(db_director)
+    
+    return db_director    
+
+# Función para actualizar un actor
+def update_actor(db: Session, idActor: str, actor: schemas.ActorUpdate):
+    actor_query = db.query(models.Actor).filter(models.Actor.id == idActor).first()
+    if actor_query:
+        actor_query.nombre=actor.nombre
+        actor_query.nacionalidad=actor.nacionalidad
+        actor_query.fechaNacimiento=actor.fechaNacimiento
+        db.commit()
+        db.refresh(actor_query)
+    return actor_query
+
+# Función para actualizar un director
+def update_director(db: Session, idDirector: str, director: schemas.DirectorUpdate):
+    director_query = db.query(models.Director).filter(models.Director.id == idDirector).first()
+    if director_query:
+        director_query.nombre=director.nombre
+        director_query.nacionalidad=director.nacionalidad
+        director_query.fechaNacimiento=director.fechaNacimiento
+        db.commit()
+        db.refresh(director_query)
+    return director_query
+
+# Función para eliminar un actor
+def delete_actor(db: Session, actor_id: str) -> bool:
+    actor = db.query(models.Actor).filter(models.Actor.id == actor_id).first()
+    if actor:
+        db.delete(actor)
+        db.commit()
+        return True
+    return False
+
+# Función para eliminar un director
+def delete_director(db: Session, director_id: str) -> bool:
+    director = db.query(models.Director).filter(models.Director.id == director_id).first()
+    if director:
+        db.delete(director)
+        db.commit()
+        return True
+    return False
+
+# Función para dar una valoración a un contenido
 def valorar_contenido(db: Session, idContenido: str, valoracion: int):
     contenido = db.query(models.Contenido).filter(models.Contenido.id == idContenido).first()
     print(contenido)

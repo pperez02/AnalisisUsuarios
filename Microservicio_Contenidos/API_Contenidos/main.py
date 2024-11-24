@@ -296,6 +296,43 @@ def get_director_by_content(idContenido: str, db: Session = Depends(get_db)):
     director = crud.get_director_by_content(db=db, idContenido=idContenido)
     return director
 
+#Funciones específicas de administrador para actores y directores
+@app.post("/actores", response_model=schemas.Actor)
+def create_actor(actor: schemas.ActorCreate, db: Session = Depends(get_db)):
+    return crud.create_actor(db=db, actor=actor)
+
+@app.post("/directores", response_model=schemas.Director)
+def create_director(director: schemas.DirectorCreate, db: Session = Depends(get_db)):
+    return crud.create_director(db=db, director=director)
+
+@app.put("/actores/{idActor}")
+def update_actor(idActor: str, actor: schemas.ActorUpdate, db: Session = Depends(get_db)):
+    actor = crud.update_actor(db=db, idActor=idActor, actor=actor)
+    if not actor:
+        raise HTTPException(status_code=404, detail="Actor no encontrado")
+    return {"message": "Datos del actor actualizados correctamente"}
+
+@app.put("/directores/{idDirector}")
+def update_director(idDirector: str, director: schemas.DirectorUpdate, db: Session = Depends(get_db)):
+    director = crud.update_director(db=db, idDirector=idDirector, director=director)
+    if not director:
+        raise HTTPException(status_code=404, detail="Director no encontrado")
+    return {"message": "Datos del director actualizados correctamente"}
+
+@app.delete("/actores/{idActor}")
+def delete_actor(idActor: str, db: Session = Depends(get_db)):
+    success = crud.delete_actor(db=db, actor_id=idActor)
+    if not success:
+        raise HTTPException(status_code=404, detail="Actor no encontrado")
+    return {"message": "Actor eliminado exitosamente"}    
+
+@app.delete("/directores/{idDirector}")
+def delete_director(idDirector: str, db: Session = Depends(get_db)):
+    success = crud.delete_director(db=db, director_id=idDirector)
+    if not success:
+        raise HTTPException(status_code=404, detail="Director no encontrado")
+    return {"message": "Director eliminado exitosamente"}
+
 #Funciones para obtener todos los actores o directores de la base de datos
 @app.get("/actores", response_model=list[schemas.Actor])
 def get_actores(db: Session = Depends(get_db)):
