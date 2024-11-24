@@ -531,8 +531,8 @@ async def lista_usuarios(request: Request):
 
 @app.get("/administrador/series/{idSerie}", response_class=HTMLResponse)
 async def get_actualizar_serie(request: Request, idSerie: str):
-    response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}")
-    generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
+    response = requests.get(f"{BASE_URL_CONTENIDOS}/series/{idSerie}")
+    generos_response = request.get(f"{BASE_URL_CONTENIDOS}/generos")
     
     if response.status_code == 200:
         # Obtiene los datos de la serie
@@ -571,7 +571,8 @@ async def get_actualizar_serie(request: Request, idSerie: str):
                 "descripcion": serie_data['descripcion'],
                 "fecLanzamiento": serie_data['fechaLanzamiento'],
                 "idGenero": serie_data['idGenero'],
-                "generos": generos # Pasa la lista de todos los géneros para elegir
+                "generos": generos,  # Pasa la lista de todos los géneros para elegir
+                "duracion": serie_data['duracion']
             }
         )
     else:
@@ -583,43 +584,4 @@ async def get_actualizar_serie(request: Request, idSerie: str):
                 "request": request,
                 "error_message": error_message,
             }
-        )
-
-@app.post("/administrador/update_serie/{idSerie}", response_class=HTMLResponse)
-async def actualizar_serie(request: Request, idSerie: str):
-    """
-    Endpoint para actualizar el perfil de un usuario.
-    """
-    data = await request.form()
-
-    # Extraemos los datos del JSON recibido
-    titulo = data.get('titulo')
-    descripcion = data.get('descripcion')
-    fechaLanzamiento = data.get('fecLanzamiento') 
-    idGenero = data.get('genero')
-
-    # Construir el payload para la API externa
-    payload = {
-        "titulo": titulo,
-        "descripcion": descripcion,
-        "fechaLanzamiento": fechaLanzamiento,
-        "idGenero": idGenero
-    }
-
-    # URL del endpoint de la API externa para actualizar la serie
-    api_url = f"{BASE_URL_CONTENIDOS}/series/{idSerie}"
-
-    try:
-        # Enviar la solicitud PUT a la API externa
-        response = requests.put(api_url, json=payload)
-
-        # Comprobar el estado de la respuesta de la API
-        if response.status_code == 200:
-            data = response.json()
-            return RedirectResponse(url=f"/administrador/series/{idSerie}", status_code=303)
-        else:
-            raise HTTPException(status_code=response.status_code, detail="Error al actualizar la serie")
-
-    except requests.exceptions.RequestException as e:
-        # Manejar errores de red o conexión
-        raise HTTPException(status_code=500, detail=f"Error al comunicarse con la API externa: {str(e)}")        
+        )    

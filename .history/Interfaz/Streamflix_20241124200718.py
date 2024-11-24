@@ -606,8 +606,8 @@ async def actualizar_serie(request: Request, idSerie: str):
         "idGenero": idGenero
     }
 
-    # URL del endpoint de la API externa para actualizar la serie
-    api_url = f"{BASE_URL_CONTENIDOS}/series/{idSerie}"
+    # URL del endpoint de la API externa para actualizar el perfil
+    api_url = f"{BASE_URL_CONTENIDOS}/generos/{idSerie}"
 
     try:
         # Enviar la solicitud PUT a la API externa

@@ -585,7 +585,7 @@ async def get_actualizar_serie(request: Request, idSerie: str):
             }
         )
 
-@app.post("/administrador/update_serie/{idSerie}", response_class=HTMLResponse)
+@app.post("/administrador/series/{idSerie}", response_class=HTMLResponse)
 async def actualizar_serie(request: Request, idSerie: str):
     """
     Endpoint para actualizar el perfil de un usuario.
@@ -600,14 +600,14 @@ async def actualizar_serie(request: Request, idSerie: str):
 
     # Construir el payload para la API externa
     payload = {
-        "titulo": titulo,
-        "descripcion": descripcion,
-        "fechaLanzamiento": fechaLanzamiento,
-        "idGenero": idGenero
+        "titulo": nombre,
+        "descripcion": password,
+        "fechaLanzamiento": email,
+        "idGenero": idioma
     }
 
-    # URL del endpoint de la API externa para actualizar la serie
-    api_url = f"{BASE_URL_CONTENIDOS}/series/{idSerie}"
+    # URL del endpoint de la API externa para actualizar el perfil
+    api_url = f"{BASE_URL_CONTENIDOS}/generos/{idSerie}"
 
     try:
         # Enviar la solicitud PUT a la API externa

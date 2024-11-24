@@ -15,13 +15,13 @@
             <h1>Actualizar serie</h1>
             <form action="/update_serie/{{serie_id}}" method="post">
                 <label for="titulo">Título:</label>
-                <input type="text" id="titulo" name="titulo" value="titulo" required>
+                <input type="text" id="titulo" name="titulo" value="{{titulo}}" required>
 
                 <label for="descripcion">Descripción:</label>
-                <input type="text" id="descripcion" name="descripcion" value="descripcion" required>
+                <input type="text" id="descripcion" name="descripcion" value="{{descripcion}}" required>
 
                 <label for="fecLanzamiento">Fecha de lanzamiento:</label>
-                <input type="date" id="fecLanzamiento" name="fecLanzamiento" value="fecLanzamiento" required>
+                <input type="text" id="fecLanzamiento" name="fecLanzamiento" value="{{fecLanzamiento}}" required>
 
                 <label for="genero">Género:</label>
                 <select id="genero" name="genero" required>
@@ -31,9 +31,6 @@
                         </option>
                     {% endfor %}
                 </select>
-
-                <label for="duracion">Duración:</label>
-                <input type="number" id="duracion" name="duracion" required>
 
                 <button type="submit">Actualizar datos</button>
             </form>
