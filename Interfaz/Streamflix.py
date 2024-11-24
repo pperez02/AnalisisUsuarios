@@ -103,6 +103,28 @@ async def login(request: Request, email: str = Form(...), password: str = Form(.
     # Redirigimos al endpoint de pantalla principal con el `user_id`
     return RedirectResponse(url=f"/pantalla_principal?user_id={user_id}", status_code=303)
 
+@app.get("/admin_login", response_class=HTMLResponse)
+async def admin_index(request: Request):
+    # Renderiza la página index.html y la devuelve al usuario
+    return templates.TemplateResponse("admin_login.html", {"request": request})
+
+# Endpoint para hacer login
+@app.post("/admin_login")
+async def admin_login(request: Request, email: str = Form(...), password: str = Form(...)):
+    # Enviar las credenciales al microservicio para verificar el login
+    data = {"email": email, "password": password}
+    response = requests.post(f"{BASE_URL_USUARIOS}/usuarios/login", json=data)
+    
+    if response.status_code != 200:
+        raise HTTPException(status_code=400, detail="Credenciales inválidas")
+    
+    # Si las credenciales son correctas, obtenemos los datos del usuario
+    user_data = response.json()
+    user_id = user_data.get("id")
+    
+    # Redirigimos al endpoint de pantalla principal con el `user_id`
+    return RedirectResponse(url=f"/menu_admin?user_id={user_id}", status_code=303)
+
 
 
 # Endpoint para mostrar la página de registro
@@ -249,6 +271,17 @@ async def pantalla_principal(request: Request, user_id: str):
             "historial": datos["historial"],
             "generos_con_contenidos": datos["generos_con_contenidos"],
             "mensaje": mensaje,
+        }
+    )
+
+@app.get("/menu_admin", response_class=HTMLResponse)
+async def menu_admin(request: Request, user_id: str):
+    # Renderizamos el menu de admin.
+    return templates.TemplateResponse(
+        "menu_admin.html",
+        {
+            "request": request,
+            "user_id": user_id,
         }
     )
 

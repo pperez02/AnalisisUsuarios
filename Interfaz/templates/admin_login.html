@@ -12,11 +12,11 @@
 <header>
     <div class="navbar">
         <div class="logo">
-            <a href="/">Streamflix</a>
+            <a href="/admin_login">Streamflix</a>
         </div>
         <nav>
             <ul>
-                <li><a href="/admin_login"class="login-button">Soy administrador</a></li>
+                <li><a href="/"class="login-button">Soy usuario</a></li>
             </ul>
         </nav>
     </div>
@@ -27,7 +27,7 @@
         <div class="container">
             <h1>Inicio de Sesión</h1>
             <!-- Formulario de login -->
-            <form action="/login" method="post">
+            <form action="/admin_login" method="post">
                 <label for="email">Correo electrónico:</label>
                 <input type="email" id="email" name="email" required>
 
@@ -37,8 +37,6 @@
                 <button type="submit">Iniciar sesión</button>
             </form>
             <br>
-            <!-- Botón para redirigir al formulario de registro -->
-            <button onclick="window.location.href='/registro_usuario'">Registrar</button>
         </div>
     </main>
     {% include "footer.html" %}
