@@ -1622,7 +1622,7 @@ def borrar_director(idDirector: str, request: Request):
 
 
 @app.get("/directores/actualizar", response_class=HTMLResponse)
-async def actualizar_directores(request: Request):
+async def actualizar_directores(request: Request, success: str = None):
     # Realizar una solicitud GET a la API de contenidos para obtener la lista de directores
     response = requests.get(f"{BASE_URL_CONTENIDOS}/directores")
 
@@ -1634,6 +1634,7 @@ async def actualizar_directores(request: Request):
             {
                 "request": request,
                 "directores": directores,
+                "message": success
             },
         )
     else:
@@ -1665,4 +1666,4 @@ async def actualizar_director(request: Request):
                 status_code=response.status_code, detail="Error al actualizar director"
             )
     # Redirigimos a la página de actualización de directores
-    return RedirectResponse(url=f"/directores/actualizar", status_code=303)
+    return RedirectResponse(url=f"/directores/actualizar?success=true", status_code=303)

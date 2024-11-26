@@ -23,6 +23,12 @@
 </header>
 
 <body>
+    {% if message %}
+    <div class="message">
+        ¡Director actualizado con éxito!
+    </div>
+    {% endif %}
+
     <h1>Actualizar Directores</h1>
     <form action="/director/actualizar" method="POST">
         <table>

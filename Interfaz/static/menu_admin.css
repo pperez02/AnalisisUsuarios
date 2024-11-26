@@ -6,7 +6,7 @@ body {
 /* Contenedor general */
 .container {
     max-width: 100%;
-    margin-top: 10rem;
+    margin-top: 20%;
     background: #000;
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -68,7 +68,7 @@ header {
     justify-content: center;
     align-items: center;
     height: 60px;
-    /* Define una altura fija */
+    margin-bottom: 10rem;
 }
 
 .navbar {
