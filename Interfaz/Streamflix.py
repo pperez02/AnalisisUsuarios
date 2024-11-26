@@ -621,7 +621,7 @@ async def admin_menu(request: Request):
     response.delete_cookie("success_message")
     return response
 
-@app.get("/admin_usuarios", response_class=HTMLResponse)
+@app.get("/administrador/usuarios", response_class=HTMLResponse)
 async def lista_usuarios(request: Request):
     # Realizamos la solicitud al microservicio de usuarios
     response = requests.get(f"{BASE_URL_USUARIOS}/usuarios")
@@ -640,7 +640,7 @@ async def lista_usuarios(request: Request):
         },
     )
 
-@app.get("/admin_crear_pelicula", response_class=HTMLResponse)
+@app.get("/administrador/pelicula/crear", response_class=HTMLResponse)
 async def crear_pelicula_form(request: Request):
     """
     Muestra el formulario para crear una película.
@@ -659,7 +659,7 @@ async def crear_pelicula_form(request: Request):
 )
 
 
-@app.post("/admin_crear_pelicula", response_class=HTMLResponse)
+@app.post("/administrador/pelicula/crear", response_class=HTMLResponse)
 async def crear_pelicula(
     request: Request,
     titulo: str = Form(...),
@@ -702,10 +702,10 @@ async def crear_pelicula(
         )
 
 
-@app.get("/admin_crear_serie", response_class=HTMLResponse)
+@app.get("/administrador/serie/crear", response_class=HTMLResponse)
 async def crear_serie_form(request: Request):
     """
-    Muestra el formulario para crear una película.
+    Muestra el formulario para crear una serie.
     """
     # Obtener los géneros y directores desde el microservicio de contenidos
     generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
@@ -721,7 +721,7 @@ async def crear_serie_form(request: Request):
     )
 
 
-@app.post("/admin_crear_serie", response_class=HTMLResponse)
+@app.post("/administrador/serie/crear", response_class=HTMLResponse)
 async def crear_serie(
     request: Request,
     titulo: str = Form(...),
@@ -730,7 +730,7 @@ async def crear_serie(
     id_genero: str = Form(...),
 ):
     """
-    Procesa el formulario para crear una película.
+    Procesa el formulario para crear una serie.
     """
     data = {
         "tipoContenido": "Serie",
@@ -763,7 +763,7 @@ async def crear_serie(
         )
     
 
-@app.get("/admin_crear_temporada", response_class=HTMLResponse)
+@app.get("/administrador/temporada/crear", response_class=HTMLResponse)
 async def crear_temporada_form(request: Request):
     """
     Muestra el formulario para crear una temporada de una serie.
@@ -782,7 +782,7 @@ async def crear_temporada_form(request: Request):
     )
 
 
-@app.post("/admin_crear_temporada", response_class=HTMLResponse)
+@app.post("/administrador/temporada/crear", response_class=HTMLResponse)
 async def crear_temporada(
     request: Request,
     id_serie : str = Form (...),
@@ -814,7 +814,7 @@ async def crear_temporada(
         )
 
 
-@app.get("/admin_crear_genero", response_class=HTMLResponse)
+@app.get("/administrador/genero/crear", response_class=HTMLResponse)
 async def crear_genero_form(request: Request):
     """
     Muestra el formulario para crear un género de contenido multimedia.
@@ -827,7 +827,88 @@ async def crear_genero_form(request: Request):
     )
 
 
-@app.post("/admin_crear_genero", response_class=HTMLResponse)
+@app.get("/contenidos/{idSerie}/temporadas")
+async def obtener_temporadas(idSerie: str):
+    """
+    Endpoint para obtener todas las temporadas de una serie específica.
+    """
+    # Obtener temporadas desde el microservicio de contenidos
+    response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}/temporadas")
+    if response.status_code != 200:
+        raise HTTPException(status_code=500, detail="Error al obtener las temporadas.")
+    
+    return response.json()
+
+
+
+@app.get("/administrador/episodio/crear", response_class=HTMLResponse)
+async def crear_episodio_form(request: Request):
+    """
+    Muestra el formulario para crear un episodio.
+    """
+    # Obtener todas las series desde el microservicio de contenidos
+    series_response = requests.get(f"{BASE_URL_CONTENIDOS}/todoseries")
+    series = series_response.json() if series_response.status_code == 200 else []
+
+    # Realizar una solicitud GET a la API de contenidos para obtener la lista de directores
+    directores_response = requests.get(f"{BASE_URL_CONTENIDOS}/directores")
+
+    # Verifica si la respuesta fue exitosa
+    directores = directores_response.json() if directores_response.status_code == 200 else []
+
+    return templates.TemplateResponse(
+        "admin_crear_episodio.html",  # Plantilla HTML del formulario
+        {
+            "request": request,
+            "series": series,  # Lista de series disponibles
+            "directores": directores, # Lista de directores
+        },
+    )
+
+
+@app.post("/administrador/episodio/crear", response_class=HTMLResponse)
+async def crear_episodio(
+    request: Request,
+    idSerie: str = Form(...),
+    idTemporada: str = Form(...),
+    numeroEpisodio: int = Form(...),
+    duracion: int = Form(...),
+    idDirector: str = Form(...),
+):
+    """
+    Procesa el formulario para crear un episodio.
+    """
+    # Construcción de los datos a enviar al microservicio
+    data = {
+        "idDirector": idDirector,
+        "numeroEpisodio": numeroEpisodio,
+        "duracion": duracion,
+    }
+
+    # Hacer la solicitud POST al microservicio de contenidos
+    response = requests.post(
+        f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}/temporadas/{idTemporada}/episodios",
+        json=data,
+    )
+
+    # Redirigir con un mensaje si el episodio se creó correctamente
+    if response.status_code == 200:
+        redirect_response = RedirectResponse(url="/admin_menu", status_code=303)
+        redirect_response.set_cookie(
+            key="success_message", value="Episodio creado exitosamente", max_age=5
+        )
+        return redirect_response
+    else:
+        # Renderizar el formulario nuevamente con un mensaje de error
+        error_message = "Error al crear el episodio. Por favor, inténtelo de nuevo."
+        return templates.TemplateResponse(
+            "admin_crear_episodio.html",
+            {"request": request, "error_message": error_message},
+        )
+
+
+
+@app.post("/administrador/genero/crear", response_class=HTMLResponse)
 async def crear_genero(
     request: Request,
     nombre: str = Form(...),

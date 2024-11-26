@@ -215,6 +215,15 @@ def get_todoseries(db: Session):
 def get_todopeliculas(db: Session):
     return db.query(models.Contenido).filter(models.Contenido.tipoContenido == "Pelicula")
 
+# Consulta de todas las temporadas de una serie
+def get_temporadas_by_serie(db: Session, idSerie: str):
+    """
+    Obtiene todas las temporadas asociadas a una serie específica.
+    """
+    temporadas = db.query(models.Temporada).filter(models.Temporada.idContenido == idSerie).all()
+    return temporadas
+
+
 def get_contenido_by_id(db: Session, id_contenido: str):
     return db.query(models.Contenido).filter(models.Contenido.id == id_contenido).first()    
 

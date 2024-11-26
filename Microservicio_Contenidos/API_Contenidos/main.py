@@ -128,6 +128,12 @@ def get_todopeliculas(db: Session = Depends(get_db)):
     peliculas = crud.get_todopeliculas(db=db)
     return peliculas
 
+@app.get("/contenidos/{idSerie}/temporadas")
+def get_temporadas(idSerie: str, db: Session = Depends(get_db)):
+    temporadas = crud.get_temporadas_by_serie(db, idSerie)
+    return temporadas
+
+
 @app.get("/contenidos/{idContenido}", response_model=schemas.Contenido)
 def get_contenido(idContenido: str, db: Session = Depends(get_db)):
     # Llamada al CRUD para obtener el contenido por id
