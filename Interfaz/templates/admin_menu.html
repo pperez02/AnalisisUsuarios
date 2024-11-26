@@ -43,30 +43,38 @@
                 <ul>
                     <li><a href="/admin_crear_pelicula">Crear película</a></li>
                     <li><a href="/admin_crear_serie">Crear serie</a></li>
-                    <li><a href="#">Crear temporada</a></li>
+                    <li><a href="/admin_crear_temporada">Crear temporada</a></li>
                     <li><a href="#">Crear episodio</a></li>
-                    <li><a href="#">Crear género</a></li>
-                    <li><a href="#">Actualizar película</a>
+                    <li><a href="/admin_crear_genero">Crear género</a></li>
+                    <li style="color: #e50914;">Actualizar película:
                         <ul>
                             {% for pelicula in peliculas %}
                             <li>
-                                {{pelicula.titulo}}
+                                &emsp; <a href="/administrador/peliculas/{{pelicula.id}}">- {{pelicula.titulo}}</a>
                             </li>
                             {% endfor %}
                         </ul>
                     </li>
-                    <li><a href="#">Actualizar serie</a>
+                    <li style="color: #e50914;">Actualizar serie:
                         <ul>
                             {% for serie in series %}
                             <li>
-                                {{serie.titulo}}
+                                &emsp; <a href="/administrador/series/{{serie.id}}">- {{serie.titulo}}</a>
                             </li>
                             {% endfor %}
                         </ul>
                     </li>
                     <li><a href="#">Actualizar temporada</a></li>
                     <li><a href="#">Actualizar episodio</a></li>
-                    <li><a href="#">Actualizar género</a></li>
+                    <li style="color: #e50914;">Actualizar género:
+                        <ul>
+                            {% for genero in generos %}
+                            <li>
+                                &emsp; <a href="#">- {{genero.nombre}}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
                     <li><a href="#">Borrar película</a></li>
                     <li><a href="#">Borrar serie</a></li>
                     <li><a href="#">Borrar temporada</a></li>
@@ -87,7 +95,7 @@
                         <ul>
                             {% for actor in actores %}
                             <li>
-                                {{actor.nombre}}
+                                &emsp;- {{actor.nombre}}
                             </li>
                             {% endfor %}
                         </ul>
@@ -96,7 +104,7 @@
                         <ul>
                             {% for director in directores %}
                             <li>
-                                {{director.nombre}}
+                                &emsp;- {{director.nombre}}
                             </li>
                             {% endfor %}
                         </ul>
