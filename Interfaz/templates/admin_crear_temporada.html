@@ -25,7 +25,7 @@
     <p style="color:red;">{{ error_message }}</p>
     {% endif %}
     <div class="container">
-        <form action="/admin_crear_temporada" method="post">
+        <form action="/administrador/temporada/crear" method="post">
             <label for="id_serie">Serie:</label>
             <select id="id_serie" name="id_serie" required>
                 {% for serie in series %}
