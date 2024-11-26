@@ -59,64 +59,25 @@
                         <ul>
                             {% for serie in series %}
                             <li>
-                                &emsp; <a href="/administrador/series/{{serie.idSerie}}">- {{serie.titulo}}</a>
+                                &emsp; <a href="/administrador/series/{{serie.id}}">- {{serie.titulo}}</a>
                             </li>
                             {% endfor %}
                         </ul>
                     </li>
-                    <li><a href="#">Actualizar temporada</a>
-                        <ul>
-                            {% for serie in series %}
-                            <li>
-                                - {{serie.titulo}}
-                                <ul>
-                                    {% for temporada in serie.Temporadas %}
-                                    <li>
-                                        &emsp; <a href="/administrador/series/{{serie.idSerie}}/temporadas/{{temporada.idTemporada}}">- Temporada {{temporada.numeroTemporada}}</a>
-                                    </li>
-                                    {% endfor %}
-                                </ul>    
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </li>    
+                    <li><a href="#">Actualizar temporada</a></li>
                     <li><a href="#">Actualizar episodio</a></li>
-                        <ul>
-                            {% for serie in series %}
-                            <li>
-                                - {{serie.titulo}}
-                                <ul>
-                                    {% for temporada in serie.Temporadas %}
-                                    <li>
-                                        - Temporada {{temporada.numeroTemporada}}
-                                        <ul>
-                                            {% for episodio in temporada.Episodios %}
-                                            <li>
-                                                &emsp; <a 
-                                                href="/administrador/series/{{serie.idSerie}}/temporadas/{{temporada.idTemporada}}/episodios/{{episodio.idEpisodio}}">
-                                                - Episodio {{episodio.numeroEpisodio}}
-                                                </a>
-                                            </li>
-                                            {% endfor %}
-                                        </ul>
-                                    </li>
-                                    {% endfor %}
-                                </ul>    
-                            </li>
-                            {% endfor %}
-                        </ul>
                     <li style="color: #e50914;">Actualizar género:
                         <ul>
                             {% for genero in generos %}
                             <li>
-                                &emsp; <a href="/administrador/generos/{{genero.id}}">- {{genero.nombre}}</a>
+                                &emsp; <a href="#">- {{genero.nombre}}</a>
                             </li>
                             {% endfor %}
                         </ul>
                     </li>
-                    <li><a href="/peliculas/borrar">Borrar película</a></li>
-                    <li><a href="/series/borrar">Borrar serie</a></li>
-                    <li><a href="/temporadas/borrar">Borrar temporada</a></li>
+                    <li><a href="#">Borrar película</a></li>
+                    <li><a href="#">Borrar serie</a></li>
+                    <li><a href="#">Borrar temporada</a></li>
                     <li><a href="#">Borrar episodio</a></li>
                     <li><a href="#">Borrar género</a></li>
                     <li><a href="#">Añadir subtítulos a un contenido</a></li>

@@ -946,9 +946,8 @@ async def actualizar_pelicula(request: Request, idPelicula: str):
         # Comprobar el estado de la respuesta de la API
         if response.status_code == 200:
             data = response.json()
-            return RedirectResponse(
-                url=f"/admin_menu", status_code=303
-            )
+                # Redirigir nuevamente al listado de actores
+            return RedirectResponse(url=f"/administrador/update_pelicula/{idPelicula}", status_code=303) 
         else:
             raise HTTPException(
                 status_code=response.status_code, detail="Error al actualizar la pelicula"
@@ -1349,128 +1348,46 @@ async def actualizar_genero(request: Request, idGenero: str):
             status_code=500, detail=f"Error al comunicarse con la API externa: {str(e)}"
         )
 
-@app.get("/peliculas/borrar", response_class=HTMLResponse)
-def borrar_peliculas(request: Request):
+@app.get("/administrador/peliculas/borrar", response_class=HTMLResponse)
+def borrar_actores(request: Request):
     """
-    Obtiene la lista de películas desde la API de Contenidos y redirige a la página HTML.
+    Obtiene la lista de actores desde la API de Contenidos y redirige a la página HTML.
     """
     try:
-        # Petición a la API de Contenidos para obtener el listado de películas
-        response = requests.get(f"{BASE_URL_CONTENIDOS}/todopeliculas")
+        # Petición a la API de Contenidos para obtener el listado de actores
+        response = requests.get(f"{BASE_URL_CONTENIDOS}/actores")
         response.raise_for_status()
-        peliculas = response.json()
+        actores = response.json()
     except requests.exceptions.RequestException as e:
         return HTMLResponse(
-            content=f"<h1>Error al obtener las películas: {e}</h1>", status_code=500
+            content=f"<h1>Error al obtener actores: {e}</h1>", status_code=500
         )
 
     mensaje = request.query_params.get("mensaje", None)
     print(mensaje)
-    # Renderizar la plantilla con los datos de las películas
+    # Renderizar la plantilla con los datos de actores
     return templates.TemplateResponse(
-        "admin_borrar_peliculas.html",
-        {"request": request, "peliculas": peliculas, "mensaje": mensaje},
+        "borrar_actores.html",
+        {"request": request, "actores": actores, "mensaje": mensaje},
     )
 
 
-@app.post("/peliculas/{idPelicula}/borrar")
-def borrar_pelicula(idPelicula: str, request: Request):
+@app.post("/administrador/peliculas/{idPelicula}/borrar")
+def borrar_actor(idActor: str, request: Request):
     """
-    Realiza una solicitud a la API de Contenidos para eliminar una película.
+    Realiza una solicitud a la API de Contenidos para eliminar un actor.
     """
     try:
-        # Petición a la API de Contenidos para borrar la película
-        response = requests.delete(f"{BASE_URL_CONTENIDOS}/contenidos/{idPelicula}")
+        # Petición a la API de Contenidos para borrar el actor
+        response = requests.delete(f"{BASE_URL_CONTENIDOS}/actores/{idActor}")
         response.raise_for_status()
         mensaje = response.json().get("message")
 
     except requests.exceptions.RequestException as e:
-        mensaje = f"Error al intentar borrar la película: {e}"
+        mensaje = f"Error al intentar borrar el actor: {e}"
 
-    # Redirigir nuevamente al listado de películas
-    return RedirectResponse(url=f"/peliculas/borrar?mensaje={mensaje}", status_code=303)              
-
-@app.get("/series/borrar", response_class=HTMLResponse)
-def borrar_series(request: Request):
-    """
-    Obtiene la lista de series desde la API de Contenidos y redirige a la página HTML.
-    """
-    try:
-        # Petición a la API de Contenidos para obtener el listado de series
-        response = requests.get(f"{BASE_URL_CONTENIDOS}/todoseries")
-        response.raise_for_status()
-        series = response.json()
-    except requests.exceptions.RequestException as e:
-        return HTMLResponse(
-            content=f"<h1>Error al obtener las series: {e}</h1>", status_code=500
-        )
-
-    mensaje = request.query_params.get("mensaje", None)
-    print(mensaje)
-    # Renderizar la plantilla con los datos de las series
-    return templates.TemplateResponse(
-        "admin_borrar_series.html",
-        {"request": request, "series": series, "mensaje": mensaje},
-    )
-
-
-@app.post("/series/{idSerie}/borrar")
-def borrar_serie(idSerie: str, request: Request):
-    """
-    Realiza una solicitud a la API de Contenidos para eliminar una serie.
-    """
-    try:
-        # Petición a la API de Contenidos para borrar la serie
-        response = requests.delete(f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}")
-        response.raise_for_status()
-        mensaje = response.json().get("message")
-
-    except requests.exceptions.RequestException as e:
-        mensaje = f"Error al intentar borrar la serie: {e}"
-
-    # Redirigir nuevamente al listado de series
-    return RedirectResponse(url=f"/series/borrar?mensaje={mensaje}", status_code=303) 
-
-@app.get("/temporadas/borrar", response_class=HTMLResponse)
-def borrar_temporadas(request: Request):
-    """
-    Obtiene la lista de series desde la API de Contenidos y redirige a la página HTML.
-    """
-    try:
-        # Petición a la API de Contenidos para obtener el listado de series
-        response = requests.get(f"{BASE_URL_CONTENIDOS}/series")
-        response.raise_for_status()
-        series = response.json()
-    except requests.exceptions.RequestException as e:
-        return HTMLResponse(
-            content=f"<h1>Error al obtener las series: {e}</h1>", status_code=500
-        )
-
-    mensaje = request.query_params.get("mensaje", None)
-    print(mensaje)
-    # Renderizar la plantilla con los datos de las series
-    return templates.TemplateResponse(
-        "admin_borrar_temporadas.html",
-        {"request": request, "series": series, "mensaje": mensaje},
-    )
-
-
-@app.post("/series/{idSerie}/temporadas/{idTemporada}/borrar")
-def borrar_temporada(idSerie: str, idTemporada: str, request: Request):
-    """
-    Realiza una solicitud a la API de Contenidos para eliminar una temporada.
-    """
-    try:
-        # Petición a la API de Contenidos para borrar la temporada
-        response = requests.delete(f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}/temporadas/{idTemporada}")
-        response.raise_for_status()
-        mensaje = response.json().get("message")
-
-    except requests.exceptions.RequestException as e:
-        mensaje = f"Error al intentar borrar la temporada: {e}"
-
-    # Redirigir nuevamente al listado de series
-    return RedirectResponse(url=f"/temporadas/borrar?mensaje={mensaje}", status_code=303)
+    # Redirigir nuevamente al listado de actores
+    return RedirectResponse(url=f"/actores/borrar?mensaje={mensaje}", status_code=303)              
 
 # Endpoints para eliminar actores o directores
 @app.get("/actores/borrar", response_class=HTMLResponse)

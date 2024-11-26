@@ -1396,7 +1396,7 @@ def borrar_series(request: Request):
     Obtiene la lista de series desde la API de Contenidos y redirige a la página HTML.
     """
     try:
-        # Petición a la API de Contenidos para obtener el listado de series
+        # Petición a la API de Contenidos para obtener el listado de películas
         response = requests.get(f"{BASE_URL_CONTENIDOS}/todoseries")
         response.raise_for_status()
         series = response.json()
@@ -1430,47 +1430,6 @@ def borrar_serie(idSerie: str, request: Request):
 
     # Redirigir nuevamente al listado de series
     return RedirectResponse(url=f"/series/borrar?mensaje={mensaje}", status_code=303) 
-
-@app.get("/temporadas/borrar", response_class=HTMLResponse)
-def borrar_temporadas(request: Request):
-    """
-    Obtiene la lista de series desde la API de Contenidos y redirige a la página HTML.
-    """
-    try:
-        # Petición a la API de Contenidos para obtener el listado de series
-        response = requests.get(f"{BASE_URL_CONTENIDOS}/series")
-        response.raise_for_status()
-        series = response.json()
-    except requests.exceptions.RequestException as e:
-        return HTMLResponse(
-            content=f"<h1>Error al obtener las series: {e}</h1>", status_code=500
-        )
-
-    mensaje = request.query_params.get("mensaje", None)
-    print(mensaje)
-    # Renderizar la plantilla con los datos de las series
-    return templates.TemplateResponse(
-        "admin_borrar_temporadas.html",
-        {"request": request, "series": series, "mensaje": mensaje},
-    )
-
-
-@app.post("/series/{idSerie}/temporadas/{idTemporada}/borrar")
-def borrar_temporada(idSerie: str, idTemporada: str, request: Request):
-    """
-    Realiza una solicitud a la API de Contenidos para eliminar una temporada.
-    """
-    try:
-        # Petición a la API de Contenidos para borrar la temporada
-        response = requests.delete(f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}/temporadas/{idTemporada}")
-        response.raise_for_status()
-        mensaje = response.json().get("message")
-
-    except requests.exceptions.RequestException as e:
-        mensaje = f"Error al intentar borrar la temporada: {e}"
-
-    # Redirigir nuevamente al listado de series
-    return RedirectResponse(url=f"/temporadas/borrar?mensaje={mensaje}", status_code=303)
 
 # Endpoints para eliminar actores o directores
 @app.get("/actores/borrar", response_class=HTMLResponse)

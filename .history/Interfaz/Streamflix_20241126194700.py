@@ -584,7 +584,7 @@ async def add_payment_method(user_id: str, request: Request):
 @app.get("/admin_menu", response_class=HTMLResponse)
 async def admin_menu(request: Request):
     peliculas_response = requests.get(f"{BASE_URL_CONTENIDOS}/todopeliculas")
-    series_response = requests.get(f"{BASE_URL_CONTENIDOS}/series")
+    series_response = requests.get(f"{BASE_URL_CONTENIDOS}/todoseries")
     actores_response = requests.get(f"{BASE_URL_CONTENIDOS}/actores")
     directores_response = requests.get(f"{BASE_URL_CONTENIDOS}/directores")
     generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
@@ -915,7 +915,7 @@ async def get_actualizar_pelicula(request: Request, idPelicula: str):
         )
 
 
-@app.post("/administrador/update_pelicula/{idPelicula}")
+@app.post("/administrador/update_pelicula/{idPelicula}", response_class=HTMLResponse)
 async def actualizar_pelicula(request: Request, idPelicula: str):
     """
     Endpoint para actualizar el perfil de un usuario.
@@ -1064,7 +1064,7 @@ async def actualizar_serie(request: Request, idSerie: str):
 @app.get("/administrador/series/{idSerie}/temporadas/{idTemporada}", response_class=HTMLResponse)
 async def get_actualizar_temporada(request: Request, idSerie: str, idTemporada: str):
     response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}/temporadas/{idTemporada}")
-    series_response = requests.get(f"{BASE_URL_CONTENIDOS}/todoseries")
+    series_response = request.get(f"{BASE_URL_CONTENIDOS}/todoseries")
 
     if response.status_code == 200:
         # Obtiene los datos de la serie
@@ -1094,7 +1094,6 @@ async def get_actualizar_temporada(request: Request, idSerie: str, idTemporada: 
             "admin_actualizar_temporada.html",  # Plantilla HTML que renderizará los datos
             {
                 "request": request,
-                "idSerie": idSerie,
                 "temporada_id": idTemporada,
                 "numeroTemporada": temporada_data["numeroTemporada"],
                 "series": series,  # Pasa la lista de todas las series
@@ -1114,7 +1113,7 @@ async def get_actualizar_temporada(request: Request, idSerie: str, idTemporada: 
         )
 
 @app.post("/administrador/update_temporada/{idTemporada}", response_class=HTMLResponse)
-async def actualizar_temporada(request: Request, idTemporada: str):
+async def actualizar_temporada(request: Request, idSerie: str, idTemporada: str):
     """
     Endpoint para actualizar una temporada.
     """
@@ -1152,325 +1151,7 @@ async def actualizar_temporada(request: Request, idTemporada: str):
         # Manejar errores de red o conexión
         raise HTTPException(
             status_code=500, detail=f"Error al comunicarse con la API externa: {str(e)}"
-        )
-
-@app.get("/administrador/series/{idSerie}/temporadas/{idTemporada}/episodios/{idEpisodio}", response_class=HTMLResponse)
-async def get_actualizar_episodio(request: Request, idSerie: str, idTemporada: str, idEpisodio: str):
-    response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}/temporadas/{idTemporada}/episodios/{idEpisodio}")
-    series_response = requests.get(f"{BASE_URL_CONTENIDOS}/series")
-    directores_response = requests.get(f"{BASE_URL_CONTENIDOS}/directores")
-
-    if response.status_code == 200:
-        # Obtiene los datos de la serie
-        episodio_data = response.json()
-        series = []
-        directores = []
-
-        if series_response.status_code == 200:
-            # Obtiene la lista de series
-            series_data = series_response.json()
-            series = [
-                {
-                    "id": serie["id"],
-                    "titulo": serie["titulo"],
-                    "temporadas": series_data["Temporadas"],
-                }
-                for serie in series_data
-            ]
-        else:
-            # En caso de error al obtener las series
-            error_message = f"Error al obtener las series y temporadas de la base de datos: {series_response.status_code}"
-            return templates.TemplateResponse(
-                "admin_actualizar_episodio.html",
-                {"request": request, "error_message": error_message},
-            )
-                
-        if directores_response.status_code == 200:
-            # Obtiene la lista de directores
-            directores_data = directores_response.json()
-            directores = [
-                {
-                    "id": director["id"],
-                    "nombre": director["nombre"],
-                }
-                for director in directores_data
-            ]
-        else:
-            # En caso de error al obtener los directores
-            error_message = f"Error al obtener los directores de la base de datos: {directores_response.status_code}"
-            return templates.TemplateResponse(
-                "admin_actualizar_episodio.html",
-                {"request": request, "error_message": error_message},
-            )
-
-        # Renderiza la plantilla HTML con los datos de la temporada
-        return templates.TemplateResponse(
-            "admin_actualizar_episodio.html",  # Plantilla HTML que renderizará los datos
-            {
-                "request": request,
-                "idSerie": idSerie,
-                "idTemporada": idTemporada,
-                "episodio_id": idEpisodio,
-                "numeroEpisodio": episodio_data["numeroEpisodio"],
-                "idDirector": episodio_data["idDirector"],
-                "series": series,  # Pasa la lista de todas las series con sus temporadas
-                "directores": directores,   # Pasa la lista de todos los directores
-            },
-        )
-    else:
-        # En caso de error al obtener los datos del episodio
-        error_message = (
-            f"Error al obtener los datos del episodio: {response.status_code}"
-        )
-        return templates.TemplateResponse(
-            "admin_actualizar_episodio.html",
-            {
-                "request": request,
-                "error_message": error_message,
-            },
-        )
-
-@app.post("/administrador/update_episodio/{idEpisodio}", response_class=HTMLResponse)
-async def actualizar_episodio(request: Request, idEpisodio: str):
-    """
-    Endpoint para actualizar un episodio.
-    """
-    data = await request.form()
-
-    # Extraemos los datos del JSON recibido
-    idSerie = data.get("id_serie")
-    idTemporada = data.get("id_temporada")
-    numeroEpisodio = data.get("numeroEpisodio")
-    duracion = data.get("duracion")
-    idDirector = data.get("idDirector")
-
-    # Construir el payload para la API externa
-    payload = {
-        "idContenido": idSerie,
-        "idTemporada": idTemporada,
-        "numeroEpisodio": numeroEpisodio,
-        "duracion": duracion,
-        "idDirector": idDirector,
-    }
-
-    # URL del endpoint de la API externa para actualizar el episodio
-    api_url = f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}/temporadas/{idTemporada}/episodios/{idEpisodio}"
-
-    try:
-        # Enviar la solicitud PUT a la API externa
-        response = requests.put(api_url, json=payload)
-
-        # Comprobar el estado de la respuesta de la API
-        if response.status_code == 200:
-            data = response.json()
-            return RedirectResponse(
-                url=f"/admin_menu", status_code=303
-            )
-        else:
-            raise HTTPException(
-                status_code=response.status_code, detail="Error al actualizar el episodio"
-            )
-
-    except requests.exceptions.RequestException as e:
-        # Manejar errores de red o conexión
-        raise HTTPException(
-            status_code=500, detail=f"Error al comunicarse con la API externa: {str(e)}"
-        )
-
-@app.get("/administrador/generos/{idGenero}", response_class=HTMLResponse)
-async def get_actualizar_genero(request: Request, idGenero: str):
-    response = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{idGenero}")
-
-    if response.status_code == 200:
-        # Obtiene los datos de la serie
-        genero_data = response.json()
-
-        # Renderiza la plantilla HTML con los datos de la temporada
-        return templates.TemplateResponse(
-            "admin_actualizar_genero.html",  # Plantilla HTML que renderizará los datos
-            {
-                "request": request,
-                "idGenero": idGenero,
-                "nombre": genero_data["nombre"],
-                "descripcion": genero_data["descripcion"],
-            },
-        )
-    else:
-        # En caso de error al obtener los datos del género
-        error_message = (
-            f"Error al obtener los datos del genero: {response.status_code}"
-        )
-        return templates.TemplateResponse(
-            "admin_actualizar_genero.html",
-            {
-                "request": request,
-                "error_message": error_message,
-            },
-        )
-
-@app.post("/administrador/update_genero/{idGenero}", response_class=HTMLResponse)
-async def actualizar_genero(request: Request, idGenero: str):
-    """
-    Endpoint para actualizar un género.
-    """
-    data = await request.form()
-
-    # Extraemos los datos del JSON recibido
-    nombre = data.get("nombre")
-    descripcion = data.get("descripcion")
-
-    # Construir el payload para la API externa
-    payload = {
-        "nombre": nombre,
-        "descripcion": descripcion,
-    }
-
-    # URL del endpoint de la API externa para actualizar el episodio
-    api_url = f"{BASE_URL_CONTENIDOS}/generos/{idGenero}"
-
-    try:
-        # Enviar la solicitud PUT a la API externa
-        response = requests.put(api_url, json=payload)
-
-        # Comprobar el estado de la respuesta de la API
-        if response.status_code == 200:
-            data = response.json()
-            return RedirectResponse(
-                url=f"/admin_menu", status_code=303
-            )
-        else:
-            raise HTTPException(
-                status_code=response.status_code, detail="Error al actualizar el género"
-            )
-
-    except requests.exceptions.RequestException as e:
-        # Manejar errores de red o conexión
-        raise HTTPException(
-            status_code=500, detail=f"Error al comunicarse con la API externa: {str(e)}"
-        )
-
-@app.get("/peliculas/borrar", response_class=HTMLResponse)
-def borrar_peliculas(request: Request):
-    """
-    Obtiene la lista de películas desde la API de Contenidos y redirige a la página HTML.
-    """
-    try:
-        # Petición a la API de Contenidos para obtener el listado de películas
-        response = requests.get(f"{BASE_URL_CONTENIDOS}/todopeliculas")
-        response.raise_for_status()
-        peliculas = response.json()
-    except requests.exceptions.RequestException as e:
-        return HTMLResponse(
-            content=f"<h1>Error al obtener las películas: {e}</h1>", status_code=500
-        )
-
-    mensaje = request.query_params.get("mensaje", None)
-    print(mensaje)
-    # Renderizar la plantilla con los datos de las películas
-    return templates.TemplateResponse(
-        "admin_borrar_peliculas.html",
-        {"request": request, "peliculas": peliculas, "mensaje": mensaje},
-    )
-
-
-@app.post("/peliculas/{idPelicula}/borrar")
-def borrar_pelicula(idPelicula: str, request: Request):
-    """
-    Realiza una solicitud a la API de Contenidos para eliminar una película.
-    """
-    try:
-        # Petición a la API de Contenidos para borrar la película
-        response = requests.delete(f"{BASE_URL_CONTENIDOS}/contenidos/{idPelicula}")
-        response.raise_for_status()
-        mensaje = response.json().get("message")
-
-    except requests.exceptions.RequestException as e:
-        mensaje = f"Error al intentar borrar la película: {e}"
-
-    # Redirigir nuevamente al listado de películas
-    return RedirectResponse(url=f"/peliculas/borrar?mensaje={mensaje}", status_code=303)              
-
-@app.get("/series/borrar", response_class=HTMLResponse)
-def borrar_series(request: Request):
-    """
-    Obtiene la lista de series desde la API de Contenidos y redirige a la página HTML.
-    """
-    try:
-        # Petición a la API de Contenidos para obtener el listado de series
-        response = requests.get(f"{BASE_URL_CONTENIDOS}/todoseries")
-        response.raise_for_status()
-        series = response.json()
-    except requests.exceptions.RequestException as e:
-        return HTMLResponse(
-            content=f"<h1>Error al obtener las series: {e}</h1>", status_code=500
-        )
-
-    mensaje = request.query_params.get("mensaje", None)
-    print(mensaje)
-    # Renderizar la plantilla con los datos de las series
-    return templates.TemplateResponse(
-        "admin_borrar_series.html",
-        {"request": request, "series": series, "mensaje": mensaje},
-    )
-
-
-@app.post("/series/{idSerie}/borrar")
-def borrar_serie(idSerie: str, request: Request):
-    """
-    Realiza una solicitud a la API de Contenidos para eliminar una serie.
-    """
-    try:
-        # Petición a la API de Contenidos para borrar la serie
-        response = requests.delete(f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}")
-        response.raise_for_status()
-        mensaje = response.json().get("message")
-
-    except requests.exceptions.RequestException as e:
-        mensaje = f"Error al intentar borrar la serie: {e}"
-
-    # Redirigir nuevamente al listado de series
-    return RedirectResponse(url=f"/series/borrar?mensaje={mensaje}", status_code=303) 
-
-@app.get("/temporadas/borrar", response_class=HTMLResponse)
-def borrar_temporadas(request: Request):
-    """
-    Obtiene la lista de series desde la API de Contenidos y redirige a la página HTML.
-    """
-    try:
-        # Petición a la API de Contenidos para obtener el listado de series
-        response = requests.get(f"{BASE_URL_CONTENIDOS}/series")
-        response.raise_for_status()
-        series = response.json()
-    except requests.exceptions.RequestException as e:
-        return HTMLResponse(
-            content=f"<h1>Error al obtener las series: {e}</h1>", status_code=500
-        )
-
-    mensaje = request.query_params.get("mensaje", None)
-    print(mensaje)
-    # Renderizar la plantilla con los datos de las series
-    return templates.TemplateResponse(
-        "admin_borrar_temporadas.html",
-        {"request": request, "series": series, "mensaje": mensaje},
-    )
-
-
-@app.post("/series/{idSerie}/temporadas/{idTemporada}/borrar")
-def borrar_temporada(idSerie: str, idTemporada: str, request: Request):
-    """
-    Realiza una solicitud a la API de Contenidos para eliminar una temporada.
-    """
-    try:
-        # Petición a la API de Contenidos para borrar la temporada
-        response = requests.delete(f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}/temporadas/{idTemporada}")
-        response.raise_for_status()
-        mensaje = response.json().get("message")
-
-    except requests.exceptions.RequestException as e:
-        mensaje = f"Error al intentar borrar la temporada: {e}"
-
-    # Redirigir nuevamente al listado de series
-    return RedirectResponse(url=f"/temporadas/borrar?mensaje={mensaje}", status_code=303)
+        )       
 
 # Endpoints para eliminar actores o directores
 @app.get("/actores/borrar", response_class=HTMLResponse)

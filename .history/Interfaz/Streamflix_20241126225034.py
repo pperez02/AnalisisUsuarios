@@ -1450,7 +1450,7 @@ def borrar_temporadas(request: Request):
     print(mensaje)
     # Renderizar la plantilla con los datos de las series
     return templates.TemplateResponse(
-        "admin_borrar_temporadas.html",
+        "admin_borrar_series.html",
         {"request": request, "series": series, "mensaje": mensaje},
     )
 

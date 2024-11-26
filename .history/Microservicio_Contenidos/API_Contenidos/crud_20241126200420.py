@@ -288,14 +288,12 @@ def get_all_series_con_temporadas_episodios(db: Session):
             # Añadir los datos de la temporada con sus episodios
             temporadas_data.append(schemas.TemporadasGet(
                 idTemporada=temporada.idTemporada,
-                numeroTemporada=temporada.numeroTemporada,
                 Episodios=episodios_data
             ))
 
         # Añadir los datos de la serie con sus temporadas
         series_data.append(schemas.SeriesGet(
             idSerie=serie.id,
-            titulo=serie.titulo,
             Temporadas=temporadas_data
         ))
 

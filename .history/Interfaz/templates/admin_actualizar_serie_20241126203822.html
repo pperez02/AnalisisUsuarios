@@ -39,7 +39,7 @@
                 <label for="genero">Género:</label>
                 <select id="genero" name="genero" required>
                     {% for genero in generos %}
-                        <option value="{{ genero.id }}" {% if genero.id == idGenero %}selected{% endif %}>
+                        <option value="{{ genero.id }}" {% if genero.id == {{idGenero}} %}selected{% endif %}>
                             {{ genero.nombre }}
                         </option>
                     {% endfor %}
