@@ -25,7 +25,7 @@
     <p style="color:red;">{{ error_message }}</p>
     {% endif %}
     <div class="container">
-        <form action="/administrador/update_episodio/series/{{idSerie}}/temporadas/{{idTemporada}}/episodios/{{episodio_id}}" method="post">
+        <form action="/administrador/update_episodio/{{episodio_id}}" method="post">
             <label for="numeroEpisodio">Número de episodio:</label>
             <input type="number" id="numeroEpisodio" name="numeroEpisodio" value="{{numeroEpisodio}}" required><br>
             <label for="duracion">Duración:</label>

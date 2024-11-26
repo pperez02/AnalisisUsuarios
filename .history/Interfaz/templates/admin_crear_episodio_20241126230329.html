@@ -57,9 +57,6 @@
             <label for="temporadas">Temporada:</label>
             <select id="temporadas" name="idTemporada" required>
                 <option value="">Seleccione una temporada</option>
-                {% for temporada in temporadasSelect %}
-                    <option value="{{ temporada.idTemporada }}">{{ temporada.numeroTemporada }}</option>
-                {% endfor %}
             </select>
 
             <label for="numeroEpisodio">Número de Episodio:</label>

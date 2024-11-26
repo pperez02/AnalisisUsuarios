@@ -1238,12 +1238,33 @@ async def actualizar_temporada(request: Request, idTemporada: str):
 @app.get("/administrador/series/{idSerie}/temporadas/{idTemporada}/episodios/{idEpisodio}", response_class=HTMLResponse)
 async def get_actualizar_episodio(request: Request, idSerie: str, idTemporada: str, idEpisodio: str):
     response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}/temporadas/{idTemporada}/episodios/{idEpisodio}")
+    series_response = requests.get(f"{BASE_URL_CONTENIDOS}/series")
     directores_response = requests.get(f"{BASE_URL_CONTENIDOS}/directores")
 
     if response.status_code == 200:
         # Obtiene los datos de la serie
         episodio_data = response.json()
+        series = []
         directores = []
+
+        if series_response.status_code == 200:
+            # Obtiene la lista de series
+            series_data = series_response.json()
+            series = [
+                {
+                    "id": serie["id"],
+                    "titulo": serie["titulo"],
+                    "temporadas": series_data["Temporadas"],
+                }
+                for serie in series_data
+            ]
+        else:
+            # En caso de error al obtener las series
+            error_message = f"Error al obtener las series y temporadas de la base de datos: {series_response.status_code}"
+            return templates.TemplateResponse(
+                "admin_actualizar_episodio.html",
+                {"request": request, "error_message": error_message},
+            )
                 
         if directores_response.status_code == 200:
             # Obtiene la lista de directores
@@ -1272,8 +1293,8 @@ async def get_actualizar_episodio(request: Request, idSerie: str, idTemporada: s
                 "idTemporada": idTemporada,
                 "episodio_id": idEpisodio,
                 "numeroEpisodio": episodio_data["numeroEpisodio"],
-                "duracion": episodio_data["duracion"],
                 "idDirector": episodio_data["idDirector"],
+                "series": series,  # Pasa la lista de todas las series con sus temporadas
                 "directores": directores,   # Pasa la lista de todos los directores
             },
         )
@@ -1290,16 +1311,16 @@ async def get_actualizar_episodio(request: Request, idSerie: str, idTemporada: s
             },
         )
 
-@app.post("/administrador/update_episodio/series/{idSerie}/temporadas/{idTemporada}/episodios/{idEpisodio}", response_class=HTMLResponse)
-async def actualizar_episodio(request: Request, idSerie: str, idTemporada: str, idEpisodio: str):
+@app.post("/administrador/update_episodio/{idEpisodio}", response_class=HTMLResponse)
+async def actualizar_episodio(request: Request, idEpisodio: str):
     """
     Endpoint para actualizar un episodio.
     """
     data = await request.form()
 
     # Extraemos los datos del JSON recibido
-    idSerie = idSerie
-    idTemporada = idTemporada
+    idSerie = data.get("id_serie")
+    idTemporada = data.get("id_temporada")
     numeroEpisodio = data.get("numeroEpisodio")
     duracion = data.get("duracion")
     idDirector = data.get("idDirector")
@@ -1552,7 +1573,7 @@ def borrar_actores(request: Request):
     print(mensaje)
     # Renderizar la plantilla con los datos de actores
     return templates.TemplateResponse(
-        "admin_borrar_actores.html",
+        "borrar_actores.html",
         {"request": request, "actores": actores, "mensaje": mensaje},
     )
 

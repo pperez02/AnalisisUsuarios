@@ -1272,7 +1272,6 @@ async def get_actualizar_episodio(request: Request, idSerie: str, idTemporada: s
                 "idTemporada": idTemporada,
                 "episodio_id": idEpisodio,
                 "numeroEpisodio": episodio_data["numeroEpisodio"],
-                "duracion": episodio_data["duracion"],
                 "idDirector": episodio_data["idDirector"],
                 "directores": directores,   # Pasa la lista de todos los directores
             },
@@ -1291,15 +1290,15 @@ async def get_actualizar_episodio(request: Request, idSerie: str, idTemporada: s
         )
 
 @app.post("/administrador/update_episodio/series/{idSerie}/temporadas/{idTemporada}/episodios/{idEpisodio}", response_class=HTMLResponse)
-async def actualizar_episodio(request: Request, idSerie: str, idTemporada: str, idEpisodio: str):
+async def actualizar_episodio(request: Request, idEpisodio: str):
     """
     Endpoint para actualizar un episodio.
     """
     data = await request.form()
 
     # Extraemos los datos del JSON recibido
-    idSerie = idSerie
-    idTemporada = idTemporada
+    idSerie = data.get("id_serie")
+    idTemporada = data.get("id_temporada")
     numeroEpisodio = data.get("numeroEpisodio")
     duracion = data.get("duracion")
     idDirector = data.get("idDirector")

@@ -58,7 +58,7 @@
             <select id="temporadas" name="idTemporada" required>
                 <option value="">Seleccione una temporada</option>
                 {% for temporada in temporadasSelect %}
-                    <option value="{{ temporada.idTemporada }}">{{ temporada.numeroTemporada }}</option>
+                <option value="{{ temporada.idTemporada }}">{{ temporada.numeroTemporada }}</option>
                 {% endfor %}
             </select>
 
