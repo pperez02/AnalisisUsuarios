@@ -229,11 +229,12 @@ async def detalles_pelicula(request: Request, idContenido: str):
         },
     )
 
+
 @app.get("/buscar", response_class=HTMLResponse)
 async def buscar(request: Request, query: str, tipo: str):
     # Realizamos la búsqueda de contenidos o actores según el tipo
     if tipo == "contenido":
-        response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{query}/n")
+        response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{query}/buscar")
     elif tipo == "actor":
         response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{query}/actores")
     else:
