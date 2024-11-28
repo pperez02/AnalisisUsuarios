@@ -18,11 +18,7 @@ body {
     font-family: 'Arial', sans-serif;
     background-color: var(--color-background);
     color: var(--color-text);
-}
-
-h1 {
-    font-size: 32px;
-    margin: 0;
+    line-height: 1.6;
 }
 
 /* Encabezado */
@@ -30,8 +26,9 @@ h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
+    padding: 1rem 2rem;
     background-color: var(--color-background);
+    flex-wrap: wrap; /* Permite que el contenido se ajuste en pantallas pequeñas */
 }
 
 .perfil-button {
@@ -40,7 +37,7 @@ h1 {
     padding: 12px 25px;
     text-decoration: none;
     border-radius: 25px;
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
     box-shadow: var(--button-shadow);
@@ -49,7 +46,7 @@ h1 {
 
 .perfil-button:hover {
     background: linear-gradient(135deg, var(--color-primary-hover), var(--color-primary));
-    transform: translateY(-2px) scale(1.05); /* Efecto de elevación */
+    transform: translateY(-2px) scale(1.05);
     box-shadow: var(--button-shadow-hover);
 }
 
@@ -57,16 +54,19 @@ h1 {
 .container {
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    padding: 2rem;
 }
 
 /* Tarjeta de película */
 .movie-card {
     display: flex;
+    flex-direction: row;
     background-color: #1a1a1a;
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+    gap: 20px; /* Espacio entre imagen y detalles */
+    flex-wrap: wrap; /* Permite que los elementos se acomoden en pantallas pequeñas */
 }
 
 /* Imagen de la película */
@@ -76,7 +76,6 @@ h1 {
     background-size: cover;
     background-position: center;
     border-radius: 10px;
-    margin-right: 20px;
     transition: transform 0.3s ease;
 }
 
@@ -87,19 +86,22 @@ h1 {
 /* Detalles de la película */
 .movie-details {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 /* Título de la película */
 .movie-title {
-    font-size: 36px;
+    font-size: 2rem;
     font-weight: bold;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 1rem;
 }
 
 /* Información adicional de la película */
 .movie-info {
-    font-size: 18px;
+    font-size: 1rem;
     margin-bottom: 10px;
     text-align: center;
 }
@@ -110,8 +112,8 @@ h1 {
 
 /* Descripción de la película */
 .movie-description {
-    font-size: 16px;
-    margin-bottom: 20px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
     line-height: 1.5;
 }
 
@@ -119,19 +121,20 @@ h1 {
 .reparto, .doblajes, .subtitulos {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap; /* Acomoda los items en pantallas pequeñas */
 }
 
 .reparto ul, .doblajes ul, .subtitulos ul {
     display: flex;
-    gap: 20px;
+    gap: 10px;
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
 .reparto li, .doblajes li, .subtitulos li {
-    font-size: 16px;
+    font-size: 1rem;
 }
 
 .reparto strong, .doblajes strong, .subtitulos strong {
@@ -141,7 +144,7 @@ h1 {
 
 /* Valoración de la película */
 .rating {
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: bold;
     color: var(--color-primary);
 }
@@ -149,8 +152,8 @@ h1 {
 /* Pie de página */
 footer {
     text-align: center;
-    font-size: 14px;
-    padding: 20px;
+    font-size: 0.875rem;
+    padding: 2rem;
     background-color: var(--color-background);
     color: var(--color-text);
 }
@@ -169,7 +172,7 @@ footer {
     border: 1px solid #ddd;
     border-radius: 15px;
     padding: 15px 20px;
-    font-size: 16px;
+    font-size: 1rem;
     width: calc(25% - 20px);
     min-width: 150px;
     height: 100px;
@@ -200,7 +203,7 @@ footer {
     background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
     color: var(--color-text);
     padding: 12px 25px;
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: bold;
     border: none;
     border-radius: 25px;
@@ -231,11 +234,65 @@ footer {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 16px;
+    font-size: 1rem;
 }
 
 .rating-input {
-    font-size: 16px;
+    font-size: 1rem;
     padding: 5px;
     border-radius: 5px;
+}
+
+/* Diseño responsivo */
+@media (max-width: 768px) {
+    /* Ajustes para pantallas más pequeñas */
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .movie-card {
+        flex-direction: column;
+        width: 100%;
+        padding: 10px;
+    }
+
+    .movie-poster {
+        width: 100%;
+        height: auto;
+        margin-bottom: 1rem;
+    }
+
+    .movie-title {
+        font-size: 1.5rem;
+    }
+
+    .movie-info, .movie-description {
+        text-align: left;
+    }
+
+    .reparto, .doblajes, .subtitulos {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .episodio-item {
+        width: calc(50% - 10px); /* Dos elementos por fila en pantallas pequeñas */
+    }
+
+    .action-button {
+        font-size: 0.9rem;
+    }
+}
+
+/* Diseño para pantallas más grandes */
+@media (min-width: 1200px) {
+    .movie-card {
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    .episodio-item {
+        width: calc(25% - 20px); /* Cuatro elementos por fila en pantallas grandes */
+    }
 }

@@ -1,0 +1,116 @@
+/* Estilos generales para la página */
+body {
+    margin: 2rem;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    flex-direction: column; /* Los elementos estarán apilados en una columna */
+    align-items: center; /* Centra los elementos horizontalmente */
+    justify-content: flex-start; /* Alinea los elementos al principio */
+    height: 100vh; /* Altura completa de la ventana */
+}
+
+/* Estilo del encabezado */
+header {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    width: 100%;
+}
+
+/* Estilo para el título */
+h1 {
+    font-size: 28px;
+    color: #fff;
+    text-align: center;
+    margin-top: 80px; /* Asegura que el título esté por debajo del header */
+    margin-bottom: 30px; /* Espacio debajo del título */
+}
+
+/* Estilo del mensaje de éxito o error */
+.message {
+    background-color: #ffeb3b;
+    padding: 10px;
+    margin: 20px auto;
+    width: 80%;
+    text-align: center;
+    border-radius: 5px;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Tabla de actores */
+table {
+    width: 80%;
+    margin: 0 auto; /* Centra la tabla */
+    border-collapse: collapse;
+    background-color: #1a1a1a;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: #333;
+    color: white;
+}
+
+table tr:hover {
+    background-color: #444;
+}
+
+/* Estilo para el botón de eliminar */
+button[type="submit"] {
+    background-color: #f44336; /* Rojo */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+    background-color: #d32f2f; /* Rojo más oscuro al pasar el ratón */
+}
+
+/* Estilo para el mensaje si no hay actores */
+p {
+    text-align: center;
+    font-size: 18px;
+    color: #555;
+    font-weight: bold;
+}
+
+/* Espaciado y estilo general */
+.container {
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #222;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Diseño responsivo para pantallas pequeñas */
+@media (max-width: 768px) {
+    table {
+        width: 100%; /* Asegura que la tabla ocupe todo el ancho en pantallas pequeñas */
+    }
+
+    h1 {
+        font-size: 24px; /* Tamaño de fuente más pequeño para pantallas pequeñas */
+    }
+
+    .message {
+        width: 90%; /* Ancho del mensaje más pequeño */
+    }
+}

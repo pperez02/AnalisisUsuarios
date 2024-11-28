@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Borrar Episodios</title>
+        <link rel="stylesheet" href="/static/style.css">
+        <link rel="stylesheet" href="/static/menu_admin.css">
+        <link rel="stylesheet" href="/static/borrar_actores.css">
+    </head>
+
+<header>
+    <div class="navbar">
+        <div class="logo">
+            <a href=#>Streamflix: Borrar Episodios</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/admin_menu" class="return-button">Volver al inicio</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<body>
+    <h1>Borrar Episodios</h1>
+    
+    <!-- Mostrar la tabla solo si hay series -->
+    {% if series and series|length > 0 %}
+
+        <!-- Mostrar mensaje si está presente -->
+        {% if mensaje %}
+            <div class="message">
+                <p>{{ mensaje }}</p>
+            </div>
+        {% endif %}
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Título serie</th>
+                    <th>Temporada</th>
+                    <th>Episodio</th>
+                    <th>Duracion</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for serie in series %}
+                    {% if serie.Temporadas and serie.Temporadas|length > 0 %}
+                        {% for temporada in serie.Temporadas %}
+                            {% if temporada.Episodios and temporada.Episodios|length > 0 %}
+                                {% for episodio in temporada.Episodios %}
+                                    <tr>                            
+                                        <td>{{ serie.titulo }}</td>
+                                        <td>{{ temporada.numeroTemporada }}</td>
+                                        <td>{{ episodio.numeroEpisodio }}</td>
+                                        <td>{{ episodio.duracion }} mins</td>
+                                        <td>
+                                            <form action="/series/{{ serie.idSerie }}/temporadas/{{ temporada.idTemporada }}/episodios/{{ episodio.idEpisodio }}/borrar" method="post" style="display:inline;">
+                                                <button type="submit">Eliminar</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <!-- Si no hay series, mostrar un mensaje -->
+        <p>No existen series.</p>
+    {% endif %}
+</body>
+</html>

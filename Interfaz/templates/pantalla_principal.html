@@ -27,7 +27,7 @@
                 <h2>Recomendaciones personalizadas</h2>
                 <div class="content-list">
                     {% for contenido in recomendaciones %}
-                        <a href="/contenidos/{{ contenido.id }}" class="content-box">
+                        <a href="/detalles_contenido/{{ contenido.id }}?user_id={{ user_id }}" class="content-box">
                             {{ contenido.titulo }}
                         </a>
                     {% endfor %}
@@ -43,7 +43,7 @@
                 <h2>Tendencias</h2>
                 <div class="content-list">
                     {% for tendencia in tendencias %}
-                        <a href="/contenidos/{{ tendencia.id }}" class="content-box">
+                        <a href="/detalles_contenido/{{ tendencia.id }}?user_id={{ user_id }}" class="content-box">
                             {{ tendencia.titulo }} - Me gusta: {{ tendencia.me_gusta_total }}
                         </a>
                     {% endfor %}
@@ -59,7 +59,7 @@
                 <h2>Tu historial</h2>
                 <div class="content-list">
                     {% for item in historial %}
-                        <a href="/contenidos/{{ item.id }}" class="content-box">
+                        <a href="/detalles_contenido/{{ item.id }}?user_id={{ user_id }}" class="content-box">
                             {{ item.titulo }}
                         </a>
                     {% endfor %}
@@ -76,7 +76,7 @@
                 <h2>{{ genero.nombre }}</h2>
                 <div class="content-list">
                     {% for contenido in genero.contenidos %}
-                        <a href="/contenidos/{{ contenido.id }}" class="content-box">
+                        <a href="/detalles_contenido/{{ contenido.id }}?user_id={{ user_id }}" class="content-box">
                             {{ contenido.titulo }}
                         </a>
                     {% endfor %}

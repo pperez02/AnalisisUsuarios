@@ -17,6 +17,10 @@ class Contenido(BaseModel):
     idSubtitulosContenido: Optional[str] = None
     idDoblajeContenido: Optional[str] = None
 
+# Usado para devolver el la lista personalizada
+class ContenidoGetId(Contenido):
+    id: str
+
 # Esquema utilizado para las listas de "Me gusta" de los usuarios
 class ListaMeGusta(BaseModel):
     idUsuario: str

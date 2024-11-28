@@ -1,33 +1,45 @@
+/* Body general */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #000;
+}
+
 /* Contenedor general */
 .container {
     max-width: 100%;
-    margin: 20px auto;
-    background: #000;
     padding: 20px;
+    margin-top: 5rem; /* Ajuste para que el contenedor no quede demasiado abajo */
+    background: #000;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* Diseño en grid para las secciones */
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    gap: 30px;
-    /* Reduce el espacio entre las columnas */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Reduce la columna mínima para pantallas más pequeñas */
+    gap: 20px; /* Reducido el espacio entre las columnas */
 }
 
 /* Estilos para cada sección */
 .section {
     background-color: #000;
-    border-radius: 2px;
-    padding: 5px;
+    border-radius: 8px; /* Bordes más redondeados */
+    padding: 15px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease;
+}
+
+.section:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Efecto al pasar el ratón */
 }
 
 .section h2 {
-    color: #e50914;
+    color: #e50914; /* Rojo icónico de Netflix */
     border-bottom: 2px solid #e50914;
     padding-bottom: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     text-align: center;
 }
 
@@ -63,9 +75,10 @@ header {
     justify-content: center;
     align-items: center;
     height: 60px;
-    /* Define una altura fija */
+    margin-bottom: 5rem; /* Ajustado para evitar el solapamiento */
 }
 
+/* Estilos para la barra de navegación */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -79,8 +92,7 @@ header {
 .navbar .logo a {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #e50914;
-    /* Rojo icónico de Netflix */
+    color: #e50914; /* Rojo icónico de Netflix */
     text-decoration: none;
 }
 
@@ -101,24 +113,69 @@ header {
 }
 
 /* Estilos responsivos */
+
+/* Dispositivos medianos (pantallas menores a 1200px) */
 @media (max-width: 1200px) {
-    .content-list {
-        flex-direction: row;
-        /* En pantallas medianas, los recuadros se alinean horizontalmente */
-        justify-content: space-evenly;
+    .grid {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* Ajusta las columnas */
+        gap: 15px; /* Reduce el espacio entre las columnas */
+    }
+
+    .navbar {
+        flex-direction: column;
+        padding: 1rem;
     }
 }
 
+/* Dispositivos pequeños (pantallas menores a 900px) */
 @media (max-width: 900px) {
-    .content-list {
+    .grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Hace las columnas más estrechas en pantallas pequeñas */
+        gap: 10px; /* Reduce el espacio entre las columnas */
+    }
+
+    header {
+        margin-bottom: 4rem;
+    }
+
+    .navbar ul {
         flex-direction: column;
-        /* En pantallas pequeñas, los recuadros se alinean verticalmente */
+        align-items: center;
+    }
+
+    .navbar .logo a {
+        font-size: 1.2rem; /* Ajusta el tamaño de la fuente para pantallas pequeñas */
+    }
+
+    .container {
+        padding: 15px; /* Reduce el padding para dispositivos pequeños */
+        margin-top: 3rem; /* Ajusta la posición del contenedor */
     }
 }
 
+/* Dispositivos muy pequeños (pantallas menores a 600px) */
 @media (max-width: 600px) {
-    .content-list {
+    .grid {
+        grid-template-columns: 1fr; /* Los elementos se apilan en una sola columna */
+        gap: 15px; /* Reduce el espacio entre las secciones */
+    }
+
+    .navbar ul {
         flex-direction: column;
-        /* En pantallas muy pequeñas, los recuadros se alinean verticalmente */
+        gap: 0.5rem; /* Reduce el espacio entre los elementos de la navbar */
+        align-items: center;
+    }
+
+    .navbar .logo a {
+        font-size: 1rem; /* Ajusta el tamaño de la fuente para pantallas pequeñas */
+    }
+
+    .container {
+        margin-top: 2rem; /* Ajuste del espacio superior */
+        padding: 10px; /* Reduce el padding */
+    }
+
+    header {
+        margin-bottom: 3rem; /* Ajusta la posición del header */
     }
 }

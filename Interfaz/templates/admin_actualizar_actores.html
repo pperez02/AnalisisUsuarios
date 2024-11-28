@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualizar Actores</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/menu_admin.css">
+    <link rel="stylesheet" href="/static/borrar_actores.css">
+</head>
+
+<header>
+    <div class="navbar">
+        <div class="logo">
+            <a href="#">Streamflix: Menu Administrador</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/admin_menu" class="return-button">Volver al menú</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<body>
+    {% if message %}
+    <div class="message">
+        ¡Actor actualizado con éxito!
+    </div>
+    {% endif %}
+
+    <h1>Actualizar Actores</h1>
+    <form action="/actor/actualizar" method="POST">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Nacionalidad</th>
+                    <th>Fecha de Nacimiento</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for actor in actores %}
+                <tr>
+                    <td>{{ actor.id }}</td>
+                    <td><input type="text" name="nombre_{{ actor.id }}" value="{{ actor.nombre }}" required></td>
+                    <td><input type="text" name="nacionalidad_{{ actor.id }}" value="{{ actor.nacionalidad }}" required></td>
+                    <td><input type="text" name="fechaNacimiento_{{ actor.id }}" value="{{ actor.fechaNacimiento }}" required></td>
+                    <td>
+                        <button type="submit" name="id_actor" value="{{ actor.id }}">Actualizar</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+</body>
+
+</html>

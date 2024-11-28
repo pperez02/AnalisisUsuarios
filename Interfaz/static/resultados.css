@@ -10,11 +10,15 @@ body {
     padding: 20px;
     max-width: 1000px;
     margin: 0 auto;
+    box-sizing: border-box;
 }
 
+/* Título principal */
 h1 {
     text-align: center;
     color: #333;
+    font-size: 2rem;
+    margin-bottom: 1rem;
 }
 
 /* Contenedor de los resultados de búsqueda */
@@ -35,6 +39,7 @@ h1 {
     width: 250px;
     text-align: center;
     transition: transform 0.3s ease;
+    box-sizing: border-box;
 }
 
 /* Efecto de hover en los items de resultados */
@@ -43,13 +48,15 @@ h1 {
 }
 
 .result-item h3 {
-    font-size: 20px;
+    font-size: 1.2rem;
     color: #333;
+    margin-bottom: 1rem;
 }
 
 .result-item p {
-    font-size: 16px;
+    font-size: 1rem;
     color: #666;
+    margin-bottom: 1rem;
 }
 
 .result-item strong {
@@ -58,7 +65,7 @@ h1 {
 
 /* Estilo para los títulos de las secciones */
 h2 {
-    font-size: 24px;
+    font-size: 1.5rem;
     color: #e50914; /* Color rojo para los títulos */
     margin-bottom: 20px;
     text-align: center;
@@ -76,9 +83,60 @@ h2 {
 }
 
 /* Solución para asegurar que las secciones no se solapen en tamaños más pequeños */
+@media (max-width: 1024px) {
+    .container {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .result-item {
+        width: 220px; /* Ajustamos el tamaño de los items para pantallas más pequeñas */
+    }
+}
+
+/* En pantallas pequeñas (menos de 768px) */
 @media (max-width: 768px) {
     .results {
         flex-direction: column; /* Colocar los elementos en columna en pantallas pequeñas */
         align-items: center;
+    }
+
+    .result-item {
+        width: 90%; /* Los elementos ocupan casi todo el ancho disponible */
+        margin-bottom: 20px;
+        padding: 15px;
+    }
+
+    h2 {
+        font-size: 1.3rem;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* En pantallas muy pequeñas (menos de 480px) */
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 1.4rem;
+    }
+
+    .result-item {
+        width: 100%; /* Los items ocupan todo el ancho disponible en pantallas más pequeñas */
+        margin-bottom: 15px;
+        padding: 10px;
+    }
+
+    h2 {
+        font-size: 1.2rem;
     }
 }

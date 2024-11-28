@@ -34,11 +34,12 @@ def get_recomendaciones(idUsuario: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No se pudieron recuperar las recomendaciones")
     return recomendaciones  
 
+# Endpoint para obtener lista de me gusta
 @app.get("/usuarios/{idUsuario}/me-gusta", response_model=list[schemas.ContenidoMeGusta])
 def mostrar_megusta(idUsuario: str, db: Session = Depends(get_db)):
     me_gusta = crud.mostrar_me_gusta(db=db, usuario_id=idUsuario)    
-    if not me_gusta:
-        raise HTTPException(status_code=404, detail="No se pudieron recuperar los me gusta")
+    #if not me_gusta: TODO esto impide que devuelva una lista vacia
+    #    raise HTTPException(status_code=404, detail="No se pudieron recuperar los me gusta")
     return me_gusta
 
 # Endpoint para dar "Me gusta" a un contenido
@@ -99,14 +100,20 @@ def insert_content_into_LP(idUsuario: str, idContenido: str, db: Session = Depen
         raise HTTPException(status_code=500, detail=str(e))
     
 # Endpoint para devolver la ListaPersonalizada de usuario
-@app.get("/usuarios/{idUsuario}/listaPersonalizada", response_model=list[schemas.Contenido])
+@app.get("/usuarios/{idUsuario}/listaPersonalizada", response_model=list[schemas.ContenidoGetId])
 def get_LP_user(idUsuario: str, db: Session = Depends(get_db)):
     try:
         LP = crud.get_LP_user(db=db, usuario_id=idUsuario)
-        return LP if LP else []
+        return LP  # Si LP es una lista vacía, el cliente recibirá `[]`
+    except HTTPException as e:
+        raise e  # Devolver errores HTTP generados en CRUD
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error inesperado: {e}"
+        )
     
+# Endpoint para eliminar contenido de la listaPersonalizada
 @app.delete("/usuarios/{idUsuario}/listaPersonalizada/{idContenido}")
 def delete_conent_from_user_LP(idUsuario: str, idContenido: str, db: Session = Depends(get_db)):
     eliminado = crud.delete_conent_from_user_LP(db=db, idUsuario=idUsuario, idContenido=idContenido)

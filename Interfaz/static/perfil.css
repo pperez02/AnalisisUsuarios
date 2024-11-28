@@ -5,6 +5,7 @@ main {
     align-items: center;    /* Centra los elementos horizontalmente */
     gap: 1rem;              /* Espaciado entre secciones */
     padding: 2rem 1rem;
+    box-sizing: border-box;
 }
 
 /* Secciones individuales */
@@ -18,14 +19,15 @@ section {
     text-align: center;
 }
 
-
+/* Estilos generales del cuerpo */
 body {
     font-family: Arial, sans-serif;
     background-color: #141414; /* Fondo oscuro similar al de Netflix */
     color: #e5e5e5; /* Texto claro */
     line-height: 1.6;
+    margin: 0;
+    padding: 0;
 }
-
 
 /* Estilo de la tarjeta de perfil */
 .profile-card {
@@ -55,7 +57,6 @@ body {
     font-size: 1rem;
     margin: 0.5rem 0;
 }
-
 
 /* Sección de Métodos de Pago */
 .payment-methods-section {
@@ -171,7 +172,6 @@ body {
     background-color: #b20710;
 }
 
-
 /* Botones */
 .btn {
     display: inline-block;
@@ -243,28 +243,6 @@ body {
     background-color: #b20710; /* Rojo más oscuro cuando el botón es presionado */
 }
 
-/* Estilo de la tarjeta de perfil */
-.profile-card {
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background-color: #222;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-    text-align: center;
-}
-
-.profile-avatar {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    border: 4px solid #e50914;
-    margin-bottom: 1rem;
-}
-
-/* Otros estilos... */
-
-
 /* Footer */
 footer {
     text-align: center;
@@ -273,4 +251,52 @@ footer {
     background-color: #141414;
     border-top: 1px solid #333;
     color: #777;
+}
+
+/* Media Queries para Responsividad */
+
+/* En pantallas medianas (menos de 900px) */
+@media (max-width: 900px) {
+    main {
+        padding: 1.5rem;
+    }
+
+    .profile-card, .payment-methods-section, .payment-section {
+        width: 100%;
+        margin: 1rem;
+    }
+
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+    }
+
+    .payment-method-item {
+        flex-direction: column; /* Pone los items en columna para pantallas pequeñas */
+        align-items: flex-start;
+    }
+
+    .payment-method-item span {
+        margin-bottom: 10px;
+    }
+}
+
+/* En pantallas pequeñas (menos de 600px) */
+@media (max-width: 600px) {
+    .payment-method-item {
+        padding: 0.8rem;
+    }
+
+    .profile-card, .payment-methods-section, .payment-section {
+        padding: 1.5rem;
+    }
+
+    .btn, .payment-section button {
+        width: 100%;
+        padding: 1rem;
+    }
+
+    footer {
+        font-size: 0.8rem;
+    }
 }

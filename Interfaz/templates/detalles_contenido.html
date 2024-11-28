@@ -136,74 +136,169 @@
     </footer>
 
     <script>
-        const userId = "{{ idUsuario }}"; // ID del usuario actual
+        const userId = "{{ user_id }}"; // ID del usuario actual
+        const contentId = "{{ detalles_contenido['id'] }}"; // ID del contenido actual
     
-        // Función para dar/quitar "Me gusta"
-        async function toggleLike(contentId) {
-            const likeButton = document.getElementById("like-button");
-            const isLiked = likeButton.classList.contains("liked");
+        if (!userId) {
+            console.error("User ID no está definido. Por favor, verifica que se haya pasado correctamente.");
+        }
+    
+        /**
+         * Inicializa el estado de los botones "Añadir a mi lista" y "Me gusta".
+         */
+        async function initializeButtons(contentId) {
+            await initializeCustomListButton(contentId);
+            await initializeLikeButton(contentId);
+        }
+    
+        /**
+         * Verifica y configura el estado del botón de lista personalizada.
+         */
+        async function initializeCustomListButton(contentId) {
+            const customListButton = document.getElementById("custom-list-button");
     
             try {
-                if (isLiked) {
-                    // Eliminar "Me gusta"
-                    await fetch(`/usuarios/${userId}/me-gusta/${contentId}`, { method: "DELETE" });
-                    likeButton.classList.remove("liked");
-                    likeButton.textContent = "Me gusta";
+                // Llamada al endpoint para verificar si el contenido está en la lista personalizada
+                const response = await fetch(`/contenidos/${userId}/esta_en_lista/${contentId}`, { method: "GET" });
+                const estaEnLista = await response.json(); // true o false
+    
+                // Configurar el estado inicial del botón según la respuesta
+                if (estaEnLista) {
+                    customListButton.classList.add("in-list");
+                    customListButton.textContent = "Quitar de mi lista";
+                    customListButton.onclick = () => toggleCustomList(contentId, true); // Configura para eliminar
                 } else {
-                    // Dar "Me gusta"
-                    await fetch(`/usuarios/${userId}/me-gusta/${contentId}`, { method: "POST" });
-                    likeButton.classList.add("liked");
-                    likeButton.textContent = "Quitar Me gusta";
+                    customListButton.classList.remove("in-list");
+                    customListButton.textContent = "Añadir a mi lista";
+                    customListButton.onclick = () => toggleCustomList(contentId, false); // Configura para añadir
                 }
             } catch (error) {
-                console.error("Error al gestionar 'Me gusta':", error);
+                console.error("Error al inicializar el botón de lista personalizada:", error);
             }
         }
     
-        // Función para añadir/quitar de la lista personalizada
-        async function toggleCustomList(contentId) {
+        /**
+         * Alterna entre añadir o quitar el contenido de la lista personalizada.
+         */
+        async function toggleCustomList(contentId, isInList) {
             const customListButton = document.getElementById("custom-list-button");
-            const isInList = customListButton.classList.contains("in-list");
     
             try {
                 if (isInList) {
                     // Eliminar de lista personalizada
-                    await fetch(`/usuarios/${userId}/listaPersonalizada/${contentId}`, { method: "DELETE" });
+                    await fetch(`/contenidos/${userId}/eliminar_de_LP/${contentId}`, { method: "DELETE" });
                     customListButton.classList.remove("in-list");
                     customListButton.textContent = "Añadir a mi lista";
+                    customListButton.onclick = () => toggleCustomList(contentId, false); // Cambia el estado a añadir
                 } else {
                     // Añadir a lista personalizada
-                    await fetch(`/usuarios/${userId}/listaPersonalizada/${contentId}`, { method: "POST" });
+                    await fetch(`/contenidos/${userId}/aniadir_a_LP/${contentId}`, { method: "POST" });
                     customListButton.classList.add("in-list");
                     customListButton.textContent = "Quitar de mi lista";
+                    customListButton.onclick = () => toggleCustomList(contentId, true); // Cambia el estado a eliminar
                 }
             } catch (error) {
                 console.error("Error al gestionar la lista personalizada:", error);
             }
         }
     
-        // Función para enviar valoración
-        async function submitRating(contentId) {
-            const ratingInput = document.getElementById("rating-input");
-            const rating = ratingInput.value;
-    
-            if (!rating) {
-                alert("Por favor selecciona una valoración.");
-                return;
-            }
+        /**
+         * Verifica y configura el estado del botón "Me gusta".
+         */
+        async function initializeLikeButton(contentId) {
+            const likeButton = document.getElementById("like-button");
     
             try {
-                await fetch(`/usuarios/${userId}/valoraciones/${contentId}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ valoracion: parseInt(rating) }),
-                });
-                alert("¡Gracias por tu valoración!");
+                // Llamada al endpoint para verificar si el contenido está en "Me gusta"
+                const response = await fetch(`/contenidos/${userId}/esta_en_mg/${contentId}`, { method: "GET" });
+                const estaEnMg = await response.json(); // true o false
+    
+                // Configurar el estado inicial del botón según la respuesta
+                if (estaEnMg) {
+                    likeButton.classList.add("liked");
+                    likeButton.textContent = "Quitar Me gusta";
+                    likeButton.onclick = () => toggleLike(contentId, true); // Configura para eliminar "Me gusta"
+                } else {
+                    likeButton.classList.remove("liked");
+                    likeButton.textContent = "Me gusta";
+                    likeButton.onclick = () => toggleLike(contentId, false); // Configura para añadir "Me gusta"
+                }
             } catch (error) {
-                console.error("Error al enviar valoración:", error);
+                console.error("Error al inicializar el botón Me gusta:", error);
             }
         }
+    
+        /**
+         * Alterna entre añadir o quitar el contenido de "Me gusta".
+         */
+        async function toggleLike(contentId, isLiked) {
+            const likeButton = document.getElementById("like-button");
+    
+            try {
+                if (isLiked) {
+                    // Eliminar de "Me gusta"
+                    await fetch(`/contenidos/${userId}/eliminar-me-gusta/${contentId}`, { method: "DELETE" });
+                    likeButton.classList.remove("liked");
+                    likeButton.textContent = "Me gusta";
+                    likeButton.onclick = () => toggleLike(contentId, false); // Cambia el estado a añadir "Me gusta"
+                } else {
+                    // Añadir a "Me gusta"
+                    await fetch(`/contenidos/${userId}/dar-me-gusta/${contentId}`, { method: "POST" });
+                    likeButton.classList.add("liked");
+                    likeButton.textContent = "Quitar Me gusta";
+                    likeButton.onclick = () => toggleLike(contentId, true); // Cambia el estado a eliminar "Me gusta"
+                }
+            } catch (error) {
+                console.error("Error al gestionar Me gusta:", error);
+            }
+        }
+
+        /**
+         * Envía la valoración del contenido al servidor.
+         */
+         async function submitRating(contentId) {
+            const ratingInput = document.getElementById("rating-input");
+            const ratingValue = ratingInput.value;
+
+            if (!ratingValue) {
+                alert("Por favor, selecciona una valoración antes de enviarla.");
+                return;
+            }
+
+            console.log("Valoración enviada:", ratingValue); // Log para depurar
+
+            try {
+                const response = await fetch(`/usuarios/${userId}/valorarContenido/${contentId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        valoracion: parseInt(ratingValue, 10),
+                    }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    alert("¡Gracias por tu valoración!");
+                    console.log("Respuesta del servidor:", data);
+                } else {
+                    const error = await response.json();
+                    console.error("Error al enviar la valoración:", error);
+                    alert("Hubo un problema al enviar tu valoración. Inténtalo de nuevo.");
+                }
+            } catch (error) {
+                console.error("Error en la solicitud de valoración:", error);
+                alert("No se pudo enviar tu valoración. Verifica tu conexión e inténtalo de nuevo.");
+            }
+        }
+    
+        // Llamada inicial al cargar la página
+        document.addEventListener("DOMContentLoaded", () => {
+            initializeButtons(contentId);
+        });
     </script>
+    
     
 
 </body>

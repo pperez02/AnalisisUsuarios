@@ -102,9 +102,12 @@ class Genero(GeneroBase):
 
 class TemporadasGet(BaseModel):
     idTemporada: str
+    numeroTemporada: int
     Episodios: list[Episodio]
+
 class SeriesGet(BaseModel):
     idSerie: str
+    titulo: str
     Temporadas: list[TemporadasGet]
 
 class TemporadaUpdate(BaseModel):
@@ -128,8 +131,26 @@ class Actor(BaseModel):
     nacionalidad: str
     fechaNacimiento: str
 
+class ActorCreate(BaseModel):
+    nombre: str
+    nacionalidad: str
+    fechaNacimiento: str
+
+class ActorUpdate(BaseModel):
+    nombre: str
+    nacionalidad: str
+    fechaNacimiento: str        
+
 class Director(BaseModel):
     id: str
     nombre: str
     nacionalidad: str
     fechaNacimiento: str
+
+class DirectorCreate(BaseModel):
+    nombre: str
+    nacionalidad: str
+    fechaNacimiento: str
+
+class DirectorUpdate(DirectorCreate):
+    pass    

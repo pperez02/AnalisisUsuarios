@@ -9,6 +9,19 @@
     <link rel="stylesheet" href="/static/header_footer.css">
 </head>
 
+<header>
+    <div class="navbar">
+        <div class="logo">
+            <a href=#>Streamflix: Actualizar serie</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/admin_menu" class="return-button">Volver al menú</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
 <body>
     <main>
         <div class="container">
@@ -26,7 +39,7 @@
                 <label for="genero">Género:</label>
                 <select id="genero" name="genero" required>
                     {% for genero in generos %}
-                        <option value="{{ genero.id }}" {% if genero.id == genero_actual %}selected{% endif %}>
+                        <option value="{{ genero.id }}" {% if genero.id == idGenero %}selected{% endif %}>
                             {{ genero.nombre }}
                         </option>
                     {% endfor %}

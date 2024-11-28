@@ -71,7 +71,17 @@ def update_doblaje(idContenido: str, idDoblaje: str, db: Session = Depends(get_d
 
 @app.get("/contenidos/{idContenido}/doblajes")
 def get_doblajes(idContenido: str, db: Session = Depends(get_db)):
-    return crud.get_doblajes(db=db, idContenido=idContenido) 
+    return crud.get_doblajes(db=db, idContenido=idContenido)
+
+# Endpoint para obtener todos los subtitulos
+@app.get("/contenidos/subtitulos")
+def get_all_subtitulos(db: Session = Depends(get_db)):
+    return crud.get_all_subtitulos(db=db)
+
+# Endpoint para obtener todos los doblajes
+@app.get("/contenidos/doblajes")
+def get_all_doblajes(db: Session = Depends(get_db)):
+    return crud.get_all_doblajes(db=db)
 
 # Nuevo endpoint para eliminar contenido en distintos niveles
 @app.delete("/contenidos/{idContenido}/temporadas/{idTemporada}/episodios/{idEpisodio}", tags=["Eliminar contenido"])
@@ -127,6 +137,12 @@ def get_todoseries(db: Session = Depends(get_db)):
 def get_todopeliculas(db: Session = Depends(get_db)):
     peliculas = crud.get_todopeliculas(db=db)
     return peliculas
+
+@app.get("/contenidos/{idSerie}/temporadas")
+def get_temporadas(idSerie: str, db: Session = Depends(get_db)):
+    temporadas = crud.get_temporadas_by_serie(db, idSerie)
+    return temporadas
+
 
 @app.get("/contenidos/{idContenido}", response_model=schemas.Contenido)
 def get_contenido(idContenido: str, db: Session = Depends(get_db)):
@@ -295,3 +311,76 @@ def get_actors_by_content(idContenido: str, db: Session = Depends(get_db)):
 def get_director_by_content(idContenido: str, db: Session = Depends(get_db)):
     director = crud.get_director_by_content(db=db, idContenido=idContenido)
     return director
+
+#Funciones específicas de administrador para actores y directores
+@app.post("/actores", response_model=schemas.Actor)
+def create_actor(actor: schemas.ActorCreate, db: Session = Depends(get_db)):
+    return crud.create_actor(db=db, actor=actor)
+
+@app.post("/directores", response_model=schemas.Director)
+def create_director(director: schemas.DirectorCreate, db: Session = Depends(get_db)):
+    return crud.create_director(db=db, director=director)
+
+@app.put("/actores/{idActor}")
+def update_actor(idActor: str, actor: schemas.ActorUpdate, db: Session = Depends(get_db)):
+    actor = crud.update_actor(db=db, idActor=idActor, actor=actor)
+    if not actor:
+        raise HTTPException(status_code=404, detail="Actor no encontrado")
+    return {"message": "Datos del actor actualizados correctamente"}
+
+@app.put("/directores/{idDirector}")
+def update_director(idDirector: str, director: schemas.DirectorUpdate, db: Session = Depends(get_db)):
+    director = crud.update_director(db=db, idDirector=idDirector, director=director)
+    if not director:
+        raise HTTPException(status_code=404, detail="Director no encontrado")
+    return {"message": "Datos del director actualizados correctamente"}
+
+@app.delete("/actores/{idActor}")
+def delete_actor(idActor: str, db: Session = Depends(get_db)):
+    success = crud.delete_actor(db=db, actor_id=idActor)
+    if not success:
+        raise HTTPException(status_code=404, detail="Actor no encontrado")
+    return {"message": "Actor eliminado exitosamente"}    
+
+@app.delete("/directores/{idDirector}")
+def delete_director(idDirector: str, db: Session = Depends(get_db)):
+    success = crud.delete_director(db=db, director_id=idDirector)
+    if not success:
+        raise HTTPException(status_code=404, detail="Director no encontrado")
+    return {"message": "Director eliminado exitosamente"}
+
+#Funciones para obtener todos los actores o directores de la base de datos
+@app.get("/actores", response_model=list[schemas.Actor])
+def get_actores(db: Session = Depends(get_db)):
+    return crud.get_actores(db=db)
+
+@app.get("/directores", response_model=list[schemas.Director])
+def get_actores(db: Session = Depends(get_db)):
+    return crud.get_directores(db=db)
+
+#Funciones para eliminar un actor o director de la base de datos
+@app.delete("/actores/{idActor}")
+def borrar_actor(idActor: str, db: Session = Depends(get_db)):
+    """
+    Endpoint para borrar un actor por su ID.
+    """
+
+    eliminado = crud.eliminar_actor(db=db, idActor=idActor)
+
+    if not eliminado: 
+        return {"message": "El actor no existe o no se pudo eliminar"}
+
+    return {"message": "Actor eliminado correctamente"}
+
+@app.delete("/directores/{idDirector}")
+def borrar_actor(idDirector: str, db: Session = Depends(get_db)):
+    """
+    Endpoint para borrar un director por su ID.
+    """
+
+    eliminado = crud.eliminar_director(db=db, idDirector=idDirector)
+
+    if not eliminado: 
+        return {"message": "El director no existe o no se pudo eliminar"}
+
+    return {"message": "Director eliminado correctamente"}

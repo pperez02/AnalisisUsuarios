@@ -5,6 +5,7 @@ body {
     min-height: 100vh;
     margin: 0;
     background-color: #000; /* Fondo completamente negro */
+    font-family: Arial, sans-serif;
 }
 
 /* Contenedor */
@@ -19,6 +20,7 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
     position: relative;
     overflow-y: auto; /* Scroll si el contenido es demasiado grande */
+    box-sizing: border-box;
 }
 
 /* Estilo para las secciones con los recuadros de contenido */
@@ -33,7 +35,9 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: 15px; /* Espacio entre los recuadros */
-    justify-content: start; /* Alineación hacia la izquierda */
+    justify-content: flex-start; /* Alineación hacia la izquierda */
+    margin: 0;
+    padding: 0;
 }
 
 /* Recuadro de contenido */
@@ -54,6 +58,7 @@ body {
     height: 220px; /* Más alto */
     transition: transform 0.3s ease-in-out;
     margin: 0; /* Elimina el margen adicional */
+    overflow: hidden;
 }
 
 /* Mejoras visuales para los recuadros */
@@ -80,6 +85,7 @@ body {
     text-transform: uppercase;
     letter-spacing: 1px;
     color: #e50914;
+    margin-bottom: 15px;
 }
 
 /* Estilo de los recuadros de contenido */
@@ -115,21 +121,52 @@ main {
 }
 
 /* Estilos responsivos */
+
+/* Dispositivos grandes (pantallas mayores a 1200px) */
 @media (max-width: 1200px) {
     .content-list {
-        flex-direction: row; /* En pantallas medianas, los recuadros se alinean horizontalmente */
-        justify-content: space-evenly;
+        justify-content: space-evenly; /* Distribuye el contenido horizontalmente */
+    }
+
+    .content-box {
+        max-width: 300px; /* Aumenta el tamaño máximo de los recuadros */
+        height: 250px; /* Ajuste de altura */
     }
 }
 
+/* Dispositivos medianos (pantallas menores a 900px) */
 @media (max-width: 900px) {
     .content-list {
-        flex-direction: column; /* En pantallas pequeñas, los recuadros se alinean verticalmente */
+        flex-direction: column; /* En pantallas medianas, los recuadros se alinean verticalmente */
+        gap: 20px; /* Espacio entre recuadros */
+        justify-content: center; /* Alineación centrada */
+    }
+
+    .content-box {
+        max-width: 90%; /* Los recuadros ocupan casi todo el ancho */
+        height: 220px; /* Ajuste de altura */
     }
 }
 
+/* Dispositivos pequeños (pantallas menores a 600px) */
 @media (max-width: 600px) {
     .content-list {
         flex-direction: column; /* En pantallas muy pequeñas, los recuadros se alinean verticalmente */
+        gap: 15px; /* Reduce el espacio entre los recuadros */
+        justify-content: center; /* Alineación centrada */
+    }
+
+    .content-box {
+        max-width: 100%; /* Los recuadros ocupan todo el ancho */
+        height: 180px; /* Ajuste de altura */
+    }
+
+    .section h2 {
+        font-size: 18px; /* Reduce el tamaño de la fuente para pantallas pequeñas */
+        margin-bottom: 10px;
+    }
+
+    .container {
+        padding: 20px; /* Reduce el padding en pantallas pequeñas */
     }
 }

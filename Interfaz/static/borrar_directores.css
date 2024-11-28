@@ -1,0 +1,158 @@
+/* Estilos generales para la página */
+body {
+    margin: 2rem;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100vh;
+    margin-top: 5%; /* Reducido el margen superior para mejor adaptación */
+}
+
+/* Estilo del encabezado */
+header {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1rem; /* Usando rem para mayor flexibilidad */
+    width: 100%;
+}
+
+/* Estilo para el título */
+h1 {
+    font-size: 2rem; /* Usar rem para mayor adaptabilidad */
+    color: #fff;
+    text-align: center;
+    margin-top: 3rem; /* Reducido para pantallas pequeñas */
+    margin-bottom: 2rem;
+}
+
+/* Estilo del mensaje de éxito o error */
+.message {
+    background-color: #ffeb3b;
+    padding: 1rem;
+    width: 80%; /* Más adaptado para móviles */
+    max-width: 600px; /* Añadido para que no se estire mucho en pantallas grandes */
+    text-align: center;
+    border-radius: 5px;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Tabla de directores */
+table {
+    width: 90%; /* Ancho de tabla más flexible */
+    max-width: 1200px; /* Ancho máximo para pantallas grandes */
+    margin: 1rem auto;
+    border-collapse: collapse;
+    background-color: #1a1a1a;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+}
+
+table th, table td {
+    padding: 1rem; /* Usar rem para que sea más flexible */
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: #333;
+    color: white;
+}
+
+table tr:hover {
+    background-color: #444;
+}
+
+/* Estilo para el botón de eliminar */
+button[type="submit"] {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+    background-color: #d32f2f;
+}
+
+/* Estilo para el mensaje si no hay directores */
+p {
+    text-align: center;
+    font-size: 1.125rem; /* Usar rem para mayor consistencia */
+    color: #555;
+    font-weight: bold;
+}
+
+/* Espaciado y estilo general */
+.container {
+    margin: 1rem auto;
+    padding: 1rem;
+    background-color: #222;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Diseño responsivo para pantallas pequeñas (móviles) */
+@media (max-width: 768px) {
+    body {
+        margin-top: 2%; /* Mejorar el espacio superior para pantallas pequeñas */
+    }
+
+    h1 {
+        font-size: 1.5rem; /* Reducido para adaptarse a pantallas pequeñas */
+        margin-top: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    table {
+        width: 100%; /* Asegura que la tabla ocupe todo el ancho */
+    }
+
+    .message {
+        width: 95%; /* Asegura que el mensaje ocupe el ancho disponible */
+    }
+
+    button[type="submit"] {
+        font-size: 0.875rem; /* Botón más pequeño en móviles */
+        padding: 0.5rem; /* Botón más compacto */
+    }
+
+    .container {
+        width: 90%; /* Mejorar adaptabilidad en pantallas pequeñas */
+    }
+}
+
+/* Diseño responsivo para pantallas grandes (escritorios) */
+@media (min-width: 1200px) {
+    body {
+        margin-top: 5%; /* Dejar más espacio en pantallas grandes */
+    }
+
+    h1 {
+        font-size: 2.5rem; /* Título más grande en pantallas grandes */
+    }
+
+    table {
+        width: 80%; /* Ajustar tabla para pantallas grandes */
+    }
+
+    .message {
+        width: 70%; /* Mensaje más pequeño en pantallas grandes */
+    }
+}
+
+/* Asegurar que las tablas, imágenes, y otros elementos no se desborden en pantallas pequeñas */
+table, img {
+    max-width: 100%;
+    height: auto;
+}

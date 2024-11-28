@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlalchemy import desc, func
 from sqlalchemy.orm import Session
 from . import models, schemas
@@ -95,7 +96,7 @@ def mostrar_me_gusta(db: Session, usuario_id: str):
     if query:
         print("Mostrando lista de Me Gusta...", query)
     else:
-        print("Error al mostrar la lista de Me Gusta.")
+        print("No existen elementos en lista de Me Gusta")
 
     me_gusta = []
     for item in query:
@@ -278,41 +279,51 @@ def insert_content_into_LP(db: Session, usuario_id: str, contenido_id: str):
         raise Exception(f"Error al añadir contenido a la LP en la base de datos: {e}")
     
 def get_LP_user(db: Session, usuario_id: str):
-    # Obtener al usuario desde la API de usuarios
     try:
+        # Llamar a la API de usuarios para obtener la información del usuario
         response = requests.get(f"{BASE_URL_USUARIOS}/usuarios/{usuario_id}")
         if response.status_code != 200:
             raise Exception(f"Error al obtener el usuario: {response.status_code} {response.text}")
+        
         usuario = response.json()
-    except requests.RequestException as e:
-        raise Exception(f"Error al conectarse con la API de usuarios: {e}")
-
-    # Validar si el usuario tiene ListaPersonalizada
-    id_LP = usuario.get('idListaPersonalizada')
-    if not id_LP:
-        raise Exception(f"No se encontró una ListaPersonalizada para el usuario con ID {usuario_id}")
-
-    # Obtener todas las entradas de la LP del usuario
-    try:
-        listaPersonalizada = db.query(models.ListaPersonalizada).filter(
+        id_LP = usuario.get("idListaPersonalizada")
+        
+        if not id_LP:
+            raise Exception(f"No se encontró una ListaPersonalizada para el usuario con ID {usuario_id}")
+        
+        # Consultar la base de datos para obtener la lista personalizada
+        lista_personalizada = db.query(models.ListaPersonalizada).filter(
             models.ListaPersonalizada.idLista == id_LP
         ).all()
+        
+        # Si no hay entradas, devolver lista vacía
+        if not lista_personalizada:
+            return []
+        
+        # Obtener los contenidos relacionados
+        contenidos_LP = []
+        for row in lista_personalizada:
+            try:
+                # Consultar la API de contenidos para cada ID
+                response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{row.idContenido}")
+                if response.status_code == 200:
+                    contenidos_LP.append(response.json())
+                else:
+                    print(f"Error al obtener el contenido con ID {row.idContenido}: {response.status_code}")
+            except requests.RequestException as e:
+                print(f"Error al conectarse con la API de contenidos para ID {row.idContenido}: {e}")
+        
+        return contenidos_LP
+    except requests.RequestException as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error al conectarse con la API de usuarios: {e}"
+        )
     except Exception as e:
-        raise Exception(f"Error al obtener ListaPersonalizada de la base de datos: {e}")
-    
-    # Obtener los contenidos relacionados con las entradas de la lista personalizada
-    contenidos_LP = []
-    for row in listaPersonalizada:
-        try:
-            response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{row.idContenido}")
-            if response.status_code == 200:
-                contenidos_LP.append(response.json())
-            else:
-                print(f"Error al obtener el contenido con ID {row.idContenido}: {response.status_code}")
-        except requests.RequestException as e:
-            print(f"Error al conectarse con la API de contenidos para ID {row.idContenido}: {e}")
-
-    return contenidos_LP
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
 
 def delete_conent_from_user_LP(db: Session, idUsuario: str, idContenido: str):
     # Obtener al usuario desde la API de usuarios

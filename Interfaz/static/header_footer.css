@@ -1,20 +1,21 @@
+/* Estilos globales */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;
     min-height: 100vh; /* Asegura que el body ocupe al menos toda la ventana */
+    background-color: #000;
 }
 
+/* Estilo para el contenedor principal */
 main {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 80px 20px 70px; /* Deja espacio suficiente para header (60px) y footer (50px) */
-    background-color: #000;
 }
-
 
 /* Estilo para el header (fijo en la parte superior) */
 header {
@@ -31,6 +32,7 @@ header {
     height: 60px; /* Define una altura fija */
 }
 
+/* Estilo de la barra de navegación */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -39,6 +41,7 @@ header {
     padding: 1rem 2rem;
     background-color: #141414;
     border-bottom: 1px solid #333;
+    flex-wrap: wrap; /* Permite que los elementos se ajusten en pantallas pequeñas */
 }
 
 .navbar .logo a {
@@ -72,14 +75,15 @@ header {
     gap: 10px;  /* Espacio entre los elementos de la barra de búsqueda */
     max-width: 800px;  /* Limitar el tamaño de la barra de búsqueda */
     width: 100%;
+    margin: 1rem 0;
 }
 
 .search-bar input,
 .search-bar select {
     padding: 10px;
     margin: 5px;
-    font-size: 16px;
-    width: auto;
+    font-size: 1rem;
+    width: 100%;
 }
 
 .search-bar button {
@@ -101,11 +105,11 @@ header {
     color: white;
     padding: 10px 20px;
     border-radius: 5px;
-    text-decoration: none; /* Quita el subrayado */
-    font-size: 16px;
+    text-decoration: none;
+    font-size: 1rem;
     font-weight: bold;
     transition: background-color 0.3s;
-    margin: 1%
+    margin: 1%;
 }
 
 /* Efecto al pasar el ratón sobre el botón de perfil */
@@ -119,7 +123,7 @@ header {
     padding: 10px 20px;
     text-decoration: none;
     border-radius: 25px;
-    font-size: 16px;
+    font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
@@ -139,4 +143,108 @@ footer {
     padding: 10px 0;
     border-top: 1px solid #333;
     height: 50px; /* Define una altura fija */
+}
+
+/* Diseño Responsivo */
+
+/* Dispositivos pequeños (móviles) */
+@media (max-width: 600px) {
+    .navbar {
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem 0;
+    }
+
+    .navbar ul {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0;
+        margin: 0;
+    }
+
+    .navbar .logo a {
+        font-size: 1.2rem;
+    }
+
+    /* Barra de búsqueda: ajustar tamaño y alineación */
+    .search-bar {
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 0 1rem;
+    }
+
+    .search-bar input,
+    .search-bar select {
+        width: 100%;
+    }
+
+    /* Botón de perfil ajustado */
+    .profile-button {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+        margin: 0.5rem 0;
+    }
+
+    /* Ajustes en el perfil */
+    .perfil-button {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+
+    footer {
+        font-size: 0.875rem;
+        padding: 8px 0;
+    }
+}
+
+/* Dispositivos medianos (tabletas y dispositivos más grandes) */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .navbar .logo a {
+        font-size: 1.3rem;
+    }
+
+    /* Barra de búsqueda */
+    .search-bar {
+        width: 90%;
+    }
+
+    .search-bar input,
+    .search-bar select {
+        width: 100%;
+    }
+
+    .perfil-button {
+        font-size: 1rem;
+        padding: 10px 20px;
+    }
+}
+
+/* Dispositivos grandes (pantallas de escritorio y más grandes) */
+@media (min-width: 1024px) {
+    .navbar {
+        padding: 1rem 3rem;
+    }
+
+    .search-bar {
+        width: 80%;
+    }
+
+    .navbar .logo a {
+        font-size: 1.7rem;
+    }
+
+    .profile-button {
+        font-size: 1rem;
+    }
+
+    footer {
+        font-size: 1rem;
+        padding: 12px 0;
+    }
 }

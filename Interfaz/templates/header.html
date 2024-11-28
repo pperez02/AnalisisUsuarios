@@ -2,7 +2,7 @@
 <header>
     <div class="navbar">
         <div class="logo">
-            <a href="/pantalla_principal">Streamflix</a>
+            <a href="/pantalla_principal?user_id={{user_id}}">Streamflix</a>
         </div>
         <div class="search-bar">
             <form action="/buscar" method="get">
@@ -17,7 +17,6 @@
         </div>
         <nav>
             <ul>
-                <li><a href="/catalogo"class="perfil-button">Catálogo</a></li>
                 <li><a href="/usuarios/{{ user_id }}/perfil" class="perfil-button">Perfil</a></li>
             </ul>
         </nav>
