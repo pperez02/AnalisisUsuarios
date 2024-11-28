@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Actualizar temporada</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/header_footer.css">
+</head>
+
+<header>
+    <div class="navbar">
+        <div class="logo">
+            <a href=#>Streamflix: Actualizar temporada</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/admin_menu" class="return-button">Volver al menú</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<body>
+    {% if error_message %}
+    <p style="color:red;">{{ error_message }}</p>
+    {% endif %}
+    <div class="container">
+        <form action="/admin_crear_temporada" method="post">
+            <label for="id_serie">Serie:</label>
+            <select id="id_serie" name="id_serie" required>
+                {% for serie in series %}
+                    <option value="{{ serie.id }}" {% if serie.id == {{idSerie}} %}selected{% endif %}>
+                        {{ serie.titulo }}
+                    </option>
+                {% endfor %}
+            </select><br>
+
+            <label for="numeroTemporada">Número de temporada:</label>
+            <input type="number" id="numeroTemporada" name="numeroTemporada" value="{{numeroTemporada}}" required><br>
+
+            <button type="submit">Crear Temporada</button>
+    </div>
+    </form>
+</body>
+
+</html>

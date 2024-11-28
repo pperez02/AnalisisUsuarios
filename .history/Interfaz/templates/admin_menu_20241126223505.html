@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Administrador</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/menu_admin.css">
+</head>
+
+<header>
+    <div class="navbar">
+        <div class="logo">
+            <a href=#>Streamflix: Menu Administrador</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/" class="return-button">Volver al inicio</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<body>
+    <div class="container">
+        {% if message %}
+            <div style="color: green; font-weight: bold;">{{ message }}</div>
+        {% endif %}
+        <!-- Contenedor con grid -->
+        <div class="grid">
+            <!-- Sección Usuarios -->
+            <div class="section">
+                <h2>Usuarios</h2>
+                <ul>
+                    <li><a href="/admin_usuarios">Listar todos los usuarios</a></li>
+                </ul>
+            </div>
+
+            <!-- Sección Contenidos -->
+            <div class="section">
+                <h2>Contenidos</h2>
+                <ul>
+                    <li><a href="/admin_crear_pelicula">Crear película</a></li>
+                    <li><a href="/admin_crear_serie">Crear serie</a></li>
+                    <li><a href="/admin_crear_temporada">Crear temporada</a></li>
+                    <li><a href="#">Crear episodio</a></li>
+                    <li><a href="/admin_crear_genero">Crear género</a></li>
+                    <li style="color: #e50914;">Actualizar película:
+                        <ul>
+                            {% for pelicula in peliculas %}
+                            <li>
+                                &emsp; <a href="/administrador/peliculas/{{pelicula.id}}">- {{pelicula.titulo}}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li style="color: #e50914;">Actualizar serie:
+                        <ul>
+                            {% for serie in series %}
+                            <li>
+                                &emsp; <a href="/administrador/series/{{serie.idSerie}}">- {{serie.titulo}}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li><a href="#">Actualizar temporada</a>
+                        <ul>
+                            {% for serie in series %}
+                            <li>
+                                - {{serie.titulo}}
+                                <ul>
+                                    {% for temporada in serie.Temporadas %}
+                                    <li>
+                                        &emsp; <a href="/administrador/series/{{serie.idSerie}}/temporadas/{{temporada.idTemporada}}">- Temporada {{temporada.numeroTemporada}}</a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>    
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>    
+                    <li><a href="#">Actualizar episodio</a></li>
+                        <ul>
+                            {% for serie in series %}
+                            <li>
+                                - {{serie.titulo}}
+                                <ul>
+                                    {% for temporada in serie.Temporadas %}
+                                    <li>
+                                        - Temporada {{temporada.numeroTemporada}}
+                                        <ul>
+                                            {% for episodio in temporada.Episodios %}
+                                            <li>
+                                                &emsp; <a 
+                                                href="/administrador/series/{{serie.idSerie}}/temporadas/{{temporada.idTemporada}}/episodios/{{episodio.idEpisodio}}">
+                                                - Episodio {{episodio.numeroEpisodio}}
+                                                </a>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                    {% endfor %}
+                                </ul>    
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    <li style="color: #e50914;">Actualizar género:
+                        <ul>
+                            {% for genero in generos %}
+                            <li>
+                                &emsp; <a href="/administrador/generos/{{genero.id}}">- {{genero.nombre}}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li><a href="/peliculas/borrar">Borrar película</a></li>
+                    <li><a href="/series/borrar">Borrar serie</a></li>
+                    <li><a href="/temporadas/borrar">Borrar temporada</a></li>
+                    <li><a href="#">Borrar episodio</a></li>
+                    <li><a href="#">Borrar género</a></li>
+                    <li><a href="#">Añadir subtítulos a un contenido</a></li>
+                    <li><a href="#">Añadir doblajes a un contenido</a></li>
+                </ul>
+            </div>
+
+            <!-- Sección Actores y Directores -->
+            <div class="section">
+                <h2>Actores y Directores</h2>
+                <ul>
+                    <li><a href="#">Crear actor</a></li>
+                    <li><a href="#">Crear director</a></li>
+                    <li><a href="#">Actualizar actor</a>
+                        <ul>
+                            {% for actor in actores %}
+                            <li>
+                                &emsp;- {{actor.nombre}}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li><a href="/directores/actualizar">Actualizar director</a>
+                        <ul>
+                            {% for director in directores %}
+                            <li>
+                                &emsp;- {{director.nombre}}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li><a href="/actores/borrar">Borrar actor</a></li>
+                    <li><a href="/directores/borrar">Borrar director</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
