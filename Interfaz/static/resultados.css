@@ -82,6 +82,23 @@ h2 {
     clear: both;
 }
 
+.details-button {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #e50914;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.details-button:hover {
+    background-color: #f40612;
+}
+
+
 /* Solución para asegurar que las secciones no se solapen en tamaños más pequeños */
 @media (max-width: 1024px) {
     .container {
