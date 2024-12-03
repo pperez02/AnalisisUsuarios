@@ -293,6 +293,17 @@ async def buscar(request: Request, query: str, tipo: str):
     if not contenidos and not actores:
         mensaje = "No se han encontrado resultados."
 
+    # Para devolver las peliculas en las que ha participado un actor
+    if actores:
+        contenidos_por_actor = {}  # Diccionario para almacenar contenidos por actor
+        for actor in actores:
+            # Obtenemos los contenidos relacionados con el actor
+            response_contenidos_actor = requests.get(f"{BASE_URL_CONTENIDOS}/actores/{actor['id']}/contenidos")
+            if response_contenidos_actor.status_code == 200:
+                # Guardamos los contenidos del actor en el diccionario usando el id del actor
+                contenidos_por_actor[actor['id']] = response_contenidos_actor.json()
+
+
     # Renderizamos la página con los resultados separados
     return templates.TemplateResponse(
         "resultados_busqueda.html",
@@ -301,6 +312,7 @@ async def buscar(request: Request, query: str, tipo: str):
             "user_id": user_id,
             "contenidos": contenidos,
             "actores": actores,
+            "contenidos_por_actor": contenidos_por_actor,
             "tipo": tipo,
             "query": query,
             "mensaje": mensaje

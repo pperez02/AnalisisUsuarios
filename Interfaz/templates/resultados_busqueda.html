@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resultados de búsqueda</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <link rel="stylesheet" href="/static/resultados.css">
-    <link rel="stylesheet" href="/static/header_footer.css">
+    <link rel="stylesheet" href="/static/style_old.css">
+    <link rel="stylesheet" href="/static/resultados_old.css">
+    <link rel="stylesheet" href="/static/header_footer_old.css">
 </head>
 <body>
     {% include "header.html" %}
@@ -26,7 +26,7 @@
                         <div class="result-item">
                             <h3>{{ item.titulo }}</h3>
                             <p><strong>Género:</strong> {{ item.genero }}</p>
-                            <a href="/detalles_pelicula/{{ item.id }}" class="details-button">Detalles</a>
+                            <a href="/detalles_contenido/{{ item.id }}?user_id={{ user_id }}" class="details-button">Detalles</a>
                         </div>
                     {% endfor %}
                 </div>
@@ -38,12 +38,27 @@
                     <h2>Actores relacionados</h2>
                     {% for actor in actores %}
                         <div class="result-item">
-                            <h3>{{ actor.nombre }}</h3> <!-- Asumiendo que el actor tiene un campo 'nombre' -->
-                            <p><strong>Películas relacionadas:</strong> {{ actor.peliculas | join(', ') }}</p> <!-- Aquí puedes personalizar para mostrar películas relacionadas -->
+                            <h3>{{ actor.nombre }}</h3> <!-- Nombre del actor -->
+
+                            {% if contenidos_por_actor[actor.id] %}
+                                <p><strong>Contenido relacionado:</strong></p>
+                                <ul>
+                                    {% for contenido in contenidos_por_actor[actor.id] %}
+                                        <li>
+                                            <a href="/detalles_contenido/{{ contenido.id }}?user_id={{ user_id }}">
+                                                {{ contenido.titulo }} - {{ contenido.genero }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p>No se encontraron contenidos relacionados con este actor.</p>
+                            {% endif %}
                         </div>
                     {% endfor %}
                 </div>
             {% endif %}
+
         {% endif %}
     </div>
 
