@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Gestión de Subtítulos</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/header_footer.css">
+    <script>
+        // Función para cargar todos los contenidos desde el servicio de interface
+        async function cargarContenidos() {
+            try {
+                // Llama al endpoint de interface para obtener los contenidos
+                const response = await fetch('/administrador/contenidos'); 
+                if (!response.ok) {
+                    throw new Error('Error al obtener los contenidos');
+                }
+                const contenidos = await response.json();
+                const selectorContenidos = document.getElementById('idContenido');
+
+                selectorContenidos.innerHTML = '<option value="">Seleccione un contenido</option>'; // Limpia el selector y añade una opción inicial
+
+                // Agrega cada contenido al selector
+                contenidos.forEach((contenido) => {
+                    const option = document.createElement('option');
+                    option.value = contenido.id; // Asigna el ID del contenido
+                    option.textContent = contenido.titulo; // Muestra el título del contenido
+                    selectorContenidos.appendChild(option);
+                });
+            } catch (error) {
+                console.error(error);
+                alert('Hubo un error al cargar los contenidos.');
+            }
+        }
+
+        // Función para cargar subtítulos asignados (subtítulosContenido) desde el servicio de interface
+        async function cargarSubtitulosAsignados(idContenido) {
+            try {
+                // Llama al endpoint de interface para obtener los subtítulos asignados
+                const response = await fetch(`/administrador/contenidos/${idContenido}/subtitulos`);
+                if (!response.ok) {
+                    throw new Error('Error al obtener subtítulos asignados');
+                }
+                const subtitulosAsignados = await response.json();
+                const listaAsignados = document.getElementById('listaAsignados');
+
+                listaAsignados.innerHTML = ''; // Limpia la lista
+
+                // Agrega los subtítulos asignados al selector
+                subtitulosAsignados.forEach((subtitulo) => {
+                    const option = document.createElement('option');
+                    option.value = subtitulo.idSubtitulo;
+                    option.textContent = subtitulo.idioma;
+                    listaAsignados.appendChild(option);
+                });
+            } catch (error) {
+                console.error(error);
+                alert('Hubo un error al cargar los subtítulos asignados.');
+            }
+        }
+
+        // Función para cargar subtítulos disponibles desde el servicio de interface
+        async function cargarSubtitulosDisponibles() {
+            try {
+                // Llama al endpoint de interface para obtener los subtítulos disponibles
+                const response = await fetch('/administrador/contenidos/subtitulos'); 
+                if (!response.ok) {
+                    throw new Error('Error al obtener subtítulos disponibles');
+                }
+                const subtitulosDisponibles = await response.json();
+                const listaDisponibles = document.getElementById('idSubtitulo');
+
+                listaDisponibles.innerHTML = ''; // Limpia la lista
+
+                // Agrega los subtítulos disponibles al selector
+                subtitulosDisponibles.forEach((subtitulo) => {
+                    const option = document.createElement('option');
+                    option.value = subtitulo.idSubtitulo;
+                    option.textContent = subtitulo.idioma;
+                    listaDisponibles.appendChild(option);
+                });
+            } catch (error) {
+                console.error(error);
+                alert('Hubo un error al cargar los subtítulos disponibles.');
+            }
+        }
+
+        // Función para manejar el cambio de contenido seleccionado
+        async function manejarCambioContenido() {
+            const idContenido = document.getElementById('idContenido').value;
+            if (idContenido) {
+                await cargarSubtitulosAsignados(idContenido); // Carga los subtítulos asignados al contenido
+                await cargarSubtitulosDisponibles(); // Carga todos los subtítulos disponibles
+            } else {
+                // Limpia las listas si no hay contenido seleccionado
+                document.getElementById('listaAsignados').innerHTML = '';
+                document.getElementById('idSubtitulo').innerHTML = '';
+            }
+        }
+
+        // Inicializa la página cargando todos los contenidos
+        window.onload = cargarContenidos;
+    </script>
+</head>
+
+<body>
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <a href="#">Streamflix: Gestión de Subtítulos</a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/admin_menu" class="return-button">Volver al menú</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>Gestión de Subtítulos</h1>
+
+        <!-- Selector de contenido -->
+        <label for="idContenido">Seleccionar Contenido:</label>
+        <select id="idContenido" name="idContenido" onchange="manejarCambioContenido()" required>
+            <!-- Los contenidos se cargarán dinámicamente -->
+        </select>
+        <br><br>
+
+        <!-- Formulario para añadir subtítulos -->
+        <form action="/administrador/actualizar_subtitulo" method="post">
+            <!-- Este campo oculto pasará el id del contenido al backend -->
+            <input type="hidden" name="idContenido" value="" id="formIdContenido"> <!-- ID del contenido seleccionado -->
+            
+            <!-- Etiqueta para los subtítulos disponibles -->
+            <label for="idSubtitulo">Subtítulos disponibles:</label>
+            
+            <!-- Lista desplegable para los subtítulos disponibles -->
+            <select id="idSubtitulo" name="idSubtitulo" required>
+                <!-- Los subtítulos disponibles se cargarán dinámicamente -->
+            </select>
+            
+            <button type="submit">Añadir Subtítulo</button>
+        </form>
+
+        <br>
+
+        <!-- Formulario para eliminar subtítulos -->
+        <form action="/administrador/eliminar_subtitulos" method="post">
+            <!-- Este campo oculto pasará el id del contenido al backend -->
+            <input type="hidden" name="idContenido" value="" id="formIdContenidoEliminar"> <!-- ID del contenido seleccionado -->
+        
+            <label for="listaAsignados">Subtítulos asignados:</label>
+            <select id="listaAsignados" name="idSubtitulo" required>
+                <!-- Los subtítulos asignados se cargarán dinámicamente -->
+            </select>
+        
+            <button type="submit">Eliminar Subtítulo</button>
+        </form>
+    </div>
+
+    <script>
+        // Actualiza los campos ocultos del formulario con el contenido seleccionado
+        document.getElementById('idContenido').addEventListener('change', (event) => {
+            const idContenidoSeleccionado = event.target.value;
+            document.getElementById('formIdContenido').value = idContenidoSeleccionado;
+            document.getElementById('formIdContenidoEliminar').value = idContenidoSeleccionado;
+        });
+    </script>
+
+    <script>
+        // Comprobamos si la URL contiene los parámetros success, success_message, error y message
+        const urlParams = new URLSearchParams(window.location.search);
+
+        const success = urlParams.get('success');
+        const successMessage = urlParams.get('message');  // Mensaje de éxito
+        const successGeneralMessage = urlParams.get('success_message');  // Mensaje de éxito general
+        const error = urlParams.get('error');
+        const errorMessage = urlParams.get('message');  // Mensaje de error
+
+        // Si el parámetro success es 'true' y hay un message, mostramos el mensaje de éxito específico
+        if (success === 'true' && successMessage) {
+            alert(successMessage);  // Muestra el mensaje de éxito específico
+        }
+
+        // Si el parámetro success es 'true' y hay un success_message, mostramos el mensaje de éxito general
+        if (success === 'true' && successGeneralMessage) {
+            alert(successGeneralMessage);  // Muestra el mensaje de éxito general
+        }
+
+        // Si el parámetro error es 'true' y hay un message, mostramos el mensaje de error
+        if (error === 'true' && errorMessage) {
+            alert(errorMessage);  // Muestra el mensaje de error
+        }
+    </script>
+</body>
+
+</html>

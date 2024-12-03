@@ -90,7 +90,27 @@ def update_content(db: Session, content_id: str, content_data: Union[schemas.Pel
     db.refresh(content)
     
     return content
-          
+
+# Funcion para crear subtitulos
+def create_subtitulos(db:Session , subtitulo_id: str, idioma: str):
+    db_subtitulo = models.Subtitulo(
+        idSubtitulo=subtitulo_id,
+        idioma=idioma
+    )
+    db.add(db_subtitulo)
+    db.commit()
+    db.refresh(db_subtitulo)
+    return db_subtitulo
+
+# Funcion para eliminar subtitulos
+def delete_subtitulo(db:Session , subtitulo_id: str):
+    subtitulo = db.query(models.Subtitulo).filter(models.Subtitulo.idSubtitulo == subtitulo_id).first()
+    if subtitulo:
+        db.delete(subtitulo)
+        db.commit()
+        return True
+    return False
+
 # Función para añadir subtítulos a un contenido
 def update_subtitulo(db: Session, content_id: str, subtitulo_id: str):
     content_query = db.query(models.Contenido).filter(models.Contenido.id == content_id).first()
@@ -115,6 +135,73 @@ def get_subtitulos(db: Session, idContenido: str):
         .all()  # Ejecutamos la consulta y obtenemos todos los resultados
     )
     return subtitulos
+
+def delete_subtitulos(db: Session, content_id: str, subtitulo_id: str):
+    # Obtener el contenido y el subtítulo con los ID proporcionados
+    content_query = db.query(models.Contenido).filter(models.Contenido.id == content_id).first()
+    subtitulo_query = db.query(models.Subtitulo).filter(models.Subtitulo.idSubtitulo == subtitulo_id).first()
+
+    # Verificar si tanto el contenido como el subtítulo existen
+    if content_query and subtitulo_query:
+        # Buscar la relación entre el contenido y el subtítulo en la tabla de unión
+        db_SubtituloContenido = db.query(models.SubtituloContenido).filter(
+            models.SubtituloContenido.idSubtitulosContenido == content_query.idSubtitulosContenido,
+            models.SubtituloContenido.idSubtitulo == subtitulo_query.idSubtitulo
+        ).first()
+
+        # Si la relación existe, eliminarla
+        if db_SubtituloContenido:
+            db.delete(db_SubtituloContenido)
+            db.commit()
+            return {"message": "Subtítulo eliminado correctamente"}
+        else:
+            return {"message": "La relación entre el contenido y el subtítulo no existe"}
+    else:
+        return {"message": "Contenido o subtítulo no encontrados"}
+    
+# Función para crear doblajes
+def create_doblajes(db: Session, doblaje_id: str, idioma: str):
+    db_doblaje = models.Doblaje(
+        idDoblaje=doblaje_id,
+        idioma=idioma
+    )
+    db.add(db_doblaje)
+    db.commit()
+    db.refresh(db_doblaje)
+    return db_doblaje
+
+# Función para eliminar doblajes
+def delete_doblaje(db: Session, doblaje_id: str):
+    doblaje = db.query(models.Doblaje).filter(models.Doblaje.idDoblaje == doblaje_id).first()
+    if doblaje:
+        db.delete(doblaje)
+        db.commit()
+        return True
+    return False
+
+
+def delete_doblajes(db: Session, content_id: str, doblaje_id: str):
+    # Obtener el contenido y el doblaje con los ID proporcionados
+    content_query = db.query(models.Contenido).filter(models.Contenido.id == content_id).first()
+    doblaje_query = db.query(models.Doblaje).filter(models.Doblaje.idDoblaje == doblaje_id).first()
+
+    # Verificar si tanto el contenido como el doblaje existen
+    if content_query and doblaje_query:
+        # Buscar la relación entre el contenido y el doblaje en la tabla de unión
+        db_DoblajeContenido = db.query(models.DoblajeContenido).filter(
+            models.DoblajeContenido.idDoblajeContenido == content_query.idDoblajeContenido,
+            models.DoblajeContenido.idDoblaje == doblaje_query.idDoblaje
+        ).first()
+
+        # Si la relación existe, eliminarla
+        if db_DoblajeContenido:
+            db.delete(db_DoblajeContenido)
+            db.commit()
+            return {"message": "Doblaje eliminado correctamente"}
+        else:
+            return {"message": "La relación entre el contenido y el doblaje no existe"}
+    else:
+        return {"message": "Contenido o doblaje no encontrados"}
 
 # Función para añadir doblajes a un contenido
 def update_doblaje(db: Session, content_id: str, doblaje_id: str):

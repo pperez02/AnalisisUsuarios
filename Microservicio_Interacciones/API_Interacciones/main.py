@@ -27,7 +27,7 @@ def get_database():
     db = next(get_db())
     return db
 
-@app.get("/usuarios/{idUsuario}/recomendaciones", response_model=list[schemas.Contenido])
+@app.get("/usuarios/{idUsuario}/recomendaciones", response_model=list[schemas.ContenidoGetId])
 def get_recomendaciones(idUsuario: str, db: Session = Depends(get_db)):
     recomendaciones = crud.get_recomendaciones_usuario(db=db, usuario_id=idUsuario)
     if not recomendaciones:
@@ -73,7 +73,7 @@ def actualizar_historial(idUsuario: str, idContenido: str, db: Session = Depends
         raise HTTPException(status_code=500, detail=str(e))
 
 # Endpoint para devolver el historial del usuario
-@app.get("/usuarios/{idUsuario}/historial", response_model=list[schemas.Contenido])
+@app.get("/usuarios/{idUsuario}/historial", response_model=list[schemas.ContenidoGetId])
 def get_historial(idUsuario: str, db: Session = Depends(get_db)):
     historial = crud.get_historial_usuario(db=db, usuario_id=idUsuario)
     if not historial:

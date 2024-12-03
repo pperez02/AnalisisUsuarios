@@ -92,12 +92,7 @@ def get_recomendaciones_usuario(db: Session, usuario_id: str):
 
 def mostrar_me_gusta(db: Session, usuario_id: str):
     query = db.query(models.ListaMeGusta).filter(models.ListaMeGusta.idUsuario == usuario_id).all()
-    # Validar la respuesta
-    if query:
-        print("Mostrando lista de Me Gusta...", query)
-    else:
-        print("No existen elementos en lista de Me Gusta")
-
+    
     me_gusta = []
     for item in query:
         try:

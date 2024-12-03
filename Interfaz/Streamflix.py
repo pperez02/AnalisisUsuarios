@@ -1,3 +1,4 @@
+import uuid
 from fastapi import FastAPI, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -227,7 +228,21 @@ async def detalles_contenido(request: Request, idContenido: str, user_id: str):
     #Obtener los doblajes
     doblajes = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{detalles_contenido["idDoblajeContenido"]}/doblajes")
     detalles_doblajes = doblajes.json()
-
+         
+    #Obtener el historial
+    estaEnHistorial = False
+    historial_response = requests.get(f"{BASE_URL_INTERACCIONES}/usuarios/{user_id}/historial")
+    if historial_response != None:
+        historial = historial_response.json()
+        if (any(content["id"] == idContenido for content in historial)):
+            estaEnHistorial = True
+            
+    if not estaEnHistorial:
+        try:
+            response = requests.post(f"{BASE_URL_INTERACCIONES}/usuarios/{user_id}/historial/{idContenido}")
+        except Exception as e:
+                print(f"Error al comunicarse con POST en HISTORIAL")
+        
     # Renderiza la plantilla detalles_contenido.html con los datos de la película
     return templates.TemplateResponse("detalles_contenido.html", {
         "request": request,
@@ -1617,9 +1632,6 @@ def borrar_genero(idGenero: str, request: Request):
     # Redirigir nuevamente al listado de géneros con el mensaje
     return RedirectResponse(url=f"/generos/borrar?mensaje={mensaje}", status_code=303)
 
-# Endpoints para aniadir subtutilos a un episodio
-#TODO
-
 #Endpoints para crear un actor
 @app.get("/administrador/actor/crear", response_class=HTMLResponse)
 async def crear_actor_form(request: Request):
@@ -1896,28 +1908,6 @@ async def actualizar_director(request: Request):
     # Redirigimos a la página de actualización de directores
     return RedirectResponse(url=f"/directores/actualizar?success=true", status_code=303)
 
-@app.get("/administrador/aniadir_subtitulos",  response_class=HTMLResponse)
-async def aniadir_subtitulos(request: Request, success: str = None):
-    # Realizar una solicitud GET a la API de contenidos para obtener la lista de directores
-    responseSub = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/subtitulos")
-    responseCont = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos")
-
-    # Verifica si la respuesta fue exitosa
-    if responseCont.status_code == 200 and responseSub.status_code == 200:
-        subtitulos = responseSub.json() 
-        contenidos = responseCont.json()
-        return templates.TemplateResponse(
-            "admin_aniadir_subtitulos.html",
-            {
-                "request": request,
-                "subtitulos": subtitulos,
-                "contenidos": contenidos,
-                "message": success
-            },
-        )
-    else:
-        return {"error": "No se pudo obtener la lista de contenido"}
-
 # Endpoints para dar / quitar me-gusta
 @app.post("/contenidos/{user_id}/dar-me-gusta/{idContenido}")
 def dar_me_gusta(user_id: str, idContenido: str):
@@ -2059,3 +2049,465 @@ async def valorarContenido(userId: str, contentId: str, request: Request):
     except Exception as e:
         print("Error inesperado:", e)  # Log para depurar
         raise HTTPException(status_code=500, detail=f"Error inesperado: {e}")
+    
+# Endpoint para obtener todos los contenidos (para HTML)
+@app.get("/administrador/contenidos")
+def obtener_todos_los_contenidos():
+    """
+    Endpoint en el servicio de Streamflix que llama al microservicio Contenido
+    para obtener todos los contenidos.
+    """
+    try:
+        # Realiza la llamada al microservicio Contenido
+        response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos")
+        
+        # Maneja errores de la respuesta
+        response.raise_for_status()
+        
+        # Devuelve los contenidos obtenidos
+        return response.json()
+    
+    except requests.exceptions.RequestException as e:
+        # Lanza una excepción HTTP si hay algún error en la llamada
+        raise HTTPException(status_code=500, detail=f"Error al obtener los contenidos: {e}")
+    
+# Endpoint para obtener todos los subtitulos de un contenido (para HTML)
+@app.get("/administrador/contenidos/{idContenido}/subtitulos")
+def obtener_subtitulos_contenido(idContenido: str):
+    """
+    Endpoint en el servicio de Interface que llama al microservicio Contenido
+    para obtener los subtítulos de un contenido específico.
+    """
+    try:
+        # Realiza la llamada al microservicio Contenido para obtener los subtítulos
+        response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}/subtitulos")
+        
+        # Maneja errores de la respuesta
+        response.raise_for_status()
+        
+        # Devuelve los subtítulos obtenidos
+        return response.json()
+    
+    except requests.exceptions.RequestException as e:
+        # Lanza una excepción HTTP si hay algún error en la llamada
+        raise HTTPException(status_code=500, detail=f"Error al obtener los subtítulos: {e}")
+
+# Endpoint para obtener todos los subtitulos (para HTML)
+@app.get("/administrador/contenidos/subtitulos")
+def obtener_todos_los_subtitulos():
+    """
+    Endpoint en el servicio de Interface que llama al microservicio Contenido
+    para obtener todos los subtítulos disponibles.
+    """
+    try:
+        # Realiza la llamada al microservicio Contenido para obtener todos los subtítulos
+        response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/subtitulos")
+        
+        # Maneja errores de la respuesta
+        response.raise_for_status()
+        
+        # Devuelve la lista de subtítulos obtenida
+        return response.json()
+    
+    except requests.exceptions.RequestException as e:
+        # Lanza una excepción HTTP si hay algún error en la llamada
+        raise HTTPException(status_code=500, detail=f"Error al obtener los subtítulos: {e}")
+    
+# Endpoint post para eliminar los subtitulos
+@app.post("/administrador/eliminar_subtitulos")
+async def eliminar_subtitulos(
+    idContenido: str = Form(...),  # Recibimos idContenido como Form
+    idSubtitulo: str = Form(...)   # Recibimos idSubtitulo como Form
+):
+    """
+    Endpoint en el servicio de Interface para eliminar un subtítulo de un contenido.
+    """
+    try:
+        # Realiza la llamada DELETE al microservicio Contenido para eliminar el subtítulo
+        response = requests.delete(f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}/subtitulos/{idSubtitulo}")
+        
+        # Maneja errores de la respuesta
+        response.raise_for_status()
+        
+        # Redirige a la página de actualización de subtítulos con un mensaje de éxito
+        return RedirectResponse(url="/administrador/actualizar_subtitulos?success=true&success_message=Se%20han%20actualizado%20los%20subtitulos%20del%20contenido", status_code=303)
+    
+    except requests.exceptions.RequestException as e:
+        # Lanza una excepción HTTP si hay algún error en la llamada
+        raise HTTPException(status_code=500, detail=f"Error al eliminar subtítulo: {e}")
+    
+# Endpoint get para actualizar los subtitulos
+@app.get("/administrador/actualizar_subtitulos",  response_class=HTMLResponse)
+async def actualizar_subtitulos(request: Request, success: str = None):
+    # Realizar una solicitud GET a la API de contenidos para obtener los subtitulos y los contenidos
+    responseSub = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/subtitulos")
+    responseCont = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos")
+
+    # Verifica si la respuesta fue exitosa
+    if responseCont.status_code == 200 and responseSub.status_code == 200:
+        subtitulos = responseSub.json() 
+        contenidos = responseCont.json()
+        return templates.TemplateResponse(
+            "admin_actualizar_subtitulos.html",
+            {
+                "request": request,
+                "subtitulos_contenido": subtitulos,
+                "subtitulos_disponibles": subtitulos,
+                "contenidos": contenidos,
+                "message": success
+            },
+        )
+    else:
+        return {"error": "No se pudo obtener la lista de contenido"}
+    
+# Enpoint post para actualizar los subtitulos de un contenido
+@app.post("/administrador/actualizar_subtitulo")
+async def actualizar_subtitulos(
+    idContenido: str = Form(...),  # Recibimos idContenido como Form
+    idSubtitulo: str = Form(...),  # Recibimos idSubtitulo como Form
+):
+    """
+    Endpoint para asignar un subtítulo a un contenido.
+    Si el subtítulo ya está asignado al contenido, no lo vuelve a asignar.
+    """
+    try:
+        # Realiza la llamada GET al endpoint /contenidos/{idContenido}/subtitulos para obtener los subtítulos asignados
+        response_check = requests.get(
+            f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}/subtitulos"
+        )
+
+        # Si la respuesta es exitosa, obtenemos los subtítulos asignados
+        if response_check.status_code == 200:
+            subtitulos_asignados = response_check.json()
+        else:
+            # Si la respuesta no es 200, se lanza una excepción
+            raise HTTPException(status_code=500, detail="Error al obtener los subtítulos asignados.")
+
+        # Verificar si el subtítulo ya está asignado al contenido
+        if any(subtitulo['idSubtitulo'] == idSubtitulo for subtitulo in subtitulos_asignados):
+            # Si el subtítulo ya está asignado, redirige con un mensaje de error
+            return RedirectResponse(
+                url="/administrador/actualizar_subtitulos?error=true&message=El%20subt%C3%ADtulo%20ya%20est%C3%A1%20asignado%20a%20este%20contenido",
+                status_code=303
+            )
+
+        # Si no está asignado, intenta añadirlo
+        response = requests.post(
+            f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}/subtitulos/{idSubtitulo}"
+        )
+
+        # Verifica si la llamada al backend fue exitosa
+        response.raise_for_status()
+
+        # Redirige con éxito
+        return RedirectResponse(
+            url="/administrador/actualizar_subtitulos?success=true&message=Subt%C3%ADtulo%20asignado%20correctamente%20al%20contenido",
+            status_code=303
+        )
+
+    except requests.exceptions.RequestException as e:
+        # Lanza una excepción HTTP si hay algún error en la llamada
+        raise HTTPException(status_code=500, detail=f"Error al asignar subtítulo: {e}")
+    
+# Endpoint para obtener todos los doblajes de un contenido (para HTML)
+@app.get("/administrador/contenidos/{idContenido}/doblajes")
+def obtener_doblajes_contenido(idContenido: str):
+    """
+    Endpoint en el servicio de Interface que llama al microservicio Contenido
+    para obtener los doblajes de un contenido específico.
+    """
+    try:
+        # Realiza la llamada al microservicio Contenido para obtener los doblajes
+        response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}/doblajes")
+        
+        # Maneja errores de la respuesta
+        response.raise_for_status()
+        
+        # Devuelve los doblajes obtenidos
+        return response.json()
+    
+    except requests.exceptions.RequestException as e:
+        # Lanza una excepción HTTP si hay algún error en la llamada
+        raise HTTPException(status_code=500, detail=f"Error al obtener los doblajes: {e}")
+    
+# Endpoint para obtener todos los doblajes (para HTML)
+@app.get("/administrador/contenidos/doblajes")
+def obtener_todos_los_doblajes():
+    """
+    Endpoint en el servicio de Interface que llama al microservicio Contenido
+    para obtener todos los doblajes disponibles.
+    """
+    try:
+        # Realiza la llamada al microservicio Contenido para obtener todos los doblajes
+        response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/doblajes")
+        
+        # Maneja errores de la respuesta
+        response.raise_for_status()
+        
+        # Devuelve la lista de doblajes obtenida
+        return response.json()
+    
+    except requests.exceptions.RequestException as e:
+        # Lanza una excepción HTTP si hay algún error en la llamada
+        raise HTTPException(status_code=500, detail=f"Error al obtener los doblajes: {e}")
+    
+# Endpoint post para eliminar los doblajes
+@app.post("/administrador/eliminar_doblajes")
+async def eliminar_doblajes(
+    idContenido: str = Form(...),  # Recibimos idContenido como Form
+    idDoblaje: str = Form(...)   # Recibimos idDoblaje como Form
+):
+    """
+    Endpoint en el servicio de Interface para eliminar un doblaje de un contenido.
+    """
+    try:
+        # Realiza la llamada DELETE al microservicio Contenido para eliminar el doblaje
+        response = requests.delete(f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}/doblajes/{idDoblaje}")
+        
+        # Maneja errores de la respuesta
+        response.raise_for_status()
+        
+        # Redirige a la página de actualización de doblajes con un mensaje de éxito
+        return RedirectResponse(url="/administrador/actualizar_doblajes?success=true&success_message=Se%20han%20actualizado%20los%20doblajes%20del%20contenido", status_code=303)
+    
+    except requests.exceptions.RequestException as e:
+        # Lanza una excepción HTTP si hay algún error en la llamada
+        raise HTTPException(status_code=500, detail=f"Error al eliminar doblaje: {e}")
+    
+# Endpoint get para actualizar los doblajes
+@app.get("/administrador/actualizar_doblajes",  response_class=HTMLResponse)
+async def actualizar_doblajes(request: Request, success: str = None):
+    # Realizar una solicitud GET a la API de contenidos para obtener la lista de directores
+    responseDobl = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/doblajes")
+    responseCont = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos")
+
+    # Verifica si la respuesta fue exitosa
+    if responseCont.status_code == 200 and responseDobl.status_code == 200:
+        doblajes = responseDobl.json() 
+        contenidos = responseCont.json()
+        return templates.TemplateResponse(
+            "admin_actualizar_doblajes.html",
+            {
+                "request": request,
+                "doblajes_contenido": doblajes,
+                "doblajes_disponibles": doblajes,
+                "contenidos": contenidos,
+                "message": success
+            },
+        )
+    else:
+        return {"error": "No se pudo obtener la lista de contenido"}
+
+
+# Endpoint post para actualizar los doblajes de un contenido
+@app.post("/administrador/actualizar_doblaje")
+async def actualizar_doblajes(
+    idContenido: str = Form(...),  # Recibimos idContenido como Form
+    idDoblaje: str = Form(...),  # Recibimos idDoblaje como Form
+):
+    """
+    Endpoint para asignar un doblaje a un contenido.
+    Si el doblaje ya está asignado al contenido, no lo vuelve a asignar.
+    """
+    try:
+        # Realiza la llamada GET al endpoint /contenidos/{idContenido}/doblajes para obtener los doblajes asignados
+        response_check = requests.get(
+            f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}/doblajes"
+        )
+
+        # Si la respuesta es exitosa, obtenemos los doblajes asignados
+        if response_check.status_code == 200:
+            doblajes_asignados = response_check.json()
+        else:
+            # Si la respuesta no es 200, se lanza una excepción
+            raise HTTPException(status_code=500, detail="Error al obtener los doblajes asignados.")
+
+        # Verificar si el doblaje ya está asignado al contenido
+        if any(doblaje['idDoblaje'] == idDoblaje for doblaje in doblajes_asignados):
+            # Si el doblaje ya está asignado, redirige con un mensaje de error
+            return RedirectResponse(
+                url="/administrador/actualizar_doblajes?error=true&message=El%20doblaje%20ya%20est%C3%A1%20asignado%20a%20este%20contenido",
+                status_code=303
+            )
+
+        # Si no está asignado, intenta añadirlo
+        response = requests.post(
+            f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}/doblajes/{idDoblaje}"
+        )
+
+        # Verifica si la llamada al backend fue exitosa
+        response.raise_for_status()
+
+        # Redirige con éxito
+        return RedirectResponse(
+            url="/administrador/actualizar_doblajes?success=true&message=Doblaje%20asignado%20correctamente%20al%20contenido",
+            status_code=303
+        )
+
+    except requests.exceptions.RequestException as e:
+        # Lanza una excepción HTTP si hay algún error en la llamada
+        raise HTTPException(status_code=500, detail=f"Error al asignar doblaje: {e}")
+    
+@app.get("/administrador/administrar_subtitulos_idiomas")
+async def administrar_subtitulos_idiomas(
+    request: Request, success: str = None, message: str = None
+):
+    """
+    Renderiza la página de administración de subtítulos y muestra mensajes según el estado de las operaciones.
+    """
+    # Realizar una solicitud GET a la API de contenidos para obtener los subtítulos
+    responseSub = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/subtitulos")
+
+    # Verifica si la respuesta fue exitosa
+    if responseSub.status_code == 200:
+        subtitulos = responseSub.json()
+        return templates.TemplateResponse(
+            "admin_administrar_subtitulos_idiomas.html",
+            {
+                "request": request,
+                "subtitulos": subtitulos,
+                "success": success,  # Indica si fue exitoso o no
+                "message": message,  # Mensaje detallado para el usuario
+            },
+        )
+    else:
+        return {
+            "error": "No se pudo obtener la lista de subtítulos. Por favor, intente nuevamente."
+        }
+
+# Endpoint para crear un nuevo subtítulo
+@app.post("/administrador/crear_subtitulo")
+async def crear_subtitulo(nuevoIdioma: str = Form(...)):
+    """
+    Endpoint para crear un nuevo subtítulo.
+    Se genera automáticamente un ID para el subtítulo y se envía al backend.
+    """
+    try:
+        # Generar un ID único para el subtítulo
+        idSubtitulo = str(uuid.uuid4())[:8]  # Puedes ajustar el formato del ID según sea necesario
+
+        # Enviar la solicitud al microservicio
+        response = requests.post(
+            f"{BASE_URL_CONTENIDOS}/contenidos/subtitulos/{idSubtitulo}/{nuevoIdioma}"
+        )
+        response.raise_for_status()  # Lanza una excepción si el backend falla
+
+        # Redirige al mismo HTML con un mensaje de éxito
+        return RedirectResponse(
+            url=f"/administrador/administrar_subtitulos_idiomas?success=true&message=Subtítulo%20creado%20correctamente",
+            status_code=303,
+        )
+
+    except requests.exceptions.RequestException as e:
+        # Redirige al mismo HTML con un mensaje de error
+        return RedirectResponse(
+            url=f"/administrador/administrar_subtitulos_idiomas?success=false&message=Error%20al%20crear%20el%20subtítulo",
+            status_code=303,
+        )
+
+
+# Endpoint para eliminar un subtítulo
+@app.post("/administrador/eliminar_subtitulo")
+async def eliminar_subtitulo(idSubtitulo: str = Form(...)):
+    """
+    Endpoint para eliminar un subtítulo existente.
+    """
+    try:
+        # Realizar la solicitud DELETE al backend
+        response = requests.delete(f"{BASE_URL_CONTENIDOS}/contenidos/subtitulos/{idSubtitulo}")
+        response.raise_for_status()  # Lanza una excepción si el backend falla
+
+        # Redirige al mismo HTML con un mensaje de éxito
+        return RedirectResponse(
+            url=f"/administrador/administrar_subtitulos_idiomas?success=true&message=Subtítulo%20eliminado%20correctamente",
+            status_code=303,
+        )
+
+    except requests.exceptions.RequestException as e:
+        # Redirige al mismo HTML con un mensaje de error
+        return RedirectResponse(
+            url=f"/administrador/administrar_subtitulos_idiomas?success=false&message=Error%20al%20eliminar%20el%20subtítulo",
+            status_code=303,
+        )
+    
+@app.get("/administrador/administrar_doblajes_idiomas")
+async def administrar_doblajes_idiomas(
+    request: Request, success: str = None, message: str = None
+):
+    """
+    Renderiza la página de administración de doblajes y muestra mensajes según el estado de las operaciones.
+    """
+    # Realizar una solicitud GET a la API de contenidos para obtener los doblajes
+    responseSub = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/doblajes")
+
+    # Verifica si la respuesta fue exitosa
+    if responseSub.status_code == 200:
+        doblajes = responseSub.json()
+        return templates.TemplateResponse(
+            "admin_administrar_doblajes_idiomas.html",
+            {
+                "request": request,
+                "doblajes": doblajes,
+                "success": success,  # Indica si fue exitoso o no
+                "message": message,  # Mensaje detallado para el usuario
+            },
+        )
+    else:
+        return {
+            "error": "No se pudo obtener la lista de doblajes. Por favor, intente nuevamente."
+        }
+
+# Endpoint para crear un nuevo doblaje
+@app.post("/administrador/crear_doblaje")
+async def crear_doblaje(nuevoIdioma: str = Form(...)):
+    """
+    Endpoint para crear un nuevo doblaje.
+    Se genera automáticamente un ID para el doblaje y se envía al backend.
+    """
+    try:
+        # Generar un ID único para el doblaje
+        idDoblaje = str(uuid.uuid4())[:8]  # Puedes ajustar el formato del ID según sea necesario
+
+        # Enviar la solicitud al microservicio
+        response = requests.post(
+            f"{BASE_URL_CONTENIDOS}/contenidos/doblajes/{idDoblaje}/{nuevoIdioma}"
+        )
+        response.raise_for_status()  # Lanza una excepción si el backend falla
+
+        # Redirige al mismo HTML con un mensaje de éxito
+        return RedirectResponse(
+            url=f"/administrador/administrar_doblajes_idiomas?success=true&message=Doblaje%20creado%20correctamente",
+            status_code=303,
+        )
+
+    except requests.exceptions.RequestException as e:
+        # Redirige al mismo HTML con un mensaje de error
+        return RedirectResponse(
+            url=f"/administrador/administrar_doblajes_idiomas?success=false&message=Error%20al%20crear%20el%20doblaje",
+            status_code=303,
+        )
+
+
+# Endpoint para eliminar un doblaje
+@app.post("/administrador/eliminar_doblaje")
+async def eliminar_doblaje(idDoblaje: str = Form(...)):
+    """
+    Endpoint para eliminar un doblaje existente.
+    """
+    try:
+        # Realizar la solicitud DELETE al backend
+        response = requests.delete(f"{BASE_URL_CONTENIDOS}/contenidos/doblajes/{idDoblaje}")
+        response.raise_for_status()  # Lanza una excepción si el backend falla
+
+        # Redirige al mismo HTML con un mensaje de éxito
+        return RedirectResponse(
+            url=f"/administrador/administrar_doblajes_idiomas?success=true&message=Doblaje%20eliminado%20correctamente",
+            status_code=303,
+        )
+
+    except requests.exceptions.RequestException as e:
+        # Redirige al mismo HTML con un mensaje de error
+        return RedirectResponse(
+            url=f"/administrador/administrar_doblajes_idiomas?success=false&message=Error%20al%20eliminar%20el%20doblaje",
+            status_code=303,
+        )

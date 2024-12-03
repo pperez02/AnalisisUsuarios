@@ -57,6 +57,14 @@ def update_serie(idSerie: str, serie_data: schemas.SerieUpdate, db: Session = De
         raise HTTPException(status_code=404, detail="Serie no encontrada")
     return {"message": "Datos de serie actualizados exitosamente"}
 
+@app.post("/contenidos/subtitulos/{idSubtitulo}/{idioma}")
+def create_subtitulos(idSubtitulo: str, idioma: str, db: Session = Depends(get_db)):
+    return crud.create_subtitulos(db=db, subtitulo_id=idSubtitulo, idioma=idioma)
+
+@app.delete("/contenidos/subtitulos/{idSubtitulo}")
+def delete_subtitulo(idSubtitulo: str, db: Session = Depends(get_db)):
+    return crud.delete_subtitulo(db=db, subtitulo_id=idSubtitulo)
+
 @app.post("/contenidos/{idContenido}/subtitulos/{idSubtitulo}")
 def update_subtitulos(idContenido: str, idSubtitulo: str, db: Session = Depends(get_db)):
     return crud.update_subtitulo(db=db, content_id=idContenido, subtitulo_id=idSubtitulo)  
@@ -65,6 +73,24 @@ def update_subtitulos(idContenido: str, idSubtitulo: str, db: Session = Depends(
 def get_subtitulos(idContenido: str, db: Session = Depends(get_db)):
     return crud.get_subtitulos(db=db, idContenido=idContenido)
 
+@app.delete("/contenidos/{idContenido}/subtitulos/{idSubtitulo}") 
+def delete_subtitulos(idContenido: str, idSubtitulo: str, db: Session = Depends(get_db)):
+    result = crud.delete_subtitulos(db=db, content_id=idContenido, subtitulo_id=idSubtitulo)
+    
+    # Si se eliminó correctamente, el mensaje de éxito será retornado, si no, un mensaje de error
+    if "Subtítulo eliminado correctamente" in result.get("message"):
+        return {"message": "Subtítulo eliminado correctamente"}
+    else:
+        raise HTTPException(status_code=400, detail=result.get("message")) 
+
+@app.post("/contenidos/doblajes/{idDoblaje}/{idioma}")
+def create_doblajes(idDoblaje: str, idioma: str, db: Session = Depends(get_db)):
+    return crud.create_doblajes(db=db, doblaje_id=idDoblaje, idioma=idioma)
+
+@app.delete("/contenidos/doblajes/{idDoblaje}")
+def delete_doblaje(idDoblaje: str, db: Session = Depends(get_db)):
+    return crud.delete_doblaje(db=db, doblaje_id=idDoblaje)
+
 @app.post("/contenidos/{idContenido}/doblajes/{idDoblaje}")
 def update_doblaje(idContenido: str, idDoblaje: str, db: Session = Depends(get_db)):
     return crud.update_doblaje(db=db, content_id=idContenido, doblaje_id=idDoblaje)
@@ -72,6 +98,16 @@ def update_doblaje(idContenido: str, idDoblaje: str, db: Session = Depends(get_d
 @app.get("/contenidos/{idContenido}/doblajes")
 def get_doblajes(idContenido: str, db: Session = Depends(get_db)):
     return crud.get_doblajes(db=db, idContenido=idContenido)
+
+@app.delete("/contenidos/{idContenido}/doblajes/{idDoblaje}") 
+def delete_doblajes(idContenido: str, idDoblaje: str, db: Session = Depends(get_db)):
+    result = crud.delete_doblajes(db=db, content_id=idContenido, doblaje_id=idDoblaje)
+    
+    # Si se eliminó correctamente, el mensaje de éxito será retornado, si no, un mensaje de error
+    if "Doblaje eliminado correctamente" in result.get("message"):
+        return {"message": "Doblaje eliminado correctamente"}
+    else:
+        raise HTTPException(status_code=400, detail=result.get("message"))
 
 # Endpoint para obtener todos los subtitulos
 @app.get("/contenidos/subtitulos")
