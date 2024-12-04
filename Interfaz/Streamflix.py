@@ -11,9 +11,20 @@ import requests
 # Creación de la API de interfaz
 app = FastAPI()
 
+"""
+
+Acceso a bases de datos antes de realizar los cambios de Docker
+
 BASE_URL_CONTENIDOS = "http://127.0.0.1:8000"
 BASE_URL_USUARIOS = "http://127.0.0.1:8001"
 BASE_URL_INTERACCIONES = "http://127.0.0.1:8002"
+
+"""
+
+
+BASE_URL_CONTENIDOS = "http://contenidos:8000"  # Nombre del servicio 'contenidos' en docker-compose.yml
+BASE_URL_USUARIOS = "http://usuarios:8001"    # Nombre del servicio 'usuarios' en docker-compose.yml
+BASE_URL_INTERACCIONES = "http://interacciones:8002"  # Nombre del servicio 'interacciones' en docker-compose.yml
 
 
 # Métodos auxiliares

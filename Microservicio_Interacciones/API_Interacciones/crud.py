@@ -9,8 +9,18 @@ Autor: Grupo GA01 - ASEE
 Versión: 1.0
 Descripción: Funciones CRUD para interactuar con la base de datos
 """
+
+"""
+
+Acceso a bases de datos antes de realizar los cambios de Docker
+
 BASE_URL_CONTENIDOS = "http://127.0.0.1:8000"
 BASE_URL_USUARIOS = "http://127.0.0.1:8001"
+
+"""
+
+BASE_URL_CONTENIDOS = "http://contenidos:8000"  # Nombre del servicio de contenidos
+BASE_URL_USUARIOS = "http://usuarios:8001"    # Nombre del servicio de usuarios
 
 # Función para obtener los géneros de los contenidos del historial y "me gusta" de un usuario
 def get_generos_usuario(db: Session, usuario_id: str):

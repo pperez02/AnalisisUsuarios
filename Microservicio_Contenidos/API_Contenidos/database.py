@@ -12,7 +12,11 @@ Descripción: Conexión a la base de datos contenidos.db y creación de sesión
 """
 
 # URL de la base de datos (SQLite en este caso)
-SQLALCHEMY_DATABASE_URL = "sqlite:///./Microservicio_Contenidos/contenidos.db"
+# Acceso antes de DOCKER!!! SQLALCHEMY_DATABASE_URL = "sqlite:///./Microservicio_Contenidos/contenidos.db"
+
+#Acceso a la base de datos tras realizar los cambios con Docker
+DB_PATH = os.getenv("DB_PATH", "/app/contenidos.db")  # /app es el directorio de trabajo del contenedor
+SQLALCHEMY_DATABASE_URL = f"sqlite:///{DB_PATH}"
 
 # Crear el motor para interactuar con la base de datos
 engine = create_engine(
@@ -34,7 +38,7 @@ def get_db():
         db.close()
 
 def initialize_database():
-    if not os.path.exists("./Microservicio_Contenidos/contenidos.db"):
+    if not os.path.exists(DB_PATH):
         # Crea las tablas si no existen
         Base.metadata.create_all(bind=engine)
         print("Base de datos creada y tablas inicializadas.")
