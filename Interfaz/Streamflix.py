@@ -351,7 +351,7 @@ async def pantalla_principal(request: Request, user_id: str):
             "historial": datos["historial"],
             "generos_con_contenidos": datos["generos_con_contenidos"],
             "mensaje": mensaje,
-        },
+        }
     )
 
 @app.get("/usuarios/{user_id}/perfil", response_class=HTMLResponse)
