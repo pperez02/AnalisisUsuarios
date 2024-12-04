@@ -33,7 +33,7 @@
             <div class="section">
                 <h2>Usuarios</h2>
                 <ul>
-                    <li><a href="/administrador/usuarios/lista">Listar todos los usuarios</a></li>
+                    <li><a href="/administrador/usuarios">Listar todos los usuarios</a></li>
                 </ul>
             </div>
 
@@ -132,15 +132,7 @@
                 <ul>
                     <li><a href="/administrador/actor/crear">Crear actor</a></li>
                     <li><a href="/administrador/director/crear">Crear director</a></li>
-                    <li><a href="/actores/actualizar">Actualizar actor</a>
-                        <ul>
-                            {% for actor in actores %}
-                            <li>
-                                &emsp;- {{actor.nombre}}
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </li>
+                    <li><a href="/actores/actualizar">Actualizar actor</a></li>
                     <li><a href="/directores/actualizar">Actualizar director</a>
                     <li><a href="/actores/borrar">Borrar actor</a></li>
                     <li><a href="/directores/borrar">Borrar director</a></li>

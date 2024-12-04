@@ -83,12 +83,12 @@ def get_historial(idUsuario: str, db: Session = Depends(get_db)):
 # Endpoint para obtener los contenidos más populares basados en "me gusta".
 @app.get("/contenido/tendencias", response_model=schemas.TendenciasResponse)
 def obtener_tendencias(limite: int = 2, db: Session = Depends(get_db)):
-    contenidos = crud.get_mas_me_gusta(db, limite)
-    tendencias = [
-        schemas.Tendencia(idContenido=c.idContenido, me_gusta_total=c.me_gusta_total)
-        for c in contenidos
-    ]
+    """
+    Devuelve una lista de contenidos populares (tendencias) con su id, título, y número de 'me gusta'.
+    """
+    tendencias = crud.get_tendencias_completas(db, limite)
     return schemas.TendenciasResponse(tendencias=tendencias)
+
 
 # Endpoint para añadir contenido a la lista personalizada
 @app.post("/usuarios/{idUsuario}/listaPersonalizada/{idContenido}")

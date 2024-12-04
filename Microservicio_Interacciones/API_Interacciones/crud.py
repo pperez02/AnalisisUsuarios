@@ -254,6 +254,38 @@ def get_mas_me_gusta(db: Session, limite: int = 2):
         .all()
     )
 
+#Metodo para obtener las tendencias con el titulo de los Contenidos
+def get_tendencias_completas(db: Session, limite: int = 2):
+    # Obtener idContenido y me_gusta_total de la base de datos
+    contenidos_populares = get_mas_me_gusta(db, limite)
+    tendencias = []
+
+    for contenido in contenidos_populares:
+        id_contenido = contenido.idContenido
+        me_gusta_total = contenido.me_gusta_total
+
+        # Solicitar el título del contenido a la API de contenidos
+        try:
+            response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{id_contenido}")
+            if response.ok:
+                contenido_data = response.json()
+                titulo = contenido_data.get("titulo", "Título desconocido")  # Recuperar el título
+            else:
+                titulo = "Título no disponible"  # En caso de error en la solicitud
+        except requests.RequestException:
+            titulo = "Error al obtener título"  # Manejo de excepciones
+
+        # Añadir a la lista de tendencias
+        tendencias.append(
+            schemas.Tendencia(
+                idContenido=id_contenido,
+                titulo=titulo,
+                me_gusta_total=me_gusta_total,
+            )
+        )
+
+    return tendencias
+
 def insert_content_into_LP(db: Session, usuario_id: str, contenido_id: str):
     # Obtener al usuario desde la API de usuarios
     try:

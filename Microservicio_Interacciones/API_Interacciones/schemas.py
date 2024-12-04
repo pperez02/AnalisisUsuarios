@@ -34,6 +34,7 @@ class ValoracionUsuarioContenido(BaseModel):
 
 class Tendencia(BaseModel):
     idContenido: str
+    titulo: str
     me_gusta_total: int
 
 class TendenciasResponse(BaseModel):

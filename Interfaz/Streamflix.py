@@ -339,6 +339,7 @@ async def pantalla_principal(request: Request, user_id: str):
     datos = cargar_datos(user_id)  # Centralizamos la lógica aquí
     mensaje = datos.get("mensaje", "Error al cargar los datos")
 
+    print(datos["tendencias"])
     # Renderizamos la pantalla principal
     return templates.TemplateResponse(
         "pantalla_principal.html",

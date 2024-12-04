@@ -43,7 +43,9 @@
                 <h2>Tendencias</h2>
                 <div class="content-list">
                     {% for tendencia in tendencias %}
-                        <a href="/detalles_contenido/{{ tendencia.id }}?user_id={{ user_id }}" class="content-box">
+                        <!-- Verifica que el ID y el título se muestren correctamente -->
+                        <p>ID: {{ tendencia.idContenido }} | Título: {{ tendencia.titulo }} | Me gusta: {{ tendencia.me_gusta_total }}</p>
+                        <a href="/detalles_contenido/{{ tendencia.idContenido }}?user_id={{ user_id }}" class="content-box">
                             {{ tendencia.titulo }} - Me gusta: {{ tendencia.me_gusta_total }}
                         </a>
                     {% endfor %}
@@ -52,6 +54,8 @@
             {% else %}
                 <p class="no-results-message">No hay tendencias disponibles.</p>
             {% endif %}
+
+
 
             <!-- Historial -->
             {% if historial %}
