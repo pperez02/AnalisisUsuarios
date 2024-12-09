@@ -9,9 +9,12 @@
 <body>
     <!-- Encabezado -->
     <div class="header">
-        <h1>Catálogo de Películas</h1>
-        <a href="perfil.html" class="perfil-button">Perfil</a>
-    </div>
+        <h1>
+            <a href="/pantalla_principal/?user_id={{ user_id }}" style="text-decoration: none; color: inherit;">
+                Catálogo de Películas
+            </a>
+        </h1>
+        <a href="/usuarios/{{ user_id }}/perfil" class="perfil-button">Perfil</a></div>
 
     <!-- Contenido -->
     <div class="container">

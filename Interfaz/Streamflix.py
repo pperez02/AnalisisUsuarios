@@ -241,19 +241,30 @@ async def detalles_contenido(request: Request, idContenido: str, user_id: str):
     doblajes = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{detalles_contenido["idDoblajeContenido"]}/doblajes")
     detalles_doblajes = doblajes.json()
          
-    #Obtener el historial
+    # Obtener el historial
     estaEnHistorial = False
     historial_response = requests.get(f"{BASE_URL_INTERACCIONES}/usuarios/{user_id}/historial")
-    if historial_response != None:
+
+    # Validar que la respuesta sea válida
+    if historial_response.status_code == 200:
         historial = historial_response.json()
-        if (any(content["id"] == idContenido for content in historial)):
-            estaEnHistorial = True
-            
+        if isinstance(historial, list) and len(historial) > 0:  # Verificar si es una lista no vacía
+            if any(content["id"] == idContenido for content in historial):
+                estaEnHistorial = True
+    else:
+        #print(f"No se ha obtenido el historial: {historial_response.status_code}")
+        historial = []
+
+    # Si no está en el historial, agregarlo
     if not estaEnHistorial:
         try:
             response = requests.post(f"{BASE_URL_INTERACCIONES}/usuarios/{user_id}/historial/{idContenido}")
+            if response.status_code == 200:
+                print(f"Contenido {idContenido} agregado al historial.")
+            else:
+                print(f"Error al agregar contenido al historial: {response.status_code}")
         except Exception as e:
-                print(f"Error al comunicarse con POST en HISTORIAL")
+            print(f"Error al comunicarse con POST en HISTORIAL: {e}")
         
     # Renderiza la plantilla detalles_contenido.html con los datos de la película
     return templates.TemplateResponse("detalles_contenido.html", {
