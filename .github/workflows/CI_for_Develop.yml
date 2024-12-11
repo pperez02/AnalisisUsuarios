@@ -3,7 +3,7 @@ name: CI for Develop
 on:
   push:
     branches:
-      - STREAM-24-hu4-3-desarrollar-la-interfaz-adaptable-a-diferen
+      - develop
 
 jobs:
   lint-and-build:
