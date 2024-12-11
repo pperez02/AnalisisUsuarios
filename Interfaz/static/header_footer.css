@@ -70,25 +70,32 @@ header {
 /* Barra de búsqueda centrada en el header */
 .search-bar {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start; /* Alinea los elementos a la izquierda */
     align-items: center;
-    gap: 10px;  /* Espacio entre los elementos de la barra de búsqueda */
-    max-width: 800px;  /* Limitar el tamaño de la barra de búsqueda */
+    gap: 10px; /* Espacio entre los elementos */
+    max-width: 800px; /* Limitar el tamaño de la barra de búsqueda */
     width: 100%;
-    margin: 1rem 0;
 }
 
-.search-bar input,
+.search-bar form {
+    display: flex;
+    width: 100%; /* Ocupa todo el espacio disponible */
+}
+
+.search-bar input {
+    padding: 10px;
+    font-size: 1rem;
+    flex: 2; /* Entrada más ancha */
+}
+
 .search-bar select {
     padding: 10px;
-    margin: 5px;
     font-size: 1rem;
-    width: 100%;
+    flex: 1; /* Selector un poco más estrecho */
 }
 
 .search-bar button {
     padding: 10px 20px;
-    margin: 5px;
     background-color: #5c6bc0;
     color: white;
     border: none;
@@ -109,10 +116,8 @@ header {
     font-size: 1rem;
     font-weight: bold;
     transition: background-color 0.3s;
-    margin: 1%;
 }
 
-/* Efecto al pasar el ratón sobre el botón de perfil */
 .profile-button:hover {
     background-color: #e50914; /* Rojo más brillante */
 }
@@ -166,27 +171,27 @@ footer {
         font-size: 1.2rem;
     }
 
-    /* Barra de búsqueda: ajustar tamaño y alineación */
+    /* Barra de búsqueda */
     .search-bar {
         flex-direction: column;
-        gap: 0.5rem;
         width: 100%;
-        padding: 0 1rem;
+    }
+
+    .search-bar form {
+        flex-direction: column; /* Apilar elementos */
     }
 
     .search-bar input,
-    .search-bar select {
-        width: 100%;
+    .search-bar select,
+    .search-bar button {
+        width: 100%; /* Ocupa todo el ancho */
     }
 
-    /* Botón de perfil ajustado */
     .profile-button {
         font-size: 0.9rem;
         padding: 8px 16px;
-        margin: 0.5rem 0;
     }
 
-    /* Ajustes en el perfil */
     .perfil-button {
         font-size: 0.9rem;
         padding: 8px 16px;
@@ -198,7 +203,7 @@ footer {
     }
 }
 
-/* Dispositivos medianos (tabletas y dispositivos más grandes) */
+/* Dispositivos medianos */
 @media (max-width: 768px) {
     .navbar {
         flex-direction: column;
@@ -209,23 +214,16 @@ footer {
         font-size: 1.3rem;
     }
 
-    /* Barra de búsqueda */
     .search-bar {
         width: 90%;
     }
 
-    .search-bar input,
-    .search-bar select {
-        width: 100%;
-    }
-
     .perfil-button {
         font-size: 1rem;
-        padding: 10px 20px;
     }
 }
 
-/* Dispositivos grandes (pantallas de escritorio y más grandes) */
+/* Dispositivos grandes */
 @media (min-width: 1024px) {
     .navbar {
         padding: 1rem 3rem;
@@ -245,6 +243,5 @@ footer {
 
     footer {
         font-size: 1rem;
-        padding: 12px 0;
     }
 }
