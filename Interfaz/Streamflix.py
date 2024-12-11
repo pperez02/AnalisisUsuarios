@@ -195,13 +195,13 @@ async def detalles_contenido(request: Request, idContenido: str, user_id: str):
     detalles_contenido = contenido.json()
 
     #Extraer nombre del genero a partir del id
-    genero = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{detalles_contenido["idGenero"]}")
+    genero = requests.get(f"{BASE_URL_CONTENIDOS}/generos/{detalles_contenido['idGenero']}")
     detalles_genero = genero.json()
     nombre_genero = detalles_genero["nombre"]
 
     if detalles_contenido["tipoContenido"] == "Pelicula":
         #Extraer nombre del director a partir del id
-        director = requests.get(f"{BASE_URL_CONTENIDOS}/directores/{detalles_contenido["idDirector"]}")
+        director = requests.get(f"{BASE_URL_CONTENIDOS}/directores/{detalles_contenido['idDirector']}")
         detalles_director = director.json()
         nombre_director = detalles_director["nombre"]
         detalles_contenido["idDirector"] = nombre_director
@@ -230,15 +230,15 @@ async def detalles_contenido(request: Request, idContenido: str, user_id: str):
     
 
     #Obtener el reparto
-    reparto = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{detalles_contenido["id"]}/reparto")
+    reparto = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{detalles_contenido['id']}/reparto")
     detalles_reparto = reparto.json()
 
     #Obtener los subtitulos
-    subtitulos = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{detalles_contenido["idSubtitulosContenido"]}/subtitulos")
+    subtitulos = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{detalles_contenido['idSubtitulosContenido']}/subtitulos")
     detalles_subtitulos = subtitulos.json()
     
     #Obtener los doblajes
-    doblajes = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{detalles_contenido["idDoblajeContenido"]}/doblajes")
+    doblajes = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{detalles_contenido['idDoblajeContenido']}/doblajes")
     detalles_doblajes = doblajes.json()
          
     # Obtener el historial
