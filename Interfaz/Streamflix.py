@@ -38,6 +38,7 @@ def cargar_datos(user_id: str):
     historial = []
     generos = []
     generos_con_contenidos = []
+    lista_personalizada = []
 
     # Realizamos las solicitudes a los microservicios
     recomendaciones_response = requests.get(
@@ -82,6 +83,12 @@ def cargar_datos(user_id: str):
                 f"No se pudieron obtener los contenidos para el género {genero['nombre']}."
             )
 
+    lista_personalizada_response = requests.get(f"{BASE_URL_INTERACCIONES}/usuarios/{user_id}/listaPersonalizada")
+    if lista_personalizada_response.ok:
+        lista_personalizada = lista_personalizada_response.json()
+    else:
+        mensajes.append("No se pudo obtener la lista personalizada.")
+
     # Si no hay mensajes, significa que todo salió bien
     if not mensajes:
         mensajes.append("Los datos se cargaron correctamente.")
@@ -91,6 +98,7 @@ def cargar_datos(user_id: str):
         "tendencias": tendencias,
         "historial": historial,
         "generos_con_contenidos": generos_con_contenidos,
+        "lista_personalizada": lista_personalizada,
         "mensaje": " | ".join(mensajes),  # Unimos todos los mensajes en una sola cadena
     }
 
@@ -361,6 +369,7 @@ async def pantalla_principal(request: Request, user_id: str):
             "tendencias": datos["tendencias"],
             "historial": datos["historial"],
             "generos_con_contenidos": datos["generos_con_contenidos"],
+            "lista_personalizada": datos["lista_personalizada"],
             "mensaje": mensaje,
         }
     )

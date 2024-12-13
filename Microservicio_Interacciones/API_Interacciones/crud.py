@@ -100,6 +100,7 @@ def get_recomendaciones_usuario(db: Session, usuario_id: str):
 
     return recomendaciones    
 
+# Función para mostrar los "Me Gusta" de un usuario concreto
 def mostrar_me_gusta(db: Session, usuario_id: str):
     query = db.query(models.ListaMeGusta).filter(models.ListaMeGusta.idUsuario == usuario_id).all()
     
@@ -241,7 +242,7 @@ def get_historial_usuario(db: Session, usuario_id: str):
 
     return contenidos_historial    
 
-# Obtener los contenidos con más "me gusta"
+# Obtener los contenidos con más "Me Gusta"
 def get_mas_me_gusta(db: Session, limite: int = 2):
     return (
         db.query(
@@ -286,6 +287,7 @@ def get_tendencias_completas(db: Session, limite: int = 2):
 
     return tendencias
 
+# Función para insertar un contenido en una lista personalizada.
 def insert_content_into_LP(db: Session, usuario_id: str, contenido_id: str):
     # Obtener al usuario desde la API de usuarios
     try:
@@ -315,6 +317,7 @@ def insert_content_into_LP(db: Session, usuario_id: str, contenido_id: str):
         db.rollback()
         raise Exception(f"Error al añadir contenido a la LP en la base de datos: {e}")
     
+# Función para obtener la lista personalizada de un usuario concreto
 def get_LP_user(db: Session, usuario_id: str):
     try:
         # Llamar a la API de usuarios para obtener la información del usuario
@@ -362,6 +365,7 @@ def get_LP_user(db: Session, usuario_id: str):
             detail=str(e)
         )
 
+# Función para borrar un contenido de la lista personalizada de un usuario concreto
 def delete_conent_from_user_LP(db: Session, idUsuario: str, idContenido: str):
     # Obtener al usuario desde la API de usuarios
     try:

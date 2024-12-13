@@ -27,6 +27,7 @@ def get_database():
     db = next(get_db())
     return db
 
+# Endpoint para obtener las recomendaciones para los usuarios
 @app.get("/usuarios/{idUsuario}/recomendaciones", response_model=list[schemas.ContenidoGetId])
 def get_recomendaciones(idUsuario: str, db: Session = Depends(get_db)):
     recomendaciones = crud.get_recomendaciones_usuario(db=db, usuario_id=idUsuario)

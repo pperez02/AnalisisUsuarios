@@ -54,6 +54,22 @@
                 <p class="no-results-message">No hay tendencias disponibles.</p>
             {% endif %}
 
+            {% if lista_personalizada %}
+            <div class="section">
+                <h2>Ver más tarde</h2>
+                <div class="content-list">
+                    {% for contenido in lista_personalizada %}
+                        <!-- Verifica que el ID y el título se muestren correctamente -->
+                        <a href="/detalles_contenido/{{ contenido.id }}?user_id={{ user_id }}" class="content-box">
+                            {{ contenido.titulo }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+                <p class="no-results-message">No hay elementos en tu lista personalizada.</p>
+            {% endif %}
+
 
 
             <!-- Historial -->
