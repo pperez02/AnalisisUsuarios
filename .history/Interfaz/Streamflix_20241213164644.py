@@ -725,19 +725,12 @@ async def crear_pelicula_form(request: Request):
     generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
 
     generos = generos_response.json() if generos_response.status_code == 200 else []
-    
-    # Realizar una solicitud GET a la API de contenidos para obtener la lista de directores
-    directores_response = requests.get(f"{BASE_URL_CONTENIDOS}/directores")
-
-    # Verifica si la respuesta fue exitosa
-    directores = directores_response.json() if directores_response.status_code == 200 else []
 
     return templates.TemplateResponse(
     "admin_crear_pelicula.html",  # Nombre de la plantilla
     {
         "request": request,
         "generos": generos,
-        "directores": directores,
     },
 )
 
@@ -750,7 +743,6 @@ async def crear_pelicula(
     fecha_lanzamiento: str = Form(...),
     id_genero: str = Form(...),
     duracion: int = Form(...),
-    idDirector: str = Form(...),
 ):
     """
     Procesa el formulario para crear una película.
@@ -765,7 +757,7 @@ async def crear_pelicula(
         "idSubtitulosContenido": "1",
         "idDoblajeContenido": "1",
         "duracion": duracion,
-        "idDirector": idDirector,
+        "idDirector": "1",
     }
 
     response = requests.post(f"{BASE_URL_CONTENIDOS}/peliculas", json=data)
@@ -941,7 +933,7 @@ async def crear_episodio_form(request: Request):
     directores = directores_response.json() if directores_response.status_code == 200 else []
 
     return templates.TemplateResponse(
-        "admin_crear_episodio.html",  # Plantilla HTML del formulario
+        "admin_crear_episodios.html",  # Plantilla HTML del formulario
         {
             "request": request,
             "series": series,  # Lista de series disponibles
@@ -1027,13 +1019,11 @@ async def crear_genero(
 async def get_actualizar_pelicula(request: Request, idPelicula: str):
     response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idPelicula}")
     generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
-    directores_response = requests.get(f"{BASE_URL_CONTENIDOS}/directores")
 
     if response.status_code == 200:
         # Obtiene los datos de la pelicula
         pelicula_data = response.json()
         generos = []
-        directores = []
 
         if generos_response.status_code == 200:
             # Obtiene la lista de géneros y la convierte a una lista de objetos Genero
@@ -1053,24 +1043,6 @@ async def get_actualizar_pelicula(request: Request, idPelicula: str):
                 "admin_actualizar_pelicula.html",
                 {"request": request, "error_message": error_message},
             )
-                
-        if directores_response.status_code == 200:
-            # Obtiene la lista de directores
-            directores_data = directores_response.json()
-            directores = [
-                {
-                    "id": director["id"],
-                    "nombre": director["nombre"],
-                }
-                for director in directores_data
-            ]
-        else:
-            # En caso de error al obtener los directores
-            error_message = f"Error al obtener los directores de la base de datos: {directores_response.status_code}"
-            return templates.TemplateResponse(
-                "admin_actualizar_pelicula.html",
-                {"request": request, "error_message": error_message},
-            )
 
         # Renderiza la plantilla HTML con los datos de la pelicula
         return templates.TemplateResponse(
@@ -1083,9 +1055,7 @@ async def get_actualizar_pelicula(request: Request, idPelicula: str):
                 "fecLanzamiento": pelicula_data["fechaLanzamiento"],
                 "idGenero": pelicula_data["idGenero"],
                 "generos": generos,  # Pasa la lista de todos los géneros para elegir
-                "duracion": pelicula_data["duracion"],
-                "idDirector": pelicula_data["idDirector"],
-                "directores": directores,   # Pasa la lista de todos los directores
+                "duracion": pelicula_data["duracion"]
             },
         )
     else:
@@ -1114,7 +1084,6 @@ async def actualizar_pelicula(request: Request, idPelicula: str):
     descripcion = data.get("descripcion")
     fechaLanzamiento = data.get("fecLanzamiento")
     idGenero = data.get("genero")
-    idDirector = data.get("idDirector")
 
     # Construir el payload para la API externa
     payload = {
@@ -1122,32 +1091,30 @@ async def actualizar_pelicula(request: Request, idPelicula: str):
         "descripcion": descripcion,
         "fechaLanzamiento": fechaLanzamiento,
         "idGenero": idGenero,
-        "idDirector": idDirector,
     }
 
     # URL del endpoint de la API externa para actualizar la pelicula
     api_url = f"{BASE_URL_CONTENIDOS}/peliculas/{idPelicula}"
 
-    # Enviar la solicitud PUT a la API externa
-    response = requests.put(api_url, json=payload)
+    try:
+        # Enviar la solicitud PUT a la API externa
+        response = requests.put(api_url, json=payload)
 
-    # Comprobar el estado de la respuesta de la API
-    if response.status_code == 200:
-        redirect_response = RedirectResponse(url=f"/admin_menu", status_code=303)
-        redirect_response.set_cookie(
-            key="success_message", value="Película actualizada exitosamente", max_age=5
-        )
-        return redirect_response
-    else:
-        return templates.TemplateResponse(
-            "admin_actualizar_pelicula.html",
-            {
-                "request": request,
-                "error_message": "Error al actualizar la película. Por favor, inténtelo de nuevo.",
-            }
-        )
+        # Comprobar el estado de la respuesta de la API
+        if response.status_code == 200:
+            data = response.json()
+            return RedirectResponse(
+                url=f"/admin_menu", status_code=303
+            )
+        else:
+            raise HTTPException(
+                status_code=response.status_code, detail="Error al actualizar la pelicula"
+            )
+
+    except requests.exceptions.RequestException as e:
+        # Manejar errores de red o conexión
         raise HTTPException(
-            status_code=response.status_code, detail="Error al actualizar la pelicula"
+            status_code=500, detail=f"Error al comunicarse con la API externa: {str(e)}"
         )
 
 @app.get("/administrador/series/{idSerie}", response_class=HTMLResponse)
@@ -1230,27 +1197,26 @@ async def actualizar_serie(request: Request, idSerie: str):
     # URL del endpoint de la API externa para actualizar la serie
     api_url = f"{BASE_URL_CONTENIDOS}/series/{idSerie}"
 
-    # Enviar la solicitud PUT a la API externa
-    response = requests.put(api_url, json=payload)
+    try:
+        # Enviar la solicitud PUT a la API externa
+        response = requests.put(api_url, json=payload)
 
-    # Comprobar el estado de la respuesta de la API
-    if response.status_code == 200:
-        redirect_response = RedirectResponse(url=f"/admin_menu", status_code=303)
-        redirect_response.set_cookie(
-            key="success_message", value="Serie actualizada exitosamente", max_age=5
-        )
-        return redirect_response
-    else:
-        return templates.TemplateResponse(
-            "admin_actualizar_serie.html",
-            {
-                "request": request,
-                "error_message": "Error al actualizar la serie. Por favor, inténtelo de nuevo.",
-            }
-        )
+        # Comprobar el estado de la respuesta de la API
+        if response.status_code == 200:
+            data = response.json()
+            return RedirectResponse(
+                url=f"/admin_menu", status_code=303
+            )
+        else:
+            raise HTTPException(
+                status_code=response.status_code, detail="Error al actualizar la serie"
+            )
+
+    except requests.exceptions.RequestException as e:
+        # Manejar errores de red o conexión
         raise HTTPException(
-            status_code=response.status_code, detail="Error al actualizar la serie"
-        )    
+            status_code=500, detail=f"Error al comunicarse con la API externa: {str(e)}"
+        )
     
 @app.get("/administrador/series/{idSerie}/temporadas/{idTemporada}", response_class=HTMLResponse)
 async def get_actualizar_temporada(request: Request, idSerie: str, idTemporada: str):
@@ -1324,27 +1290,26 @@ async def actualizar_temporada(request: Request, idTemporada: str):
     # URL del endpoint de la API externa para actualizar la temporada
     api_url = f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}/temporadas/{idTemporada}"
 
-    # Enviar la solicitud PUT a la API externa
-    response = requests.put(api_url, json=payload)
+    try:
+        # Enviar la solicitud PUT a la API externa
+        response = requests.put(api_url, json=payload)
 
-    # Comprobar el estado de la respuesta de la API
-    if response.status_code == 200:
-        redirect_response = RedirectResponse(url=f"/admin_menu", status_code=303)
-        redirect_response.set_cookie(
-            key="success_message", value="Temporada actualizada exitosamente", max_age=5
-        )
-        return redirect_response
-    else:
-        return templates.TemplateResponse(
-            "admin_actualizar_temporada.html",
-            {
-                "request": request,
-                "error_message": "Error al actualizar la temporada. Por favor, inténtelo de nuevo.",
-            }
-        )
+        # Comprobar el estado de la respuesta de la API
+        if response.status_code == 200:
+            data = response.json()
+            return RedirectResponse(
+                url=f"/admin_menu", status_code=303
+            )
+        else:
+            raise HTTPException(
+                status_code=response.status_code, detail="Error al actualizar la temporada"
+            )
+
+    except requests.exceptions.RequestException as e:
+        # Manejar errores de red o conexión
         raise HTTPException(
-            status_code=response.status_code, detail="Error al actualizar la temporada"
-        )    
+            status_code=500, detail=f"Error al comunicarse con la API externa: {str(e)}"
+        )
 
 @app.get("/administrador/series/{idSerie}/temporadas/{idTemporada}/episodios/{idEpisodio}", response_class=HTMLResponse)
 async def get_actualizar_episodio(request: Request, idSerie: str, idTemporada: str, idEpisodio: str):
@@ -1427,27 +1392,26 @@ async def actualizar_episodio(request: Request, idSerie: str, idTemporada: str, 
     # URL del endpoint de la API externa para actualizar el episodio
     api_url = f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}/temporadas/{idTemporada}/episodios/{idEpisodio}"
 
-    # Enviar la solicitud PUT a la API externa
-    response = requests.put(api_url, json=payload)
+    try:
+        # Enviar la solicitud PUT a la API externa
+        response = requests.put(api_url, json=payload)
 
-    # Comprobar el estado de la respuesta de la API
-    if response.status_code == 200:
-        redirect_response = RedirectResponse(url=f"/admin_menu", status_code=303)
-        redirect_response.set_cookie(
-            key="success_message", value="Episodio actualizado exitosamente", max_age=5
-        )
-        return redirect_response
-    else:
-        return templates.TemplateResponse(
-            "admin_actualizar_episodio.html",
-            {
-                "request": request,
-                "error_message": "Error al actualizar el episodio. Por favor, inténtelo de nuevo.",
-            }
-        )
+        # Comprobar el estado de la respuesta de la API
+        if response.status_code == 200:
+            data = response.json()
+            return RedirectResponse(
+                url=f"/admin_menu", status_code=303
+            )
+        else:
+            raise HTTPException(
+                status_code=response.status_code, detail="Error al actualizar el episodio"
+            )
+
+    except requests.exceptions.RequestException as e:
+        # Manejar errores de red o conexión
         raise HTTPException(
-            status_code=response.status_code, detail="Error al actualizar el episodio"
-        )    
+            status_code=500, detail=f"Error al comunicarse con la API externa: {str(e)}"
+        )
 
 @app.get("/administrador/generos/{idGenero}", response_class=HTMLResponse)
 async def get_actualizar_genero(request: Request, idGenero: str):
@@ -1500,28 +1464,26 @@ async def actualizar_genero(request: Request, idGenero: str):
     # URL del endpoint de la API externa para actualizar el episodio
     api_url = f"{BASE_URL_CONTENIDOS}/generos/{idGenero}"
 
-    # Enviar la solicitud PUT a la API externa
-    response = requests.put(api_url, json=payload)
+    try:
+        # Enviar la solicitud PUT a la API externa
+        response = requests.put(api_url, json=payload)
 
-    # Comprobar el estado de la respuesta de la API
-    if response.status_code == 200:
-        redirect_response = RedirectResponse(url=f"/admin_menu", status_code=303)
-        redirect_response.set_cookie(
-            key="success_message", value="Género actualizado exitosamente", max_age=5
-        )
-        return redirect_response
-    else:
-        return templates.TemplateResponse(
-            "admin_actualizar_genero.html",
-            {
-                "request": request,
-                "error_message": "Error al actualizar el género. Por favor, inténtelo de nuevo.",
-            }
-        )
+        # Comprobar el estado de la respuesta de la API
+        if response.status_code == 200:
+            data = response.json()
+            return RedirectResponse(
+                url=f"/admin_menu", status_code=303
+            )
+        else:
+            raise HTTPException(
+                status_code=response.status_code, detail="Error al actualizar el género"
+            )
+
+    except requests.exceptions.RequestException as e:
+        # Manejar errores de red o conexión
         raise HTTPException(
-            status_code=response.status_code, detail="Error al actualizar el género"
-        )    
-
+            status_code=500, detail=f"Error al comunicarse con la API externa: {str(e)}"
+        )
 
 @app.get("/peliculas/borrar", response_class=HTMLResponse)
 def borrar_peliculas(request: Request):
@@ -1665,7 +1627,7 @@ def borrar_episodios(request: Request):
     print(mensaje)
     # Renderizar la plantilla con los datos de las series
     return templates.TemplateResponse(
-        "admin_borrar_episodio.html",
+        "admin_borrar_episodios.html",
         {"request": request, "series": series, "mensaje": mensaje},
     )
 

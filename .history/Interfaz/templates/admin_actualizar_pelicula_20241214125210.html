@@ -48,14 +48,13 @@
                 <label for="duracion">Duración:</label>
                 <input type="number" id="duracion" name="duracion" value="{{duracion}}" required>
 
-                <label for="idDirector">Director:</label>
-                <select id="idDirector" name="idDirector" required>
+                <label for="directores">Director:</label>
+                <select id="directores" name="idDirector" required>
+                    <option value="">Seleccione un director</option>
                     {% for director in directores %}
-                        <option value="{{ director.id }}" {% if director.id == idDirector %}selected{% endif %}>
-                            {{ director.nombre }}
-                        </option>
+                    <option value="{{ director.id }}">{{ director.nombre }}</option>
                     {% endfor %}
-                </select><br>    
+                </select>    
 
                 <button type="submit">Actualizar datos</button>
             </form>

@@ -725,19 +725,12 @@ async def crear_pelicula_form(request: Request):
     generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
 
     generos = generos_response.json() if generos_response.status_code == 200 else []
-    
-    # Realizar una solicitud GET a la API de contenidos para obtener la lista de directores
-    directores_response = requests.get(f"{BASE_URL_CONTENIDOS}/directores")
-
-    # Verifica si la respuesta fue exitosa
-    directores = directores_response.json() if directores_response.status_code == 200 else []
 
     return templates.TemplateResponse(
     "admin_crear_pelicula.html",  # Nombre de la plantilla
     {
         "request": request,
         "generos": generos,
-        "directores": directores,
     },
 )
 
@@ -750,7 +743,6 @@ async def crear_pelicula(
     fecha_lanzamiento: str = Form(...),
     id_genero: str = Form(...),
     duracion: int = Form(...),
-    idDirector: str = Form(...),
 ):
     """
     Procesa el formulario para crear una película.
@@ -765,7 +757,7 @@ async def crear_pelicula(
         "idSubtitulosContenido": "1",
         "idDoblajeContenido": "1",
         "duracion": duracion,
-        "idDirector": idDirector,
+        "idDirector": "1",
     }
 
     response = requests.post(f"{BASE_URL_CONTENIDOS}/peliculas", json=data)
@@ -1027,13 +1019,11 @@ async def crear_genero(
 async def get_actualizar_pelicula(request: Request, idPelicula: str):
     response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idPelicula}")
     generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
-    directores_response = requests.get(f"{BASE_URL_CONTENIDOS}/directores")
 
     if response.status_code == 200:
         # Obtiene los datos de la pelicula
         pelicula_data = response.json()
         generos = []
-        directores = []
 
         if generos_response.status_code == 200:
             # Obtiene la lista de géneros y la convierte a una lista de objetos Genero
@@ -1053,24 +1043,6 @@ async def get_actualizar_pelicula(request: Request, idPelicula: str):
                 "admin_actualizar_pelicula.html",
                 {"request": request, "error_message": error_message},
             )
-                
-        if directores_response.status_code == 200:
-            # Obtiene la lista de directores
-            directores_data = directores_response.json()
-            directores = [
-                {
-                    "id": director["id"],
-                    "nombre": director["nombre"],
-                }
-                for director in directores_data
-            ]
-        else:
-            # En caso de error al obtener los directores
-            error_message = f"Error al obtener los directores de la base de datos: {directores_response.status_code}"
-            return templates.TemplateResponse(
-                "admin_actualizar_pelicula.html",
-                {"request": request, "error_message": error_message},
-            )
 
         # Renderiza la plantilla HTML con los datos de la pelicula
         return templates.TemplateResponse(
@@ -1083,9 +1055,7 @@ async def get_actualizar_pelicula(request: Request, idPelicula: str):
                 "fecLanzamiento": pelicula_data["fechaLanzamiento"],
                 "idGenero": pelicula_data["idGenero"],
                 "generos": generos,  # Pasa la lista de todos los géneros para elegir
-                "duracion": pelicula_data["duracion"],
-                "idDirector": pelicula_data["idDirector"],
-                "directores": directores,   # Pasa la lista de todos los directores
+                "duracion": pelicula_data["duracion"]
             },
         )
     else:
@@ -1114,7 +1084,6 @@ async def actualizar_pelicula(request: Request, idPelicula: str):
     descripcion = data.get("descripcion")
     fechaLanzamiento = data.get("fecLanzamiento")
     idGenero = data.get("genero")
-    idDirector = data.get("idDirector")
 
     # Construir el payload para la API externa
     payload = {
@@ -1122,7 +1091,6 @@ async def actualizar_pelicula(request: Request, idPelicula: str):
         "descripcion": descripcion,
         "fechaLanzamiento": fechaLanzamiento,
         "idGenero": idGenero,
-        "idDirector": idDirector,
     }
 
     # URL del endpoint de la API externa para actualizar la pelicula
