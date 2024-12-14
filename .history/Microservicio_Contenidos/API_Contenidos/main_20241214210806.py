@@ -350,7 +350,7 @@ def get_director_by_content(idContenido: str, db: Session = Depends(get_db)):
 
 @app.delete("/contenidos/{idContenido}/reparto")
 def delete_reparto_by_content(idContenido: str, db: Session = Depends(get_db)):
-    success = crud.delete_reparto(db=db, contenido_id=idContenido)
+    success = crud.delete_reparto(db=db, contenido_id=idActor)
     if not success:
         raise HTTPException(status_code=404, detail="Reparto no encontrado")
     return {"message": "Reparto eliminado exitosamente"}        

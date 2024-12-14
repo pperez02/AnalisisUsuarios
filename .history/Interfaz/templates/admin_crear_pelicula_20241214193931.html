@@ -56,7 +56,7 @@
             <label for="actores">Actores:</label><br>
             <div id="actores-container">
                 {% for actor in actores %}
-                <input type="checkbox" id="actor_{{ actor.id }}" name="actores" value="{{ actor.id }}">
+                <input type="checkbox" id="actor_{{ actor.id }}" name="idActores" value="{{ actor.id }}">
                 <label for="actor_{{ actor.id }}">{{ actor.nombre }}</label><br>
                 {% endfor %}
             </div>           

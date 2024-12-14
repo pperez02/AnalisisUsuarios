@@ -1292,6 +1292,20 @@ async def get_actualizar_serie(request: Request, idSerie: str):
                 {"request": request, "error_message": error_message},
             )
 
+        # Renderiza la plantilla HTML con los datos de la serie
+        return templates.TemplateResponse(
+            "admin_actualizar_serie.html",  # Plantilla HTML que renderizará los datos
+            {
+                "request": request,
+                "serie_id": idSerie,
+                "titulo": serie_data["titulo"],
+                "descripcion": serie_data["descripcion"],
+                "fecLanzamiento": serie_data["fechaLanzamiento"],
+                "idGenero": serie_data["idGenero"],
+                "generos": generos,  # Pasa la lista de todos los géneros para elegir
+            },
+        )
+
         if actores_response.status_code == 200:
             # Obtiene la lista de actores
             actores_data = actores_response.json()
@@ -1320,23 +1334,7 @@ async def get_actualizar_serie(request: Request, idSerie: str):
             return templates.TemplateResponse(
                 "admin_actualizar_serie.html",
                 {"request": request, "error_message": error_message},
-            )
-
-        # Renderiza la plantilla HTML con los datos de la serie
-        return templates.TemplateResponse(
-            "admin_actualizar_serie.html",  # Plantilla HTML que renderizará los datos
-            {
-                "request": request,
-                "serie_id": idSerie,
-                "titulo": serie_data["titulo"],
-                "descripcion": serie_data["descripcion"],
-                "fecLanzamiento": serie_data["fechaLanzamiento"],
-                "idGenero": serie_data["idGenero"],
-                "generos": generos,  # Pasa la lista de todos los géneros para elegir
-                "actores": actores,
-                "reparto": reparto, 
-            },
-        )            
+            )    
 
     else:
         # En caso de error al obtener los datos de la serie

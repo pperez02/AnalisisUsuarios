@@ -8,12 +8,6 @@ body {
     background-color: #000;
 }
 
-body::before {
-    content: '';
-    display: block;
-    height: 80px;
-}
-
 /* Estilo para el contenedor principal */
 main {
     flex: 1;
