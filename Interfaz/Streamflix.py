@@ -104,9 +104,11 @@ templates = Jinja2Templates(directory="templates")
 
 # Endpoint para la página principal
 @app.get("/", response_class=HTMLResponse)
-async def index(request: Request):
+async def index(request: Request, mensaje_credenciales: str = None):
     # Renderiza la página index.html y la devuelve al usuario
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("index.html", 
+                                      {"request": request,
+                                       "mensaje_credenciales": mensaje_credenciales})
 
 
 # Endpoint para hacer login
@@ -117,7 +119,9 @@ async def login(request: Request, email: str = Form(...), password: str = Form(.
     response = requests.post(f"{BASE_URL_USUARIOS}/usuarios/login", json=data)
 
     if response.status_code != 200:
-        raise HTTPException(status_code=400, detail="Credenciales inválidas")
+        mensaje_credenciales = "Error: las credenciales no son correctas"
+        response_redirect = RedirectResponse(url=f"/?mensaje_credenciales={mensaje_credenciales}", status_code=303)
+        return response_redirect
 
     # Si las credenciales son correctas, obtenemos los datos del usuario
     user_data = response.json()
@@ -168,7 +172,10 @@ async def registrar_usuario(
     response = requests.post(f"{BASE_URL_USUARIOS}/usuarios/registro", json=data)
 
     if response.status_code != 200:
-        raise HTTPException(status_code=500, detail="Error al registrar el usuario.")
+        mensaje_credenciales = "Error: Las credenciales ya están en uso"
+        return RedirectResponse(
+        url=f"/?mensaje_credenciales={mensaje_credenciales}", status_code=303
+    )
 
     # Guardamos el id del usuario retornado
     user_data = response.json()
@@ -316,8 +323,8 @@ async def buscar(request: Request, query: str, tipo: str):
         mensaje = "No se han encontrado resultados."
 
     # Para devolver las peliculas en las que ha participado un actor
+    contenidos_por_actor = {}  # Diccionario para almacenar contenidos por actor
     if actores:
-        contenidos_por_actor = {}  # Diccionario para almacenar contenidos por actor
         for actor in actores:
             # Obtenemos los contenidos relacionados con el actor
             response_contenidos_actor = requests.get(f"{BASE_URL_CONTENIDOS}/actores/{actor['id']}/contenidos")
@@ -346,7 +353,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 @app.get("/pantalla_principal", response_class=HTMLResponse)
-async def pantalla_principal(request: Request, user_id: str):
+async def pantalla_principal(request: Request, user_id: str = None, mensaje_credenciales: str = None):
     datos = cargar_datos(user_id)  # Centralizamos la lógica aquí
     mensaje = datos.get("mensaje", "Error al cargar los datos")
 
@@ -362,11 +369,12 @@ async def pantalla_principal(request: Request, user_id: str):
             "historial": datos["historial"],
             "generos_con_contenidos": datos["generos_con_contenidos"],
             "mensaje": mensaje,
+            "mensaje_credenciales": mensaje_credenciales,
         }
     )
 
 @app.get("/usuarios/{user_id}/perfil", response_class=HTMLResponse)
-async def get_user_profile(request: Request, user_id: str):
+async def get_user_profile(request: Request, user_id: str, mensaje: str = None):
     # Llama al endpoint /perfil para obtener el perfil de un usuario y lo renderiza en HTML
     response = requests.get(f"{BASE_URL_USUARIOS}/usuarios/{user_id}")
     me_gusta_response = requests.get(
@@ -414,6 +422,7 @@ async def get_user_profile(request: Request, user_id: str):
                 "password": user_profile["password"],
                 "me_gusta": contenidos_me_gusta,  # Pasa la lista de contenidos "Me Gusta"
                 "mensaje_me_gusta": mensaje_me_gusta,  # Pasa el mensaje en caso de que no haya "Me Gusta"
+                "mensaje": mensaje,
             },
         )
     else:
@@ -497,9 +506,10 @@ async def actualizar_perfil(request: Request, id_usuario: str):
 
         # Comprobar el estado de la respuesta de la API
         if response.status_code == 200:
+            mensaje = "Perfil actualizado exitosamente"
             data = response.json()
             return RedirectResponse(
-                url=f"/usuarios/{id_usuario}/perfil", status_code=303
+                url=f"/usuarios/{id_usuario}/perfil?mensaje={mensaje}", status_code=303
             )
         else:
             raise HTTPException(
@@ -648,8 +658,8 @@ async def add_payment_method(user_id: str, request: Request):
             raise HTTPException(
                 status_code=500, detail="Error al agregar el método de pago"
             )
-        print("Redirigiendo...")
-        return RedirectResponse(url=f"/usuarios/{user_id}/perfil", status_code=303)
+        mensaje = "Método de pago añadido exitosamente"
+        return RedirectResponse(url=f"/usuarios/{user_id}/perfil?mensaje={mensaje}", status_code=303)
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -2567,3 +2577,79 @@ async def eliminar_doblaje(idDoblaje: str = Form(...)):
             url=f"/administrador/administrar_doblajes_idiomas?success=false&message=Error%20al%20eliminar%20el%20doblaje",
             status_code=303,
         )
+
+
+#Endpoint para acceder a la lista de planes de suscripción para actualizarlo o cambiarlo
+@app.get("/usuarios/{user_id}/plan_suscripcion")
+def obtener_planes_de_suscripcion(request: Request, user_id: str, mensaje: str = None):
+    # Se obtienen todos los planes de suscripcion
+    response = requests.get(f"{BASE_URL_USUARIOS}/planes-suscripcion")
+    if response.status_code != 200:
+        mensaje = "Error: no se ha encontrado ningún Plan de Suscripción"
+    planes_suscripcionBD = response.json()
+    
+    # Se obtiene el id del plan de suscripción que posee el usuario
+    response = requests.get(f"{BASE_URL_USUARIOS}/usuarios/{user_id}")
+    if response.status_code != 200:
+        mensaje = "Error: No se ha podido obtener el Plan del Usuario"
+    usuario = response.json()
+    idPlanSuscripcionUsuario = usuario.get("idPlanSuscripcion")
+
+    #Se redirecciona a la página para mostrar los planes de suscripción
+    return templates.TemplateResponse (
+            "gestionar_planes_usuario.html",
+            {
+                "request": request,
+                "planes_suscripcionBD": planes_suscripcionBD,
+                "idPlanSuscripcionUsuario": idPlanSuscripcionUsuario,
+                "user_id": user_id,
+                "mensaje": mensaje,
+            },
+    )
+
+@app.post("/usuarios/{user_id}/actualizar_plan")
+async def actualizar_plan(request: Request, user_id: str, plan_id: str = Form(...)):
+    # Cuerpo de la solicitud para cambiar el plan de suscripción
+    data = {
+        "accion": "cambiar",
+        "idPlanSuscripcion": plan_id
+    }
+
+    # Hacer la solicitud PUT al servicio de usuarios
+    response = requests.put(
+        f"{BASE_URL_USUARIOS}/usuarios/{user_id}/suscripcion",
+        json=data
+    )
+
+    if response.status_code == 200:
+        mensaje = "Plan actualizado exitosamente"
+    else:
+        mensaje = "Error: el plan no se pudo actualizar"
+
+    return RedirectResponse(
+        url=f"/usuarios/{user_id}/plan_suscripcion?mensaje={mensaje}", status_code=303
+    )
+
+@app.post("/usuarios/{user_id}/cancelar_suscripcion")
+def cancelar_suscripcion(request: Request, user_id: str):
+    data = {
+        "accion": "cancelar",
+        "idPlanSuscripcion": None
+    }
+
+    # Hacer la solicitud PUT al servicio de usuarios
+    response = requests.put(
+        f"{BASE_URL_USUARIOS}/usuarios/{user_id}/suscripcion",
+        json=data
+    )
+
+    if response.status_code == 200:
+        mensaje = "Actualmente no posees ningún plan en la plataforma"
+    else:
+        mensaje = "Error: el plan no se pudo eliminar"
+
+    return RedirectResponse(
+        url=f"/usuarios/{user_id}/plan_suscripcion?mensaje={mensaje}", status_code=303
+    )
+
+

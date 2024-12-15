@@ -14,6 +14,15 @@
     <!-- Contenido Principal -->
     <main>
         <!-- Sección del Perfil -->
+        {% if mensaje %}
+                <div class="mensaje">
+                    <div class="message-box">
+                        <p class="message-text">
+                            {{ mensaje }}
+                        </p>
+                    </div>
+                </div>
+        {% endif %}
         <section class="profile-card">
             <h2>Información Personal</h2>
             <form action="/usuarios/{{ user_id }}/perfil" id="profile-form" method="POST">
@@ -139,8 +148,16 @@
             }
             </script>            
         </section>
-        {% include "footer.html" %}
+
+        <section class="manage-subscription-section">
+            <h2>Gestionar Plan de Suscripción</h2>
+            <button class="btn" onclick="window.location.href='/usuarios/{{ user_id }}/plan_suscripcion';">
+                Gestionar Plan
+            </button>
+        </section>
+
     </main>
+    {% include "footer.html" %}
     
     <script>
 

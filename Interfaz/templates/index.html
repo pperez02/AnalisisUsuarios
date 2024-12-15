@@ -24,7 +24,18 @@
 
 <body>
     <main>
+
+        {% if mensaje_credenciales %}
+                    <div class="mensaje_credenciales">
+                        <div class="message-box">
+                            <p class="message-text">
+                                {{ mensaje_credenciales }}
+                            </p>
+                        </div>
+                    </div>
+            {% endif %}
         <div class="container">
+
             <h1>Inicio de Sesión</h1>
             <!-- Formulario de login -->
             <form action="/login" method="post">
