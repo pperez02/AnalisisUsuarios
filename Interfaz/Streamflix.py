@@ -229,8 +229,18 @@ async def detalles_contenido(request: Request, idContenido: str, user_id: str):
         # Recorrer las temporadas para acceder a los episodios
         for temporada in temporadas:
             episodios = temporada["Episodios"]  # Acceder a los episodios de la temporada
-            todos_los_episodios.extend(episodios)  # Agregar todos los episodios a la lista
-
+            for episodio in episodios:
+                idDirector = episodio.get("idDirector")
+                if idDirector:  # Verificar si existe un idDirector
+                    director_response = requests.get(f"{BASE_URL_CONTENIDOS}/directores/{idDirector}")
+                    if director_response.status_code == 200:
+                        director_data = director_response.json()
+                        episodio["director"] = director_data.get("nombre", "Desconocido")
+                    else:
+                        raise HTTPException(
+                            status_code=404, detail="No se encontraron los detalles del director del episodio."
+                        )
+            todos_los_episodios.extend(episodios) # Agregar todos los episodios a la lista
 
 
     #Cambiar los valores de ids por nombres

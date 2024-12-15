@@ -168,7 +168,7 @@ footer {
 }
 
 .episodio-item {
-    background-color: #f5f5f5;
+    background-color: #e50914;
     border: 1px solid #ddd;
     border-radius: 15px;
     padding: 15px 20px;
@@ -185,7 +185,7 @@ footer {
 }
 
 .episodio-item:hover {
-    background-color: #eaeaea;
+    background-color: #f40612;
     transform: scale(1.05);
 }
 
