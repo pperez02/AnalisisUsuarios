@@ -104,11 +104,9 @@ templates = Jinja2Templates(directory="templates")
 
 # Endpoint para la página principal
 @app.get("/", response_class=HTMLResponse)
-async def index(request: Request, mensaje_credenciales: str = None):
+async def index(request: Request):
     # Renderiza la página index.html y la devuelve al usuario
-    return templates.TemplateResponse("index.html", 
-                                      {"request": request,
-                                       "mensaje_credenciales": mensaje_credenciales})
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 # Endpoint para hacer login
@@ -119,9 +117,7 @@ async def login(request: Request, email: str = Form(...), password: str = Form(.
     response = requests.post(f"{BASE_URL_USUARIOS}/usuarios/login", json=data)
 
     if response.status_code != 200:
-        mensaje_credenciales = "Error: las credenciales no son correctas"
-        response_redirect = RedirectResponse(url=f"/?mensaje_credenciales={mensaje_credenciales}", status_code=303)
-        return response_redirect
+        raise HTTPException(status_code=400, detail="Credenciales inválidas")
 
     # Si las credenciales son correctas, obtenemos los datos del usuario
     user_data = response.json()
@@ -172,10 +168,7 @@ async def registrar_usuario(
     response = requests.post(f"{BASE_URL_USUARIOS}/usuarios/registro", json=data)
 
     if response.status_code != 200:
-        mensaje_credenciales = "Error: Las credenciales ya están en uso"
-        return RedirectResponse(
-        url=f"/?mensaje_credenciales={mensaje_credenciales}", status_code=303
-    )
+        raise HTTPException(status_code=500, detail="Error al registrar el usuario.")
 
     # Guardamos el id del usuario retornado
     user_data = response.json()
@@ -323,8 +316,8 @@ async def buscar(request: Request, query: str, tipo: str):
         mensaje = "No se han encontrado resultados."
 
     # Para devolver las peliculas en las que ha participado un actor
-    contenidos_por_actor = {}  # Diccionario para almacenar contenidos por actor
     if actores:
+        contenidos_por_actor = {}  # Diccionario para almacenar contenidos por actor
         for actor in actores:
             # Obtenemos los contenidos relacionados con el actor
             response_contenidos_actor = requests.get(f"{BASE_URL_CONTENIDOS}/actores/{actor['id']}/contenidos")
@@ -353,7 +346,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 @app.get("/pantalla_principal", response_class=HTMLResponse)
-async def pantalla_principal(request: Request, user_id: str = None, mensaje_credenciales: str = None):
+async def pantalla_principal(request: Request, user_id: str):
     datos = cargar_datos(user_id)  # Centralizamos la lógica aquí
     mensaje = datos.get("mensaje", "Error al cargar los datos")
 
@@ -369,12 +362,11 @@ async def pantalla_principal(request: Request, user_id: str = None, mensaje_cred
             "historial": datos["historial"],
             "generos_con_contenidos": datos["generos_con_contenidos"],
             "mensaje": mensaje,
-            "mensaje_credenciales": mensaje_credenciales,
         }
     )
 
 @app.get("/usuarios/{user_id}/perfil", response_class=HTMLResponse)
-async def get_user_profile(request: Request, user_id: str, mensaje: str = None):
+async def get_user_profile(request: Request, user_id: str):
     # Llama al endpoint /perfil para obtener el perfil de un usuario y lo renderiza en HTML
     response = requests.get(f"{BASE_URL_USUARIOS}/usuarios/{user_id}")
     me_gusta_response = requests.get(
@@ -422,7 +414,6 @@ async def get_user_profile(request: Request, user_id: str, mensaje: str = None):
                 "password": user_profile["password"],
                 "me_gusta": contenidos_me_gusta,  # Pasa la lista de contenidos "Me Gusta"
                 "mensaje_me_gusta": mensaje_me_gusta,  # Pasa el mensaje en caso de que no haya "Me Gusta"
-                "mensaje": mensaje,
             },
         )
     else:
@@ -506,10 +497,9 @@ async def actualizar_perfil(request: Request, id_usuario: str):
 
         # Comprobar el estado de la respuesta de la API
         if response.status_code == 200:
-            mensaje = "Perfil actualizado exitosamente"
             data = response.json()
             return RedirectResponse(
-                url=f"/usuarios/{id_usuario}/perfil?mensaje={mensaje}", status_code=303
+                url=f"/usuarios/{id_usuario}/perfil", status_code=303
             )
         else:
             raise HTTPException(
@@ -658,8 +648,8 @@ async def add_payment_method(user_id: str, request: Request):
             raise HTTPException(
                 status_code=500, detail="Error al agregar el método de pago"
             )
-        mensaje = "Método de pago añadido exitosamente"
-        return RedirectResponse(url=f"/usuarios/{user_id}/perfil?mensaje={mensaje}", status_code=303)
+        print("Redirigiendo...")
+        return RedirectResponse(url=f"/usuarios/{user_id}/perfil", status_code=303)
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -735,26 +725,12 @@ async def crear_pelicula_form(request: Request):
     generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
 
     generos = generos_response.json() if generos_response.status_code == 200 else []
-    
-    # Realizar una solicitud GET a la API de contenidos para obtener la lista de directores
-    directores_response = requests.get(f"{BASE_URL_CONTENIDOS}/directores")
-
-    # Verifica si la respuesta fue exitosa
-    directores = directores_response.json() if directores_response.status_code == 200 else []
-
-    # Realizar una solicitud GET a la API de contenidos para obtener la lista de actores
-    actores_response = requests.get(f"{BASE_URL_CONTENIDOS}/actores")
-
-    # Verifica si la respuesta fue exitosa
-    actores = actores_response.json() if actores_response.status_code == 200 else []    
 
     return templates.TemplateResponse(
     "admin_crear_pelicula.html",  # Nombre de la plantilla
     {
         "request": request,
         "generos": generos,
-        "directores": directores,
-        "actores": actores,
     },
 )
 
@@ -767,8 +743,6 @@ async def crear_pelicula(
     fecha_lanzamiento: str = Form(...),
     id_genero: str = Form(...),
     duracion: int = Form(...),
-    idDirector: str = Form(...),
-    actores: list[str] = Form(...),
 ):
     """
     Procesa el formulario para crear una película.
@@ -783,27 +757,12 @@ async def crear_pelicula(
         "idSubtitulosContenido": "1",
         "idDoblajeContenido": "1",
         "duracion": duracion,
-        "idDirector": idDirector,
+        "idDirector": "1",
     }
 
     response = requests.post(f"{BASE_URL_CONTENIDOS}/peliculas", json=data)
 
     if response.status_code == 200:
-        idPelicula = response.json().get("id")
-
-        # Añadir los actores uno por uno al reparto del contenido
-        for idActor in actores:
-            response = requests.post(f"{BASE_URL_CONTENIDOS}/contenidos/{idPelicula}/reparto/{idActor}")
-
-            if response.status_code != 200:
-                return templates.TemplateResponse(
-                    "admin_crear_pelicula.html",
-                    {
-                        "request": request,
-                        "error_message": f"Error al añadir el actor al reparto. Por favor, inténtelo de nuevo.",
-                    }
-                )
-
         redirect_response = RedirectResponse(url=f"/admin_menu", status_code=303)
         redirect_response.set_cookie(
             key="success_message", value="Película creada exitosamente", max_age=5
@@ -829,18 +788,11 @@ async def crear_serie_form(request: Request):
 
     generos = generos_response.json() if generos_response.status_code == 200 else []
 
-    # Realizar una solicitud GET a la API de contenidos para obtener la lista de actores
-    actores_response = requests.get(f"{BASE_URL_CONTENIDOS}/actores")
-
-    # Verifica si la respuesta fue exitosa
-    actores = actores_response.json() if actores_response.status_code == 200 else []      
-
     return templates.TemplateResponse(
         "admin_crear_serie.html",
         {
             "request": request,
             "generos": generos,
-            "actores": actores,
         },
     )
 
@@ -852,7 +804,6 @@ async def crear_serie(
     descripcion: str = Form(...),
     fecha_lanzamiento: str = Form(...),
     id_genero: str = Form(...),
-    actores: list[str] = Form(...),    
 ):
     """
     Procesa el formulario para crear una serie.
@@ -873,27 +824,6 @@ async def crear_serie(
     response = requests.post(f"{BASE_URL_CONTENIDOS}/series", json=data)
 
     if response.status_code == 200:
-        idSerie = response.json().get("id")
-
-        # Añadir los actores uno por uno al reparto del contenido
-        for idActor in actores:
-            response = requests.post(f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}/reparto/{idActor}")
-
-            if response.status_code != 200:
-                return templates.TemplateResponse(
-                    "admin_crear_serie.html",
-                    {
-                        "request": request,
-                        "error_message": f"Error al añadir el actor al reparto. Por favor, inténtelo de nuevo.",
-                    }
-                )
-
-        redirect_response = RedirectResponse(url=f"/admin_menu", status_code=303)
-        redirect_response.set_cookie(
-            key="success_message", value="Serie creada exitosamente", max_age=5
-        )
-        return redirect_response
-
         redirect_response = RedirectResponse(url="/admin_menu", status_code=303)
         redirect_response.set_cookie(
             key="success_message", value="Serie creada exitosamente", max_age=5
@@ -1003,7 +933,7 @@ async def crear_episodio_form(request: Request):
     directores = directores_response.json() if directores_response.status_code == 200 else []
 
     return templates.TemplateResponse(
-        "admin_crear_episodio.html",  # Plantilla HTML del formulario
+        "admin_crear_episodios.html",  # Plantilla HTML del formulario
         {
             "request": request,
             "series": series,  # Lista de series disponibles
@@ -1089,17 +1019,11 @@ async def crear_genero(
 async def get_actualizar_pelicula(request: Request, idPelicula: str):
     response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idPelicula}")
     generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
-    directores_response = requests.get(f"{BASE_URL_CONTENIDOS}/directores")
-    actores_response = requests.get(f"{BASE_URL_CONTENIDOS}/actores")
-    reparto_response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idPelicula}/reparto")
 
     if response.status_code == 200:
         # Obtiene los datos de la pelicula
         pelicula_data = response.json()
         generos = []
-        directores = []
-        actores = []
-        reparto = []
 
         if generos_response.status_code == 200:
             # Obtiene la lista de géneros y la convierte a una lista de objetos Genero
@@ -1119,54 +1043,6 @@ async def get_actualizar_pelicula(request: Request, idPelicula: str):
                 "admin_actualizar_pelicula.html",
                 {"request": request, "error_message": error_message},
             )
-                
-        if directores_response.status_code == 200:
-            # Obtiene la lista de directores
-            directores_data = directores_response.json()
-            directores = [
-                {
-                    "id": director["id"],
-                    "nombre": director["nombre"],
-                }
-                for director in directores_data
-            ]
-        else:
-            # En caso de error al obtener los directores
-            error_message = f"Error al obtener los directores de la base de datos: {directores_response.status_code}"
-            return templates.TemplateResponse(
-                "admin_actualizar_pelicula.html",
-                {"request": request, "error_message": error_message},
-            )
-        
-        if actores_response.status_code == 200:
-            # Obtiene la lista de actores
-            actores_data = actores_response.json()
-            actores = [
-                {
-                    "id": actor["id"],
-                    "nombre": actor["nombre"],
-                }
-                for actor in actores_data
-            ]
-        else:
-            # En caso de error al obtener los directores
-            error_message = f"Error al obtener los actores de la base de datos: {actores_response.status_code}"
-            return templates.TemplateResponse(
-                "admin_actualizar_pelicula.html",
-                {"request": request, "error_message": error_message},
-            )
-
-        if reparto_response.status_code == 200:
-            # Obtiene la lista del reparto
-            reparto_data = reparto_response.json()
-            reparto = [actor["id"] for actor in reparto_data]
-        else:
-            # En caso de error al obtener los directores
-            error_message = f"Error al obtener el reparto de la base de datos: {reparto_response.status_code}"
-            return templates.TemplateResponse(
-                "admin_actualizar_pelicula.html",
-                {"request": request, "error_message": error_message},
-            )                
 
         # Renderiza la plantilla HTML con los datos de la pelicula
         return templates.TemplateResponse(
@@ -1179,11 +1055,7 @@ async def get_actualizar_pelicula(request: Request, idPelicula: str):
                 "fecLanzamiento": pelicula_data["fechaLanzamiento"],
                 "idGenero": pelicula_data["idGenero"],
                 "generos": generos,  # Pasa la lista de todos los géneros para elegir
-                "duracion": pelicula_data["duracion"],
-                "idDirector": pelicula_data["idDirector"],
-                "directores": directores,   # Pasa la lista de todos los directores
-                "actores": actores,
-                "reparto": reparto,
+                "duracion": pelicula_data["duracion"]
             },
         )
     else:
@@ -1201,7 +1073,7 @@ async def get_actualizar_pelicula(request: Request, idPelicula: str):
 
 
 @app.post("/administrador/update_pelicula/{idPelicula}")
-async def actualizar_pelicula(request: Request, idPelicula: str, actores: list[str] = Form(...)):
+async def actualizar_pelicula(request: Request, idPelicula: str):
     """
     Endpoint para actualizar el perfil de un usuario.
     """
@@ -1212,7 +1084,6 @@ async def actualizar_pelicula(request: Request, idPelicula: str, actores: list[s
     descripcion = data.get("descripcion")
     fechaLanzamiento = data.get("fecLanzamiento")
     idGenero = data.get("genero")
-    idDirector = data.get("idDirector")
 
     # Construir el payload para la API externa
     payload = {
@@ -1220,7 +1091,6 @@ async def actualizar_pelicula(request: Request, idPelicula: str, actores: list[s
         "descripcion": descripcion,
         "fechaLanzamiento": fechaLanzamiento,
         "idGenero": idGenero,
-        "idDirector": idDirector,
     }
 
     # URL del endpoint de la API externa para actualizar la pelicula
@@ -1231,29 +1101,6 @@ async def actualizar_pelicula(request: Request, idPelicula: str, actores: list[s
 
     # Comprobar el estado de la respuesta de la API
     if response.status_code == 200:
-        response_delete = requests.delete(f"{BASE_URL_CONTENIDOS}/contenidos/{idPelicula}/reparto")
-        if response_delete.status_code != 200:
-            return templates.TemplateResponse(
-                "admin_actualizar_pelicula.html",
-                {
-                    "request": request,
-                    "error_message": f"Error al añadir el actor al reparto. Por favor, inténtelo de nuevo.",
-                }
-            )
-
-        # Añadir los actores uno por uno al reparto del contenido
-        for idActor in actores:
-            response = requests.post(f"{BASE_URL_CONTENIDOS}/contenidos/{idPelicula}/reparto/{idActor}")
-
-            if response.status_code != 200:
-                return templates.TemplateResponse(
-                    "admin_actualizar_pelicula.html",
-                    {
-                        "request": request,
-                        "error_message": f"Error al añadir el actor al reparto. Por favor, inténtelo de nuevo.",
-                    }
-                )
-
         redirect_response = RedirectResponse(url=f"/admin_menu", status_code=303)
         redirect_response.set_cookie(
             key="success_message", value="Película actualizada exitosamente", max_age=5
@@ -1275,8 +1122,6 @@ async def actualizar_pelicula(request: Request, idPelicula: str, actores: list[s
 async def get_actualizar_serie(request: Request, idSerie: str):
     response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}")
     generos_response = requests.get(f"{BASE_URL_CONTENIDOS}/generos")
-    actores_response = requests.get(f"{BASE_URL_CONTENIDOS}/actores")
-    reparto_response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}/reparto")    
 
     if response.status_code == 200:
         # Obtiene los datos de la serie
@@ -1302,36 +1147,6 @@ async def get_actualizar_serie(request: Request, idSerie: str):
                 {"request": request, "error_message": error_message},
             )
 
-        if actores_response.status_code == 200:
-            # Obtiene la lista de actores
-            actores_data = actores_response.json()
-            actores = [
-                {
-                    "id": actor["id"],
-                    "nombre": actor["nombre"],
-                }
-                for actor in actores_data
-            ]
-        else:
-            # En caso de error al obtener los directores
-            error_message = f"Error al obtener los actores de la base de datos: {actores_response.status_code}"
-            return templates.TemplateResponse(
-                "admin_actualizar_serie.html",
-                {"request": request, "error_message": error_message},
-            )
-
-        if reparto_response.status_code == 200:
-            # Obtiene la lista del reparto
-            reparto_data = reparto_response.json()
-            reparto = [actor["id"] for actor in reparto_data]
-        else:
-            # En caso de error al obtener los directores
-            error_message = f"Error al obtener el reparto de la base de datos: {reparto_response.status_code}"
-            return templates.TemplateResponse(
-                "admin_actualizar_serie.html",
-                {"request": request, "error_message": error_message},
-            )
-
         # Renderiza la plantilla HTML con los datos de la serie
         return templates.TemplateResponse(
             "admin_actualizar_serie.html",  # Plantilla HTML que renderizará los datos
@@ -1343,11 +1158,8 @@ async def get_actualizar_serie(request: Request, idSerie: str):
                 "fecLanzamiento": serie_data["fechaLanzamiento"],
                 "idGenero": serie_data["idGenero"],
                 "generos": generos,  # Pasa la lista de todos los géneros para elegir
-                "actores": actores,
-                "reparto": reparto, 
             },
-        )            
-
+        )
     else:
         # En caso de error al obtener los datos de la serie
         error_message = (
@@ -1363,7 +1175,7 @@ async def get_actualizar_serie(request: Request, idSerie: str):
 
 
 @app.post("/administrador/update_serie/{idSerie}", response_class=HTMLResponse)
-async def actualizar_serie(request: Request, idSerie: str, actores: list[str] = Form(...)):
+async def actualizar_serie(request: Request, idSerie: str):
     """
     Endpoint para actualizar una serie.
     """
@@ -1391,29 +1203,6 @@ async def actualizar_serie(request: Request, idSerie: str, actores: list[str] = 
 
     # Comprobar el estado de la respuesta de la API
     if response.status_code == 200:
-        response_delete = requests.delete(f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}/reparto")
-        if response_delete.status_code != 200:
-            return templates.TemplateResponse(
-                "admin_actualizar_serie.html",
-                {
-                    "request": request,
-                    "error_message": f"Error al añadir el actor al reparto. Por favor, inténtelo de nuevo.",
-                }
-            )
-
-        # Añadir los actores uno por uno al reparto del contenido
-        for idActor in actores:
-            response = requests.post(f"{BASE_URL_CONTENIDOS}/contenidos/{idSerie}/reparto/{idActor}")
-
-            if response.status_code != 200:
-                return templates.TemplateResponse(
-                    "admin_actualizar_serie.html",
-                    {
-                        "request": request,
-                        "error_message": f"Error al añadir el actor al reparto. Por favor, inténtelo de nuevo.",
-                    }
-                )
-
         redirect_response = RedirectResponse(url=f"/admin_menu", status_code=303)
         redirect_response.set_cookie(
             key="success_message", value="Serie actualizada exitosamente", max_age=5
@@ -1844,7 +1633,7 @@ def borrar_episodios(request: Request):
     print(mensaje)
     # Renderizar la plantilla con los datos de las series
     return templates.TemplateResponse(
-        "admin_borrar_episodio.html",
+        "admin_borrar_episodios.html",
         {"request": request, "series": series, "mensaje": mensaje},
     )
 
@@ -2784,79 +2573,3 @@ async def eliminar_doblaje(idDoblaje: str = Form(...)):
             url=f"/administrador/administrar_doblajes_idiomas?success=false&message=Error%20al%20eliminar%20el%20doblaje",
             status_code=303,
         )
-
-
-#Endpoint para acceder a la lista de planes de suscripción para actualizarlo o cambiarlo
-@app.get("/usuarios/{user_id}/plan_suscripcion")
-def obtener_planes_de_suscripcion(request: Request, user_id: str, mensaje: str = None):
-    # Se obtienen todos los planes de suscripcion
-    response = requests.get(f"{BASE_URL_USUARIOS}/planes-suscripcion")
-    if response.status_code != 200:
-        mensaje = "Error: no se ha encontrado ningún Plan de Suscripción"
-    planes_suscripcionBD = response.json()
-    
-    # Se obtiene el id del plan de suscripción que posee el usuario
-    response = requests.get(f"{BASE_URL_USUARIOS}/usuarios/{user_id}")
-    if response.status_code != 200:
-        mensaje = "Error: No se ha podido obtener el Plan del Usuario"
-    usuario = response.json()
-    idPlanSuscripcionUsuario = usuario.get("idPlanSuscripcion")
-
-    #Se redirecciona a la página para mostrar los planes de suscripción
-    return templates.TemplateResponse (
-            "gestionar_planes_usuario.html",
-            {
-                "request": request,
-                "planes_suscripcionBD": planes_suscripcionBD,
-                "idPlanSuscripcionUsuario": idPlanSuscripcionUsuario,
-                "user_id": user_id,
-                "mensaje": mensaje,
-            },
-    )
-
-@app.post("/usuarios/{user_id}/actualizar_plan")
-async def actualizar_plan(request: Request, user_id: str, plan_id: str = Form(...)):
-    # Cuerpo de la solicitud para cambiar el plan de suscripción
-    data = {
-        "accion": "cambiar",
-        "idPlanSuscripcion": plan_id
-    }
-
-    # Hacer la solicitud PUT al servicio de usuarios
-    response = requests.put(
-        f"{BASE_URL_USUARIOS}/usuarios/{user_id}/suscripcion",
-        json=data
-    )
-
-    if response.status_code == 200:
-        mensaje = "Plan actualizado exitosamente"
-    else:
-        mensaje = "Error: el plan no se pudo actualizar"
-
-    return RedirectResponse(
-        url=f"/usuarios/{user_id}/plan_suscripcion?mensaje={mensaje}", status_code=303
-    )
-
-@app.post("/usuarios/{user_id}/cancelar_suscripcion")
-def cancelar_suscripcion(request: Request, user_id: str):
-    data = {
-        "accion": "cancelar",
-        "idPlanSuscripcion": None
-    }
-
-    # Hacer la solicitud PUT al servicio de usuarios
-    response = requests.put(
-        f"{BASE_URL_USUARIOS}/usuarios/{user_id}/suscripcion",
-        json=data
-    )
-
-    if response.status_code == 200:
-        mensaje = "Actualmente no posees ningún plan en la plataforma"
-    else:
-        mensaje = "Error: el plan no se pudo eliminar"
-
-    return RedirectResponse(
-        url=f"/usuarios/{user_id}/plan_suscripcion?mensaje={mensaje}", status_code=303
-    )
-
-

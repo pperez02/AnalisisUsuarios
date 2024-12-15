@@ -45,22 +45,6 @@
             <label for="duracion">Duración (minutos):</label>
             <input type="number" id="duracion" name="duracion" required><br>
 
-            <label for="directores">Director:</label>
-            <select id="directores" name="idDirector" required>
-                <option value="">Seleccione un director</option>
-                {% for director in directores %}
-                <option value="{{ director.id }}">{{ director.nombre }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="actores">Actores:</label><br>
-            <div id="actores-container">
-                {% for actor in actores %}
-                <input type="checkbox" id="actor_{{ actor.id }}" name="actores" value="{{ actor.id }}">
-                <label for="actor_{{ actor.id }}">{{ actor.nombre }}</label><br>
-                {% endfor %}
-            </div>           
-
             <button type="submit">Crear Película</button>
     </div>
     </form>

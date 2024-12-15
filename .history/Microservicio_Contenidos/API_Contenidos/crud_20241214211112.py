@@ -567,13 +567,13 @@ def get_director_by_content(db: Session, idContenido: str):
     director = db.query(models.Director).filter(models.Director.id == id_director).first()
     return director
 
-def delete_reparto(db: Session, contenido_id: str):
-    reparto = db.query(models.Reparto).filter(models.Reparto.idContenido == contenido_id).all()
+def delete_reparto(db: Session, idContenido: str):
+    reparto = db.query(models.Reparto).filter(models.Reparto.idContenido == idContenido).all()
     if reparto:
         for item in reparto:
             db.delete(item)
             db.commit()
-        return True
+            return True
     return False
 
 # Función para obtener los contenidos de un género específico

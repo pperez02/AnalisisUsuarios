@@ -2,8 +2,6 @@
 body {
     margin: 0;
     padding: 0;
-    padding-top: 80px;
-    padding-bottom: 80px;
     font-family: Arial, sans-serif;
     background-color: #000;
     color: #fff;
@@ -128,29 +126,6 @@ main {
 
 .section .content-box:hover {
     transform: scale(1.05); /* Efecto de ampliación */
-}
-
-/* Estilos para el contenedor de actores */
-#actores-container {
-    text-align: left; /* Asegura alineación a la izquierda */
-    margin: 10px 0; /* Margen superior e inferior */
-}
-
-/* Ajusta los estilos de las etiquetas y checkbox específicamente dentro del contenedor de actores */
-#actores-container label {
-    display: inline; /* Evita que las etiquetas ocupen una línea completa */
-    font-size: 14px; /* Ajusta el tamaño */
-    font-weight: normal; /* Cambia el peso de la fuente */
-    margin-left: 5px; /* Espacio entre el checkbox y el texto */
-}
-
-#actores-container input[type="checkbox"] {
-    width: 16px; /* Establece un ancho menor */
-    height: 16px; /* Establece un alto menor */
-    transform: scale(0.8); /* Reduce el tamaño general del checkbox */
-    margin-right: 5px; /* Mantén un pequeño margen entre el checkbox y la etiqueta */
-    vertical-align: middle; /* Asegura la alineación vertical con el texto */
-    cursor: pointer; /* Hace que el puntero cambie al pasar sobre el checkbox */
 }
 
 /* Media Queries para responsividad */

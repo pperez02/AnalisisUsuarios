@@ -295,6 +295,7 @@ def buscar_actores(busqueda: str, db: Session = Depends(get_db)):
 
     
 # Endpoint para obtener el reparto de un contenido
+
 @app.get("/contenidos/{idContenido}/reparto")
 def get_reparto(idContenido: str, db: Session = Depends(get_db)):
     reparto = crud.get_reparto(db=db, idContenido=idContenido)
@@ -347,13 +348,6 @@ def get_actors_by_content(idContenido: str, db: Session = Depends(get_db)):
 def get_director_by_content(idContenido: str, db: Session = Depends(get_db)):
     director = crud.get_director_by_content(db=db, idContenido=idContenido)
     return director
-
-@app.delete("/contenidos/{idContenido}/reparto")
-def delete_reparto_by_content(idContenido: str, db: Session = Depends(get_db)):
-    success = crud.delete_reparto(db=db, contenido_id=idContenido)
-    if not success:
-        raise HTTPException(status_code=404, detail="Reparto no encontrado")
-    return {"message": "Reparto eliminado exitosamente"}        
 
 #Funciones específicas de administrador para actores y directores
 @app.post("/actores", response_model=schemas.Actor)
