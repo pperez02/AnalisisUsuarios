@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Planes de Suscripción</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/perfil.css">
+    <link rel="stylesheet" href="/static/header_footer.css">
+</head>
+<body>
+    {% include "header.html" %}
+
+    <main>
+
+        {% if mensaje %}
+                <div class="mensaje">
+                    <div class="message-box">
+                        <p class="message-text">
+                            {{ mensaje }}
+                        </p>
+                    </div>
+                </div>
+        {% endif %}
+        <section class="subscription-section">
+            <h2>Selecciona tu Plan de Suscripción</h2>
+
+            <form action="/usuarios/{{ user_id }}/actualizar_plan" method="POST" class="subscription-form">
+                <div class="plan-list">
+                    {% for plan in planes_suscripcionBD %}
+                        <div class="plan-item">
+                            <input 
+                                type="radio" 
+                                id="plan-{{ plan.id }}" 
+                                name="plan_id" 
+                                value="{{ plan.id }}" 
+                                {% if plan.id == idPlanSuscripcionUsuario %}checked{% endif %}>
+                            <label for="plan-{{ plan.id }}">
+                                <strong>{{ plan.nombre }}</strong><br>
+                                Precio mensual: {{ plan.precioMensual | round(2) }} USD<br>
+                                Dispositivos permitidos: {{ plan.numeroDispositivos }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="btn">Actualizar Plan</button>
+            </form>
+        </section>
+        <!-- Formulario para cancelar suscripción -->
+        <form action="/usuarios/{{ user_id }}/cancelar_suscripcion" method="POST" class="cancel-subscription-form">
+            <button type="submit" class="btn">Cancelar Suscripción</button>
+        </form>
+    </main>
+
+    {% include "footer.html" %}
+</body>
+</html>

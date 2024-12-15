@@ -1,0 +1,214 @@
+/* General body styling */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    height: 100vh; /* Altura completa de la ventana */
+    flex-direction: column; /* Asegura que el contenido se apile correctamente en pantallas pequeñas */
+}
+
+/* Contenedor principal (main) */
+main {
+    flex: 1; /* Permite que el main ocupe el espacio restante entre el header y el footer */
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    min-height: calc(100vh - 100px); /* Asegura que ocupe la altura restante, considerando un header fijo de 100px */
+    padding: 20px; /* Espaciado interno para evitar que el formulario quede pegado a los bordes */
+    background-color: #000; /* Fondo negro para mantener la estética */
+    width: 100%; /* Hace que el main ocupe todo el ancho disponible */
+    box-sizing: border-box;
+}
+
+/* Contenedor central */
+.container {
+    max-width: 400px; /* Ancho máximo del formulario */
+    width: 100%; /* Asegura que se adapte a pantallas pequeñas */
+    background-color: #1a1a1a; /* Fondo del formulario */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+    text-align: center;
+    box-sizing: border-box;
+}
+
+/* Estilo del encabezado */
+.container h1 {
+    font-size: 24px;
+    margin-bottom: 20px; /* Espacio debajo del título */
+}
+
+/* Estilo de las etiquetas */
+.container label {
+    display: block; /* Cada etiqueta en una nueva línea */
+    margin: 10px 0 5px; /* Margen arriba y abajo */
+    font-weight: bold;
+}
+
+/* Estilo de los campos de entrada */
+.container input, .container select {
+    width: 100%; /* Ocupar todo el ancho */
+    height: 30px;
+    margin-bottom: 15px; /* Espaciado inferior */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    background-color: #333; /* Fondo gris oscuro */
+    color: #fff; /* Texto blanco */
+    padding: 0 10px;
+}
+
+/* Estilo del botón */
+.container button {
+    width: 100%; /* Botón ocupa todo el ancho */
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #e50914; /* Rojo Netflix */
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s; /* Animación suave */
+}
+
+.container button:hover {
+    background-color: #f40612; /* Rojo más brillante */
+}
+
+/* Espaciado para evitar que los elementos se peguen al fondo */
+.container form {
+    margin: 0;
+}
+
+/* Secciones */
+.section {
+    margin-top: 30px;
+    text-align: left;
+}
+
+.section h2 {
+    color: #e50914;
+    border-bottom: 2px solid #e50914;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+.section div {
+    background-color: #222;
+    border-radius: 5px;
+    padding: 15px;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* Recuadros de contenido (simulación de portadas) */
+.section .content-box {
+    display: inline-block;
+    width: 120px; /* Ancho del recuadro */
+    height: 180px; /* Alto del recuadro */
+    margin: 10px; /* Separación entre recuadros */
+    background-color: #333;
+    color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+    text-align: center;
+    font-size: 12px;
+    overflow: hidden; /* Ocultar texto largo */
+    padding: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.section .content-box:hover {
+    transform: scale(1.05); /* Efecto de ampliación */
+}
+
+#actores-container label {
+    font-size: 14px; /* Tamaño de fuente más pequeño */
+    font-weight: normal; /* Cambia a un peso normal */
+    margin: 5px 0; /* Ajuste del margen */
+    line-height: 1.2; /* Espaciado entre líneas */
+}
+
+/* Media Queries para responsividad */
+
+/* En pantallas más pequeñas de 1024px (tabletas) */
+@media (max-width: 1024px) {
+    body {
+        height: auto; /* Ajuste en pantallas más pequeñas */
+        padding: 10px; /* Añadir algo de espacio en los bordes */
+    }
+
+    .container {
+        max-width: 350px; /* Ajuste de tamaño del contenedor */
+    }
+
+    .content-box {
+        width: 100px;
+        height: 150px;
+    }
+
+    .container h1 {
+        font-size: 22px; /* Reducir tamaño del título */
+    }
+}
+
+/* En pantallas móviles (menos de 768px) */
+@media (max-width: 768px) {
+    body {
+        padding: 0; /* Sin padding extra en pantallas móviles */
+        justify-content: flex-start; /* Alinear los elementos en la parte superior */
+        align-items: flex-start; /* Evitar centrado vertical */
+    }
+
+    main {
+        min-height: auto; /* Elimina la altura mínima */
+        padding: 15px;
+    }
+
+    .container {
+        max-width: 90%; /* El contenedor ocupa más ancho en pantallas pequeñas */
+    }
+
+    .content-box {
+        width: 80px;
+        height: 120px;
+        font-size: 10px; /* Ajuste de texto en recuadros */
+    }
+
+    .container h1 {
+        font-size: 20px; /* Ajuste de tamaño del título */
+    }
+
+    .container button {
+        font-size: 14px; /* Botón más pequeño en pantallas móviles */
+    }
+}
+
+/* En pantallas muy pequeñas (menos de 480px) */
+@media (max-width: 480px) {
+    .container {
+        max-width: 100%; /* El contenedor ocupa todo el ancho disponible */
+        padding: 10px; /* Reducción del espaciado interno */
+    }
+
+    .content-box {
+        width: 70px;
+        height: 100px;
+        font-size: 8px; /* Reducción de texto */
+    }
+
+    .container h1 {
+        font-size: 18px; /* Título aún más pequeño */
+    }
+
+    .container button {
+        padding: 8px; /* Botón más pequeño */
+        font-size: 12px; /* Texto más pequeño */
+    }
+}

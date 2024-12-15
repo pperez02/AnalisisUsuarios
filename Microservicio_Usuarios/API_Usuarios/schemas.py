@@ -60,7 +60,7 @@ class AccionSuscripcion(str, Enum):
     cancelar = "cancelar"
 
 class SubscriptionUpdate(BaseModel):
-    accion: AccionSuscripcion  # Usa el Enum aquí
+    accion: AccionSuscripcion
     idPlanSuscripcion: Optional[str]
 
 # Esquema para el método de pago

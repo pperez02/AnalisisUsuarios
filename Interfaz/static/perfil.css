@@ -1,5 +1,6 @@
 /* Contenedor principal */
 main {
+    margin: 10%;
     display: flex;
     flex-direction: column; /* Asegura disposición vertical */
     align-items: center;    /* Centra los elementos horizontalmente */
