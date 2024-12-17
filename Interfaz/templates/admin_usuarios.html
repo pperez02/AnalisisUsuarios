@@ -12,34 +12,40 @@
 <header>
     <div class="navbar">
         <div class="logo">
-            <a href=#>Streamflix: Lista de usuarios</a>
+            <a href="#" alt="Página principal de Streamflix" aria-label="Página principal de Streamflix">Streamflix: Lista de usuarios</a>
         </div>
         <nav>
             <ul>
-                <a href="/admin_menu">Volver al menú de administrador</a>
+                <li><a href="/admin_menu" aria-label="Volver al menú de administrador">Volver al menú de administrador</a></li>
             </ul>
         </nav>
     </div>
 </header>
 
 <body>
-    <table border="1">
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>Idioma</th>
-            <th>Plan de Suscripción</th>
-        </tr>
-        {% for usuario in usuarios %}
-        <tr>
-            <td>{{ usuario.id }}</td>
-            <td>{{ usuario.nombre }}</td>
-            <td>{{ usuario.email }}</td>
-            <td>{{ usuario.idioma }}</td>
-            <td>{{ usuario.idPlanSuscripcion }}</td>
-        </tr>
-        {% endfor %}
+    <h1>Lista de Usuarios</h1>
+    <table border="1" aria-labelledby="tabla-usuarios">
+        <caption id="tabla-usuarios">Lista de usuarios registrados en Streamflix</caption>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Idioma</th>
+                <th>Plan de Suscripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario.id }}</td>
+                <td>{{ usuario.nombre }}</td>
+                <td>{{ usuario.email }}</td>
+                <td>{{ usuario.idioma }}</td>
+                <td>{{ usuario.idPlanSuscripcion }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
 </body>
 

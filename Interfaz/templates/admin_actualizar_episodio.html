@@ -10,11 +10,11 @@
 <header>
     <div class="navbar">
         <div class="logo">
-            <a href=#>Streamflix: Actualizar episodio</a>
+            <a href="#" aria-label="Volver a la página principal de actualización de episodios">Streamflix: Actualizar episodio</a>
         </div>
         <nav>
             <ul>
-                <li><a href="/admin_menu" class="return-button">Volver al menú</a></li>
+                <li><a href="/admin_menu" class="return-button" aria-label="Volver al menú principal">Volver al menú</a></li>
             </ul>
         </nav>
     </div>
@@ -22,16 +22,24 @@
 
 <body>
     {% if error_message %}
-    <p style="color:red;">{{ error_message }}</p>
+    <p style="color:red;" aria-live="assertive">{{ error_message }}</p>
     {% endif %}
+    
     <div class="container">
-        <form action="/administrador/update_episodio/series/{{idSerie}}/temporadas/{{idTemporada}}/episodios/{{episodio_id}}" method="post">
-            <label for="numeroEpisodio">Número de episodio:</label>
-            <input type="number" id="numeroEpisodio" name="numeroEpisodio" value="{{numeroEpisodio}}" required><br>
-            <label for="duracion">Duración:</label>
-            <input type="number" id="duracion" name="duracion" value="{{duracion}}" required><br>
-            <label for="idDirector">Director:</label>
-            <select id="idDirector" name="idDirector" required>
+        <form action="/administrador/update_episodio/series/{{idSerie}}/temporadas/{{idTemporada}}/episodios/{{episodio_id}}" method="post" aria-labelledby="formActualizarEpisodio">
+            <h1 id="formActualizarEpisodio">Actualizar Episodio</h1>
+
+            <!-- Número de episodio -->
+            <label for="numeroEpisodio" aria-label="Número de episodio">Número de episodio:</label>
+            <input type="number" id="numeroEpisodio" name="numeroEpisodio" value="{{numeroEpisodio}}" required aria-required="true" aria-label="Ingrese el número del episodio"><br>
+
+            <!-- Duración -->
+            <label for="duracion" aria-label="Duración del episodio">Duración:</label>
+            <input type="number" id="duracion" name="duracion" value="{{duracion}}" required aria-required="true" aria-label="Ingrese la duración del episodio en minutos"><br>
+
+            <!-- Director -->
+            <label for="idDirector" aria-label="Seleccione el director del episodio">Director:</label>
+            <select id="idDirector" name="idDirector" required aria-required="true" aria-label="Seleccione el director del episodio">
                 {% for director in directores %}
                     <option value="{{ director.id }}" {% if director.id == idDirector %}selected{% endif %}>
                         {{ director.nombre }}
@@ -39,9 +47,9 @@
                 {% endfor %}
             </select><br>             
 
-            <button type="submit">Actualizar Episodio</button>
+            <button type="submit" aria-label="Actualizar la información del episodio">Actualizar Episodio</button>
+        </form>
     </div>
-    </form>
 </body>
 
 </html>

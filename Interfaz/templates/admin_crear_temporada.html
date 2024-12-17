@@ -10,11 +10,11 @@
 <header>
     <div class="navbar">
         <div class="logo">
-            <a href=#>Streamflix: Crear Temporada</a>
+            <a href="#" alt="Página principal de Streamflix">Streamflix: Crear Temporada</a>
         </div>
         <nav>
             <ul>
-                <li><a href="/admin_menu" class="return-button">Volver al menú</a></li>
+                <li><a href="/admin_menu" class="return-button" aria-label="Volver al menú principal">Volver al menú</a></li>
             </ul>
         </nav>
     </div>
@@ -22,23 +22,23 @@
 
 <body>
     {% if error_message %}
-    <p style="color:red;">{{ error_message }}</p>
+    <p style="color:red;" role="alert" aria-live="assertive">{{ error_message }}</p>
     {% endif %}
     <div class="container">
         <form action="/administrador/temporada/crear" method="post">
-            <label for="id_serie">Serie:</label>
-            <select id="id_serie" name="id_serie" required>
+            <label for="id_serie" aria-label="Selecciona la serie para la temporada">Serie:</label>
+            <select id="id_serie" name="id_serie" required aria-label="Selecciona una serie" aria-required="true">
                 {% for serie in series %}
                     <option value="{{ serie.id }}">{{ serie.titulo }}</option>
                 {% endfor %}
             </select><br>
 
-            <label for="numeroTemporada">Número de temporada:</label>
-            <input type="number" id="numeroTemporada" name="numeroTemporada" required><br>
+            <label for="numeroTemporada" aria-label="Introduce el número de temporada">Número de temporada:</label>
+            <input type="number" id="numeroTemporada" name="numeroTemporada" required aria-required="true" aria-label="Número de temporada"><br>
 
-            <button type="submit">Crear Temporada</button>
+            <button type="submit" aria-label="Crear temporada">Crear Temporada</button>
+        </form>
     </div>
-    </form>
 </body>
 
 </html>

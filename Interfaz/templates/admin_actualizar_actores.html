@@ -13,11 +13,11 @@
 <header>
     <div class="navbar">
         <div class="logo">
-            <a href="#">Streamflix: Menu Administrador</a>
+            <a href="#" aria-label="Ir al menú de administración de Streamflix">Streamflix: Menu Administrador</a>
         </div>
         <nav>
             <ul>
-                <li><a href="/admin_menu" class="return-button">Volver al menú</a></li>
+                <li><a href="/admin_menu" class="return-button" aria-label="Volver al menú principal">Volver al menú</a></li>
             </ul>
         </nav>
     </div>
@@ -25,7 +25,7 @@
 
 <body>
     {% if message %}
-    <div class="message">
+    <div class="message" role="alert">
         ¡Actor actualizado con éxito!
     </div>
     {% endif %}
@@ -35,22 +35,22 @@
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Nacionalidad</th>
-                    <th>Fecha de Nacimiento</th>
-                    <th>Acciones</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Nacionalidad</th>
+                    <th scope="col">Fecha de Nacimiento</th>
+                    <th scope="col">Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% for actor in actores %}
                 <tr>
                     <td>{{ actor.id }}</td>
-                    <td><input type="text" name="nombre_{{ actor.id }}" value="{{ actor.nombre }}" required></td>
-                    <td><input type="text" name="nacionalidad_{{ actor.id }}" value="{{ actor.nacionalidad }}" required></td>
-                    <td><input type="text" name="fechaNacimiento_{{ actor.id }}" value="{{ actor.fechaNacimiento }}" required></td>
+                    <td><input type="text" name="nombre_{{ actor.id }}" value="{{ actor.nombre }}" required aria-label="Nombre del actor {{ actor.nombre }}"></td>
+                    <td><input type="text" name="nacionalidad_{{ actor.id }}" value="{{ actor.nacionalidad }}" required aria-label="Nacionalidad del actor {{ actor.nacionalidad }}"></td>
+                    <td><input type="text" name="fechaNacimiento_{{ actor.id }}" value="{{ actor.fechaNacimiento }}" required aria-label="Fecha de nacimiento del actor {{ actor.nombre }}"></td>
                     <td>
-                        <button type="submit" name="id_actor" value="{{ actor.id }}">Actualizar</button>
+                        <button type="submit" name="id_actor" value="{{ actor.id }}" aria-label="Actualizar los datos del actor {{ actor.nombre }}">Actualizar</button>
                     </td>
                 </tr>
                 {% endfor %}

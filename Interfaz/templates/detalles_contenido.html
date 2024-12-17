@@ -10,17 +10,20 @@
     <!-- Encabezado -->
     <div class="header">
         <h1>
-            <a href="/pantalla_principal/?user_id={{ user_id }}" style="text-decoration: none; color: inherit;">
+            <a href="/pantalla_principal/?user_id={{ user_id }}" style="text-decoration: none; color: inherit;" aria-label="Ir al Catálogo de Películas">
                 Catálogo de Películas
             </a>
         </h1>
-        <a href="/usuarios/{{ user_id }}/perfil" class="perfil-button">Perfil</a></div>
+        <a href="/usuarios/{{ user_id }}/perfil" class="perfil-button" aria-label="Ir al perfil del usuario">Perfil</a>
+    </div>
 
     <!-- Contenido -->
     <div class="container">
         <!-- Tarjeta de una película -->
         <div class="movie-card">
-            <div class="movie-poster" style="background-image: url('https://via.placeholder.com/200x300');"></div>
+            <div class="movie-poster" 
+                style="background-image: url('https://via.placeholder.com/200x300');"
+                aria-label="Póster de la película"></div>
             <div class="movie-details">
                 <div>
                     <div class="movie-title">{{ detalles_contenido["titulo"] }}</div>
@@ -40,13 +43,13 @@
                     <div class="movie-actions">
                         <!-- Botón Me gusta -->
                         <button id="like-button" class="action-button" 
-                                onclick="toggleLike('{{ detalles_contenido.id }}')">
+                                onclick="toggleLike('{{ detalles_contenido.id }}')" aria-label="Me gusta esta película">
                             Me gusta
                         </button>
                     
                         <!-- Botón Lista Personalizada -->
                         <button id="custom-list-button" class="action-button" 
-                                onclick="toggleCustomList('{{ detalles_contenido.id }}')">
+                                onclick="toggleCustomList('{{ detalles_contenido.id }}')" aria-label="Añadir esta película a mi lista personalizada">
                             Añadir a mi lista
                         </button>
                     
@@ -61,12 +64,11 @@
                                 <option value="4">4</option>
                                 <option value="5">5</option>
                             </select>
-                            <button class="action-button" onclick="submitRating('{{ detalles_contenido.id }}')">
+                            <button class="action-button" onclick="submitRating('{{ detalles_contenido.id }}')" aria-label="Enviar valoración">
                                 Enviar
                             </button>
                         </div>
                     </div>
-                    
 
                     <div class="movie-description">
                         {{ detalles_contenido["descripcion"] }}
@@ -302,8 +304,5 @@
             initializeButtons(contentId);
         });
     </script>
-    
-    
-
 </body>
 </html>

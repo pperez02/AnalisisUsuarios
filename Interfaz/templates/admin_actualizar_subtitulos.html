@@ -106,11 +106,11 @@
     <header>
         <div class="navbar">
             <div class="logo">
-                <a href="#">Streamflix: Gestión de Subtítulos</a>
+                <a href="#" alt="Página principal de gestión de subtítulos" title="Streamflix: Gestión de Subtítulos">Streamflix: Gestión de Subtítulos</a>
             </div>
             <nav>
                 <ul>
-                    <li><a href="/admin_menu" class="return-button">Volver al menú</a></li>
+                    <li><a href="/admin_menu" class="return-button" alt="Volver al menú principal" aria-label="Volver al menú principal">Volver al menú</a></li>
                 </ul>
             </nav>
         </div>
@@ -121,40 +121,40 @@
 
         <!-- Selector de contenido -->
         <label for="idContenido">Seleccionar Contenido:</label>
-        <select id="idContenido" name="idContenido" onchange="manejarCambioContenido()" required>
+        <select id="idContenido" name="idContenido" onchange="manejarCambioContenido()" required aria-describedby="contenidoHelp">
             <!-- Los contenidos se cargarán dinámicamente -->
         </select>
         <br><br>
 
         <!-- Formulario para añadir subtítulos -->
-        <form action="/administrador/actualizar_subtitulo" method="post">
+        <form action="/administrador/actualizar_subtitulo" method="post" aria-labelledby="formAgregarSubtitulo">
             <!-- Este campo oculto pasará el id del contenido al backend -->
-            <input type="hidden" name="idContenido" value="" id="formIdContenido"> <!-- ID del contenido seleccionado -->
+            <input type="hidden" name="idContenido" value="" id="formIdContenido" aria-hidden="true"> <!-- ID del contenido seleccionado -->
             
             <!-- Etiqueta para los subtítulos disponibles -->
             <label for="idSubtitulo">Subtítulos disponibles:</label>
             
             <!-- Lista desplegable para los subtítulos disponibles -->
-            <select id="idSubtitulo" name="idSubtitulo" required>
+            <select id="idSubtitulo" name="idSubtitulo" required aria-describedby="subtitulosDisponiblesHelp">
                 <!-- Los subtítulos disponibles se cargarán dinámicamente -->
             </select>
             
-            <button type="submit">Añadir Subtítulo</button>
+            <button type="submit" aria-label="Añadir subtítulo al contenido">Añadir Subtítulo</button>
         </form>
 
         <br>
 
         <!-- Formulario para eliminar subtítulos -->
-        <form action="/administrador/eliminar_subtitulos" method="post">
+        <form action="/administrador/eliminar_subtitulos" method="post" aria-labelledby="formEliminarSubtitulo">
             <!-- Este campo oculto pasará el id del contenido al backend -->
-            <input type="hidden" name="idContenido" value="" id="formIdContenidoEliminar"> <!-- ID del contenido seleccionado -->
+            <input type="hidden" name="idContenido" value="" id="formIdContenidoEliminar" aria-hidden="true"> <!-- ID del contenido seleccionado -->
         
             <label for="listaAsignados">Subtítulos asignados:</label>
-            <select id="listaAsignados" name="idSubtitulo" required>
+            <select id="listaAsignados" name="idSubtitulo" required aria-describedby="subtitulosAsignadosHelp">
                 <!-- Los subtítulos asignados se cargarán dinámicamente -->
             </select>
         
-            <button type="submit">Eliminar Subtítulo</button>
+            <button type="submit" aria-label="Eliminar subtítulo del contenido">Eliminar Subtítulo</button>
         </form>
     </div>
 

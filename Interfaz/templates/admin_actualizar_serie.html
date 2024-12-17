@@ -12,11 +12,11 @@
 <header>
     <div class="navbar">
         <div class="logo">
-            <a href=#>Streamflix: Actualizar serie</a>
+            <a href="#" aria-label="Ir a la página principal de actualización de series">Streamflix: Actualizar serie</a>
         </div>
         <nav>
             <ul>
-                <li><a href="/admin_menu" class="return-button">Volver al menú</a></li>
+                <li><a href="/admin_menu" class="return-button" aria-label="Volver al menú principal">Volver al menú</a></li>
             </ul>
         </nav>
     </div>
@@ -26,35 +26,43 @@
     <main>
         <div class="container">
             <h1>Actualizar serie</h1>
-            <form action="/administrador/update_serie/{{serie_id}}" method="post">
-                <label for="titulo">Título:</label>
-                <input type="text" id="titulo" name="titulo" value="{{titulo}}" required>
+            <form action="/administrador/update_serie/{{serie_id}}" method="post" aria-labelledby="formActualizarSerie">
+                <h2 id="formActualizarSerie" class="sr-only">Formulario para actualizar los datos de la serie</h2>
 
-                <label for="descripcion">Descripción:</label>
-                <input type="text" id="descripcion" name="descripcion" value="{{descripcion}}" required>
+                <!-- Título -->
+                <label for="titulo" aria-label="Ingrese el título de la serie">Título:</label>
+                <input type="text" id="titulo" name="titulo" value="{{titulo}}" required aria-required="true" aria-label="Título de la serie"><br>
 
-                <label for="fecLanzamiento">Fecha de lanzamiento:</label>
-                <input type="text" id="fecLanzamiento" name="fecLanzamiento" value="{{fecLanzamiento}}" required>
+                <!-- Descripción -->
+                <label for="descripcion" aria-label="Ingrese una descripción de la serie">Descripción:</label>
+                <input type="text" id="descripcion" name="descripcion" value="{{descripcion}}" required aria-required="true" aria-label="Descripción de la serie"><br>
 
-                <label for="genero">Género:</label>
-                <select id="genero" name="genero" required>
+                <!-- Fecha de lanzamiento -->
+                <label for="fecLanzamiento" aria-label="Ingrese la fecha de lanzamiento de la serie">Fecha de lanzamiento:</label>
+                <input type="text" id="fecLanzamiento" name="fecLanzamiento" value="{{fecLanzamiento}}" required aria-required="true" aria-label="Fecha de lanzamiento de la serie"><br>
+
+                <!-- Género -->
+                <label for="genero" aria-label="Seleccionar el género de la serie">Género:</label>
+                <select id="genero" name="genero" required aria-required="true" aria-label="Selecciona el género de la serie">
                     {% for genero in generos %}
                         <option value="{{ genero.id }}" {% if genero.id == idGenero %}selected{% endif %}>
                             {{ genero.nombre }}
                         </option>
                     {% endfor %}
-                </select>
+                </select><br>
 
-                <label for="actores">Actores:</label><br>
-                <div id="actores-container">
-                    {% for actor in actores %}
-                    <input type="checkbox" id="actor_{{ actor.id }}" name="actores" value="{{ actor.id }}"
-                        {% if actor.id in reparto %}checked{% endif %}>
-                    <label for="actor_{{ actor.id }}">{{ actor.nombre }}</label><br>
-                    {% endfor %}
-                </div>                
+                <!-- Actores -->
+                <fieldset>
+                    <legend>Actores:</legend>
+                    <div id="actores-container">
+                        {% for actor in actores %}
+                            <input type="checkbox" id="actor_{{ actor.id }}" name="actores" value="{{ actor.id }}" {% if actor.id in reparto %}checked{% endif %} aria-labelledby="actor_{{ actor.id }}">
+                            <label for="actor_{{ actor.id }}">{{ actor.nombre }}</label><br>
+                        {% endfor %}
+                    </div>
+                </fieldset>
 
-                <button type="submit">Actualizar datos</button>
+                <button type="submit" aria-label="Actualizar los datos de la serie">Actualizar datos</button>
             </form>
         </div>
     </main>

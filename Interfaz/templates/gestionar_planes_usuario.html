@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,13 +9,14 @@
     <link rel="stylesheet" href="/static/perfil.css">
     <link rel="stylesheet" href="/static/header_footer.css">
 </head>
+
 <body>
     {% include "header.html" %}
 
     <main>
 
         {% if mensaje %}
-                <div class="mensaje">
+                <div class="mensaje" role="alert" aria-live="assertive">
                     <div class="message-box">
                         <p class="message-text">
                             {{ mensaje }}
@@ -22,11 +24,12 @@
                     </div>
                 </div>
         {% endif %}
-        <section class="subscription-section">
-            <h2>Selecciona tu Plan de Suscripción</h2>
+        
+        <section class="subscription-section" aria-labelledby="subscription-heading">
+            <h2 id="subscription-heading">Selecciona tu Plan de Suscripción</h2>
 
-            <form action="/usuarios/{{ user_id }}/actualizar_plan" method="POST" class="subscription-form">
-                <div class="plan-list">
+            <form action="/usuarios/{{ user_id }}/actualizar_plan" method="POST" class="subscription-form" aria-describedby="subscription-info">
+                <div class="plan-list" id="subscription-info">
                     {% for plan in planes_suscripcionBD %}
                         <div class="plan-item">
                             <input 
@@ -34,8 +37,10 @@
                                 id="plan-{{ plan.id }}" 
                                 name="plan_id" 
                                 value="{{ plan.id }}" 
-                                {% if plan.id == idPlanSuscripcionUsuario %}checked{% endif %}>
-                            <label for="plan-{{ plan.id }}">
+                                {% if plan.id == idPlanSuscripcionUsuario %}checked{% endif %}
+                                aria-checked="{{ plan.id == idPlanSuscripcionUsuario ? 'true' : 'false' }}"
+                                aria-labelledby="plan-{{ plan.id }}-label">
+                            <label for="plan-{{ plan.id }}" id="plan-{{ plan.id }}-label">
                                 <strong>{{ plan.nombre }}</strong><br>
                                 Precio mensual: {{ plan.precioMensual | round(2) }} USD<br>
                                 Dispositivos permitidos: {{ plan.numeroDispositivos }}
@@ -43,13 +48,15 @@
                         </div>
                     {% endfor %}
                 </div>
-                <button type="submit" class="btn">Actualizar Plan</button>
+                <button type="submit" class="btn" aria-label="Actualizar tu plan de suscripción">Actualizar Plan</button>
             </form>
         </section>
+
         <!-- Formulario para cancelar suscripción -->
-        <form action="/usuarios/{{ user_id }}/cancelar_suscripcion" method="POST" class="cancel-subscription-form">
-            <button type="submit" class="btn">Cancelar Suscripción</button>
+        <form action="/usuarios/{{ user_id }}/cancelar_suscripcion" method="POST" class="cancel-subscription-form" aria-labelledby="cancel-subscription-button">
+            <button type="submit" class="btn" id="cancel-subscription-button" aria-label="Cancelar la suscripción actual">Cancelar Suscripción</button>
         </form>
+
     </main>
 
     {% include "footer.html" %}

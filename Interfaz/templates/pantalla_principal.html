@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,10 +9,11 @@
     <link rel="stylesheet" href="/static/pantalla_principal.css">
     <link rel="stylesheet" href="/static/header_footer.css">
 </head>
+
 <body>
 
     {% if mensaje_credenciales %}
-        <main>
+        <main role="alert" aria-live="assertive">
             <div class="container">
                 <div class="message-box">
                     <p class="message-text">
@@ -27,7 +29,7 @@
         <main>
             <div class="container">
                 {% if mensaje %}
-                    <div class="message-box">
+                    <div class="message-box" role="alert" aria-live="assertive">
                         <p class="message-text">
                             {{ mensaje }}
                         </p>
@@ -37,78 +39,75 @@
                 <!-- Recomendaciones personalizadas -->
                 {% if recomendaciones %}
                 <div class="section">
-                    <h2>Recomendaciones personalizadas</h2>
+                    <h2 id="recomendaciones-heading">Recomendaciones personalizadas</h2>
                     <div class="content-list">
                         {% for contenido in recomendaciones %}
-                            <a href="/detalles_contenido/{{ contenido.id }}?user_id={{ user_id }}" class="content-box">
+                            <a href="/detalles_contenido/{{ contenido.id }}?user_id={{ user_id }}" class="content-box" aria-labelledby="recomendaciones-heading">
                                 {{ contenido.titulo }}
                             </a>
                         {% endfor %}
                     </div>
                 </div>
                 {% else %}
-                    <p class="no-results-message">No se encontraron recomendaciones.</p>
+                    <p class="no-results-message" aria-live="polite">No se encontraron recomendaciones.</p>
                 {% endif %}
 
                 <!-- Tendencias -->
                 {% if tendencias %}
                 <div class="section">
-                    <h2>Tendencias</h2>
+                    <h2 id="tendencias-heading">Tendencias</h2>
                     <div class="content-list">
                         {% for tendencia in tendencias.tendencias %}
-                            <!-- Verifica que el ID y el título se muestren correctamente -->
-                            <a href="/detalles_contenido/{{ tendencia.idContenido }}?user_id={{ user_id }}" class="content-box">
+                            <a href="/detalles_contenido/{{ tendencia.idContenido }}?user_id={{ user_id }}" class="content-box" aria-labelledby="tendencias-heading">
                                 {{ tendencia.titulo }} - Me gusta: {{ tendencia.me_gusta_total }}
                             </a>
                         {% endfor %}
                     </div>
                 </div>
                 {% else %}
-                    <p class="no-results-message">No hay tendencias disponibles.</p>
+                    <p class="no-results-message" aria-live="polite">No hay tendencias disponibles.</p>
                 {% endif %}
 
-            {% if lista_personalizada %}
-            <div class="section">
-                <h2>Ver más tarde</h2>
-                <div class="content-list">
-                    {% for contenido in lista_personalizada %}
-                        <!-- Verifica que el ID y el título se muestren correctamente -->
-                        <a href="/detalles_contenido/{{ contenido.id }}?user_id={{ user_id }}" class="content-box">
-                            {{ contenido.titulo }}
-                        </a>
-                    {% endfor %}
+                <!-- Ver más tarde -->
+                {% if lista_personalizada %}
+                <div class="section">
+                    <h2 id="ver-mas-tarde-heading">Ver más tarde</h2>
+                    <div class="content-list">
+                        {% for contenido in lista_personalizada %}
+                            <a href="/detalles_contenido/{{ contenido.id }}?user_id={{ user_id }}" class="content-box" aria-labelledby="ver-mas-tarde-heading">
+                                {{ contenido.titulo }}
+                            </a>
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
-            {% else %}
-                <p class="no-results-message">No hay elementos en tu lista personalizada.</p>
-            {% endif %}
-
-
+                {% else %}
+                    <p class="no-results-message" aria-live="polite">No hay elementos en tu lista personalizada.</p>
+                {% endif %}
 
                 <!-- Historial -->
                 {% if historial %}
                 <div class="section">
-                    <h2>Tu historial</h2>
+                    <h2 id="historial-heading">Tu historial</h2>
                     <div class="content-list">
                         {% for item in historial %}
-                            <a href="/detalles_contenido/{{ item.id }}?user_id={{ user_id }}" class="content-box">
+                            <a href="/detalles_contenido/{{ item.id }}?user_id={{ user_id }}" class="content-box" aria-labelledby="historial-heading">
                                 {{ item.titulo }}
                             </a>
                         {% endfor %}
                     </div>
                 </div>
                 {% else %}
-                    <p class="no-results-message">Tu historial está vacío o no se pudo recuperar.</p>
+                    <p class="no-results-message" aria-live="polite">Tu historial está vacío o no se pudo recuperar.</p>
                 {% endif %}
 
                 <!-- Géneros -->
                 {% if generos_con_contenidos %}
                 {% for genero in generos_con_contenidos %}
                 <div class="section">
-                    <h2>{{ genero.nombre }}</h2>
+                    <h2 id="genero-{{ genero.nombre | lower | replace(' ', '-') }}-heading">{{ genero.nombre }}</h2>
                     <div class="content-list">
                         {% for contenido in genero.contenidos %}
-                            <a href="/detalles_contenido/{{ contenido.id }}?user_id={{ user_id }}" class="content-box">
+                            <a href="/detalles_contenido/{{ contenido.id }}?user_id={{ user_id }}" class="content-box" aria-labelledby="genero-{{ genero.nombre | lower | replace(' ', '-') }}-heading">
                                 {{ contenido.titulo }}
                             </a>
                         {% endfor %}
@@ -116,7 +115,7 @@
                 </div>
                 {% endfor %}
                 {% else %}
-                    <p class="no-results-message">No hay contenidos disponibles por género.</p>
+                    <p class="no-results-message" aria-live="polite">No hay contenidos disponibles por género.</p>
                 {% endif %}
             </div>
         </main>
@@ -125,4 +124,5 @@
     {% endif %}
        
 </body>
+
 </html>

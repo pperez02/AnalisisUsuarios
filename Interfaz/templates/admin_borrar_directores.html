@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Menú Administrador</title>
-        <link rel="stylesheet" href="/static/style.css">
-        <link rel="stylesheet" href="/static/menu_admin.css">
-        <link rel="stylesheet" href="/static/borrar_directores.css"> <!-- Actualizar el nombre del archivo CSS -->
-    </head>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Administrador</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/menu_admin.css">
+    <link rel="stylesheet" href="/static/borrar_directores.css"> <!-- Actualizado el nombre del archivo CSS -->
+</head>
 
 <header>
     <div class="navbar">
         <div class="logo">
-            <a href="#">Streamflix: Menu Administrador</a>
+            <a href="#" title="Página principal del administrador">Streamflix: Menú Administrador</a>
         </div>
         <nav>
             <ul>
-                <li><a href="/admin_menu" class="return-button">Volver al menú</a></li>
+                <li><a href="/admin_menu" class="return-button" title="Volver al menú principal" aria-label="Volver al inicio">Volver al menú</a></li>
             </ul>
         </nav>
     </div>
@@ -30,12 +31,13 @@
 
         <!-- Mostrar mensaje si está presente -->
         {% if mensaje %}
-            <div class="message">
+            <div class="message" role="alert" aria-live="assertive">
                 <p>{{ mensaje }}</p>
             </div>
         {% endif %}
 
-        <table>
+        <table aria-labelledby="directorsTable">
+            <caption id="directorsTable">Lista de Directores</caption>
             <thead>
                 <tr>
                     <th>ID</th>
@@ -46,15 +48,15 @@
                 </tr>
             </thead>
             <tbody>
-                {% for director in directores %} <!-- Cambiar de actor a director -->
+                {% for director in directores %}
                 <tr>
-                    <td>{{ director.id }}</td> <!-- Actualizar a 'director' -->
-                    <td>{{ director.nombre }}</td> <!-- Actualizar a 'director' -->
-                    <td>{{ director.nacionalidad }}</td> <!-- Actualizar a 'director' -->
-                    <td>{{ director.fechaNacimiento }}</td> <!-- Actualizar a 'director' -->
+                    <td>{{ director.id }}</td>
+                    <td>{{ director.nombre }}</td>
+                    <td>{{ director.nacionalidad }}</td>
+                    <td>{{ director.fechaNacimiento }}</td>
                     <td>
-                        <form action="/directores/{{ director.id }}/borrar" method="post" style="display:inline;"> <!-- Actualizar la URL de la acción -->
-                            <button type="submit">Eliminar</button>
+                        <form action="/directores/{{ director.id }}/borrar" method="post" style="display:inline;" aria-label="Eliminar director {{ director.nombre }}">
+                            <button type="submit" aria-label="Eliminar director {{ director.nombre }}">Eliminar</button>
                         </form>
                     </td>
                 </tr>
@@ -63,7 +65,8 @@
         </table>
     {% else %}
         <!-- Si no hay directores, mostrar un mensaje -->
-        <p>No existen directores.</p>
+        <p>No existen directores registrados.</p>
     {% endif %}
 </body>
+
 </html>
