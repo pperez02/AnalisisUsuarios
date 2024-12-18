@@ -42,7 +42,8 @@
                     <h2 id="recomendaciones-heading">Recomendaciones personalizadas</h2>
                     <div class="content-list">
                         {% for contenido in recomendaciones %}
-                            <a href="/detalles_contenido/{{ contenido.id }}?user_id={{ user_id }}" class="content-box" aria-labelledby="recomendaciones-heading">
+                            <a href="/detalles_contenido/{{ contenido.id }}?user_id={{ user_id }}" class="content-box" aria-labelledby="recomendaciones-heading"
+                            style="background-image: url('https://unexes-my.sharepoint.com/personal/jmasapas_alumnos_unex_es/Documents/ASEE+GPS/Content-Posters/{{ contenido.id }}.jpg');">
                                 {{ contenido.titulo }}
                             </a>
                         {% endfor %}
@@ -58,7 +59,8 @@
                     <h2 id="tendencias-heading">Tendencias</h2>
                     <div class="content-list">
                         {% for tendencia in tendencias.tendencias %}
-                            <a href="/detalles_contenido/{{ tendencia.idContenido }}?user_id={{ user_id }}" class="content-box" aria-labelledby="tendencias-heading">
+                            <a href="/detalles_contenido/{{ tendencia.idContenido }}?user_id={{ user_id }}" class="content-box" aria-labelledby="tendencias-heading"
+                            style="background-image: url('https://unexes-my.sharepoint.com/personal/jmasapas_alumnos_unex_es/Documents/ASEE+GPS/Content-Posters/{{ tendencia.idContenido }}.jpg');">
                                 {{ tendencia.titulo }} - Me gusta: {{ tendencia.me_gusta_total }}
                             </a>
                         {% endfor %}
@@ -74,7 +76,8 @@
                     <h2 id="ver-mas-tarde-heading">Ver más tarde</h2>
                     <div class="content-list">
                         {% for contenido in lista_personalizada %}
-                            <a href="/detalles_contenido/{{ contenido.id }}?user_id={{ user_id }}" class="content-box" aria-labelledby="ver-mas-tarde-heading">
+                            <a href="/detalles_contenido/{{ contenido.id }}?user_id={{ user_id }}" class="content-box" aria-labelledby="ver-mas-tarde-heading"
+                            style="background-image: url('https://unexes-my.sharepoint.com/personal/jmasapas_alumnos_unex_es/Documents/ASEE+GPS/Content-Posters/{{ contenido.id }}.jpg');">
                                 {{ contenido.titulo }}
                             </a>
                         {% endfor %}
@@ -90,7 +93,8 @@
                     <h2 id="historial-heading">Tu historial</h2>
                     <div class="content-list">
                         {% for item in historial %}
-                            <a href="/detalles_contenido/{{ item.id }}?user_id={{ user_id }}" class="content-box" aria-labelledby="historial-heading">
+                            <a href="/detalles_contenido/{{ item.id }}?user_id={{ user_id }}" class="content-box" aria-labelledby="historial-heading"
+                            style="background-image: url('https://unexes-my.sharepoint.com/personal/jmasapas_alumnos_unex_es/Documents/ASEE+GPS/Content-Posters/{{ item.id }}.jpg');">
                                 {{ item.titulo }}
                             </a>
                         {% endfor %}
@@ -107,7 +111,8 @@
                     <h2 id="genero-{{ genero.nombre | lower | replace(' ', '-') }}-heading">{{ genero.nombre }}</h2>
                     <div class="content-list">
                         {% for contenido in genero.contenidos %}
-                            <a href="/detalles_contenido/{{ contenido.id }}?user_id={{ user_id }}" class="content-box" aria-labelledby="genero-{{ genero.nombre | lower | replace(' ', '-') }}-heading">
+                            <a href="/detalles_contenido/{{ contenido.id }}?user_id={{ user_id }}" class="content-box" aria-labelledby="genero-{{ genero.nombre | lower | replace(' ', '-') }}-heading"
+                            style="background-image: url('https://unexes-my.sharepoint.com/personal/jmasapas_alumnos_unex_es/Documents/ASEE+GPS/Content-Posters/{{ contenido.id }}.jpg');">
                                 {{ contenido.titulo }}
                             </a>
                         {% endfor %}

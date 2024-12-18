@@ -45,8 +45,8 @@
                                 <ul>
                                     {% for contenido in contenidos_por_actor[actor.id] %}
                                         <li>
-                                            <a href="/detalles_contenido/{{ contenido.id }}?user_id={{ user_id }}" aria-label="Ver detalles de {{ contenido.titulo }}">
-                                                {{ contenido.titulo }} - {{ contenido.genero }}
+                                            <a href="/detalles_contenido/{{ contenido.id }}?user_id={{ user_id }}" class="details-button" aria-label="Ver detalles de {{ contenido.titulo }}">
+                                                {{ contenido.titulo }}
                                             </a>
                                         </li>
                                     {% endfor %}
