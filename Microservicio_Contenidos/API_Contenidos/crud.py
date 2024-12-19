@@ -649,7 +649,6 @@ def delete_director(db: Session, director_id: str) -> bool:
 # Función para dar una valoración a un contenido
 def valorar_contenido(db: Session, idContenido: str, valoracion: int):
     contenido = db.query(models.Contenido).filter(models.Contenido.id == idContenido).first()
-    print(contenido)
     if not contenido:
         return None   
     contenido.valoracionPromedio = (contenido.valoracionPromedio + valoracion)/2

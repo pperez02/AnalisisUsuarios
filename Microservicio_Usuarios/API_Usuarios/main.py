@@ -54,7 +54,6 @@ def login_user(credentials: schemas.UserLogin, db: Session = Depends(get_databas
 
 @app.put("/usuarios/{idUsuario}/perfil")
 def update_user_profile(idUsuario: str, user_data: schemas.UserUpdate, db: Session = Depends(get_database)):
-    print(user_data)
     user = crud.update_user(db, user_id=idUsuario, user_data=user_data)
     if user is None:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")

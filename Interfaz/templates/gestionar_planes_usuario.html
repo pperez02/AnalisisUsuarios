@@ -38,7 +38,7 @@
                                 name="plan_id" 
                                 value="{{ plan.id }}" 
                                 {% if plan.id == idPlanSuscripcionUsuario %}checked{% endif %}
-                                aria-checked="{{ plan.id == idPlanSuscripcionUsuario ? 'true' : 'false' }}"
+                                aria-checked="{{ 'true' if plan.id == idPlanSuscripcionUsuario else 'false' }}"
                                 aria-labelledby="plan-{{ plan.id }}-label">
                             <label for="plan-{{ plan.id }}" id="plan-{{ plan.id }}-label">
                                 <strong>{{ plan.nombre }}</strong><br>

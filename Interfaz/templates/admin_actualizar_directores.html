@@ -21,13 +21,12 @@
         </nav>
     </div>
 </header>
-
-<body>
-    {% if message %}
+{% if message %}
     <div class="message" role="alert">
         ¡Director actualizado con éxito!
     </div>
-    {% endif %}
+{% endif %}
+<body>
 
     <h1>Actualizar Directores</h1>
     <form action="/director/actualizar" method="POST">
@@ -36,7 +35,7 @@
                 <tr>
                     <th scope="col">ID</th>
                     <th scope="col">Nombre</th>
-                    <th scope="col">Apellido</th>
+                    <th scope="col">Nacionalidad</th>
                     <th scope="col">Fecha de nacimiento</th>
                 </tr>
             </thead>
@@ -45,7 +44,7 @@
                 <tr>
                     <td>{{ director.id }}</td>
                     <td><input type="text" name="nombre_{{ director.id }}" value="{{ director.nombre }}" required aria-label="Nombre del director {{ director.nombre }}"></td>
-                    <td><input type="text" name="apellido_{{ director.id }}" value="{{ director.apellido }}" required aria-label="Apellido del director {{ director.apellido }}"></td>
+                    <td><input type="text" name="nacionalidad_{{ director.id }}" value="{{ director.nacionalidad }}" required aria-label="Nacionalidad del director {{ director.nombre }}"></td>
                     <td><input type="text" name="fechaNacimiento_{{ director.id }}" value="{{ director.fechaNacimiento }}" required aria-label="Fecha de nacimiento del director {{ director.nombre }}"></td>
                     <td>
                         <button type="submit" name="id_director" value="{{ director.id }}" aria-label="Actualizar los datos del director {{ director.nombre }}">Actualizar</button>
