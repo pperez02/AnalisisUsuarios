@@ -14,9 +14,7 @@ def create_user(db: Session, user: schemas.UserCreate):
         email=user.email,
         password=user.password,
         idioma=user.idioma,
-        idPlanSuscripcion=user.idPlanSuscripcion,
-        idListaPersonalizada=user.idListaPersonalizada,
-        idHistorial=user.idHistorial
+        idPlanSuscripcion=user.idPlanSuscripcion
     )
     db.add(db_user)
     db.commit()
