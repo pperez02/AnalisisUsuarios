@@ -142,7 +142,7 @@ def valorar_contenido(db: Session, idUsuario: str, idContenido: str, valoracion:
     if not valoracion:
         return None
     #Se hace una llamada a la API de Contenidos 
-    url = f"http://localhost:8000/contenidos/{idContenido}/valoracion"
+    url = f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}/valoracion"
 
     # Parámetros del cuerpo de la solicitud
     params = {
