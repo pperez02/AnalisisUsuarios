@@ -19,10 +19,10 @@
 
                 selectorContenidos.innerHTML = '<option value="">Seleccione un contenido</option>'; // Limpia el selector y añade una opción inicial
 
-                // Agrega cada contenido al selector
+                // Agrega cada contenido al selector con el idSubtitulosContenido
                 contenidos.forEach((contenido) => {
                     const option = document.createElement('option');
-                    option.value = contenido.id; // Asigna el ID del contenido
+                    option.value = contenido.idSubtitulosContenido; // Usa el idSubtitulosContenido en vez del id
                     option.textContent = contenido.titulo; // Muestra el título del contenido
                     selectorContenidos.appendChild(option);
                 });
@@ -32,11 +32,11 @@
             }
         }
 
-        // Función para cargar subtítulos asignados (subtítulosContenido) desde el servicio de interface
-        async function cargarSubtitulosAsignados(idContenido) {
+        // Función para cargar subtítulos asignados desde el servicio de interface
+        async function cargarSubtitulosAsignados(idSubtitulosContenido) {
             try {
-                // Llama al endpoint de interface para obtener los subtítulos asignados
-                const response = await fetch(`/administrador/contenidos/${idContenido}/subtitulos`);
+                // Llama al endpoint de interface para obtener los subtítulos asignados usando idSubtitulosContenido
+                const response = await fetch(`/administrador/contenidos/${idSubtitulosContenido}/subtitulos`);
                 if (!response.ok) {
                     throw new Error('Error al obtener subtítulos asignados');
                 }
@@ -86,9 +86,9 @@
 
         // Función para manejar el cambio de contenido seleccionado
         async function manejarCambioContenido() {
-            const idContenido = document.getElementById('idContenido').value;
-            if (idContenido) {
-                await cargarSubtitulosAsignados(idContenido); // Carga los subtítulos asignados al contenido
+            const idSubtitulosContenido = document.getElementById('idContenido').value; // Obtén idSubtitulosContenido
+            if (idSubtitulosContenido) {
+                await cargarSubtitulosAsignados(idSubtitulosContenido); // Carga los subtítulos asignados con el nuevo id
                 await cargarSubtitulosDisponibles(); // Carga todos los subtítulos disponibles
             } else {
                 // Limpia las listas si no hay contenido seleccionado
@@ -129,7 +129,7 @@
         <!-- Formulario para añadir subtítulos -->
         <form action="/administrador/actualizar_subtitulo" method="post" aria-labelledby="formAgregarSubtitulo">
             <!-- Este campo oculto pasará el id del contenido al backend -->
-            <input type="hidden" name="idContenido" value="" id="formIdContenido" aria-hidden="true"> <!-- ID del contenido seleccionado -->
+            <input type="hidden" name="idSubtitulosContenido" value="" id="formIdSubtitulosContenido" aria-hidden="true">
             
             <!-- Etiqueta para los subtítulos disponibles -->
             <label for="idSubtitulo">Subtítulos disponibles:</label>
@@ -147,7 +147,7 @@
         <!-- Formulario para eliminar subtítulos -->
         <form action="/administrador/eliminar_subtitulos" method="post" aria-labelledby="formEliminarSubtitulo">
             <!-- Este campo oculto pasará el id del contenido al backend -->
-            <input type="hidden" name="idContenido" value="" id="formIdContenidoEliminar" aria-hidden="true"> <!-- ID del contenido seleccionado -->
+            <input type="hidden" name="idSubtitulosContenido" value="" id="formIdSubtituloContenidoEliminar" aria-hidden="true"> <!-- ID del contenido seleccionado -->
         
             <label for="listaAsignados">Subtítulos asignados:</label>
             <select id="listaAsignados" name="idSubtitulo" required aria-describedby="subtitulosAsignadosHelp">
@@ -161,9 +161,9 @@
     <script>
         // Actualiza los campos ocultos del formulario con el contenido seleccionado
         document.getElementById('idContenido').addEventListener('change', (event) => {
-            const idContenidoSeleccionado = event.target.value;
-            document.getElementById('formIdContenido').value = idContenidoSeleccionado;
-            document.getElementById('formIdContenidoEliminar').value = idContenidoSeleccionado;
+            const idSubtitulosContenidoSeleccionado = event.target.value;
+            document.getElementById('formIdSubtitulosContenido').value = idSubtitulosContenidoSeleccionado;
+            document.getElementById('formIdSubtituloContenidoEliminar').value = idSubtitulosContenidoSeleccionado;
         });
     </script>
 

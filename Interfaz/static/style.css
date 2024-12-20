@@ -2,7 +2,7 @@
 body {
     margin: 0;
     padding: 0;
-    padding-top: 80px;
+    /* padding-top: 80px; */
     padding-bottom: 80px;
     font-family: Arial, sans-serif;
     background-color: #000;
@@ -10,7 +10,7 @@ body {
     display: flex;
     justify-content: center; /* Centra horizontalmente */
     align-items: center; /* Centra verticalmente */
-    height: 100vh; /* Altura completa de la ventana */
+    /* height: 100vh; /* Altura completa de la ventana  */
     flex-direction: column; /* Asegura que el contenido se apile correctamente en pantallas pequeñas */
 }
 

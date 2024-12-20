@@ -65,17 +65,17 @@ def create_subtitulos(idSubtitulo: str, idioma: str, db: Session = Depends(get_d
 def delete_subtitulo(idSubtitulo: str, db: Session = Depends(get_db)):
     return crud.delete_subtitulo(db=db, subtitulo_id=idSubtitulo)
 
-@app.post("/contenidos/{idContenido}/subtitulos/{idSubtitulo}")
-def update_subtitulos(idContenido: str, idSubtitulo: str, db: Session = Depends(get_db)):
-    return crud.update_subtitulo(db=db, content_id=idContenido, subtitulo_id=idSubtitulo)  
+@app.post("/contenidos/{idSubtitulosContenido}/subtitulos/{idSubtitulo}")
+def update_subtitulos(idSubtitulosContenido: str, idSubtitulo: str, db: Session = Depends(get_db)):
+    return crud.update_subtitulo(db=db, idSubtitulosContenido=idSubtitulosContenido, subtitulo_id=idSubtitulo)  
 
-@app.get("/contenidos/{idContenido}/subtitulos")
-def get_subtitulos(idContenido: str, db: Session = Depends(get_db)):
-    return crud.get_subtitulos(db=db, idContenido=idContenido)
+@app.get("/contenidos/{idSubtitulosContenido}/subtitulos")
+def get_subtitulos(idSubtitulosContenido: str, db: Session = Depends(get_db)):
+    return crud.get_subtitulos(db=db, idSubtitulosContenido=idSubtitulosContenido)
 
-@app.delete("/contenidos/{idContenido}/subtitulos/{idSubtitulo}") 
-def delete_subtitulos(idContenido: str, idSubtitulo: str, db: Session = Depends(get_db)):
-    result = crud.delete_subtitulos(db=db, content_id=idContenido, subtitulo_id=idSubtitulo)
+@app.delete("/contenidos/{idSubtitulosContenido}/subtitulos/{idSubtitulo}") 
+def delete_subtitulos(idSubtitulosContenido: str, idSubtitulo: str, db: Session = Depends(get_db)):
+    result = crud.delete_subtitulos(db=db, idSubtitulosContenido=idSubtitulosContenido, subtitulo_id=idSubtitulo)
     
     # Si se eliminó correctamente, el mensaje de éxito será retornado, si no, un mensaje de error
     if "Subtítulo eliminado correctamente" in result.get("message"):
@@ -91,17 +91,17 @@ def create_doblajes(idDoblaje: str, idioma: str, db: Session = Depends(get_db)):
 def delete_doblaje(idDoblaje: str, db: Session = Depends(get_db)):
     return crud.delete_doblaje(db=db, doblaje_id=idDoblaje)
 
-@app.post("/contenidos/{idContenido}/doblajes/{idDoblaje}")
-def update_doblaje(idContenido: str, idDoblaje: str, db: Session = Depends(get_db)):
-    return crud.update_doblaje(db=db, content_id=idContenido, doblaje_id=idDoblaje)
+@app.post("/contenidos/{idDoblajeContenido}/doblajes/{idDoblaje}")
+def update_doblaje(idDoblajeContenido: str, idDoblaje: str, db: Session = Depends(get_db)):
+    return crud.update_doblaje(db=db, idDoblajeContenido=idDoblajeContenido, doblaje_id=idDoblaje)
 
-@app.get("/contenidos/{idContenido}/doblajes")
-def get_doblajes(idContenido: str, db: Session = Depends(get_db)):
-    return crud.get_doblajes(db=db, idContenido=idContenido)
+@app.get("/contenidos/{idDoblajeContenido}/doblajes")
+def get_doblajes(idDoblajeContenido: str, db: Session = Depends(get_db)):
+    return crud.get_doblajes(db=db, idDoblajeContenido=idDoblajeContenido)
 
-@app.delete("/contenidos/{idContenido}/doblajes/{idDoblaje}") 
-def delete_doblajes(idContenido: str, idDoblaje: str, db: Session = Depends(get_db)):
-    result = crud.delete_doblajes(db=db, content_id=idContenido, doblaje_id=idDoblaje)
+@app.delete("/contenidos/{idDoblajeContenido}/doblajes/{idDoblaje}") 
+def delete_doblajes(idDoblajeContenido: str, idDoblaje: str, db: Session = Depends(get_db)):
+    result = crud.delete_doblajes(db=db, idDoblajeContenido=idDoblajeContenido, doblaje_id=idDoblaje)
     
     # Si se eliminó correctamente, el mensaje de éxito será retornado, si no, un mensaje de error
     if "Doblaje eliminado correctamente" in result.get("message"):

@@ -800,7 +800,7 @@ async def crear_pelicula(
         "idGenero": id_genero,
         "valoracionPromedio": 0.0,
         "idSubtitulosContenido": "1",
-        "idDoblajeContenido": "1",
+        "idDoblajeContenido": "1", #TODO
         "duracion": duracion,
         "idDirector": idDirector,
     }
@@ -2364,15 +2364,15 @@ def obtener_todos_los_contenidos():
         raise HTTPException(status_code=500, detail=f"Error al obtener los contenidos: {e}")
     
 # Endpoint para obtener todos los subtitulos de un contenido (para HTML)
-@app.get("/administrador/contenidos/{idContenido}/subtitulos")
-def obtener_subtitulos_contenido(idContenido: str):
+@app.get("/administrador/contenidos/{idSubtitulosContenido}/subtitulos")
+def obtener_subtitulos_contenido(idSubtitulosContenido: str):
     """
     Endpoint en el servicio de Interface que llama al microservicio Contenido
     para obtener los subtítulos de un contenido específico.
     """
     try:
         # Realiza la llamada al microservicio Contenido para obtener los subtítulos
-        response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}/subtitulos")
+        response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idSubtitulosContenido}/subtitulos")
         
         # Maneja errores de la respuesta
         response.raise_for_status()
@@ -2408,7 +2408,7 @@ def obtener_todos_los_subtitulos():
 # Endpoint post para eliminar los subtitulos
 @app.post("/administrador/eliminar_subtitulos")
 async def eliminar_subtitulos(
-    idContenido: str = Form(...),  # Recibimos idContenido como Form
+    idSubtitulosContenido: str = Form(...),  # Recibimos idContenido como Form
     idSubtitulo: str = Form(...)   # Recibimos idSubtitulo como Form
 ):
     """
@@ -2416,7 +2416,7 @@ async def eliminar_subtitulos(
     """
     try:
         # Realiza la llamada DELETE al microservicio Contenido para eliminar el subtítulo
-        response = requests.delete(f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}/subtitulos/{idSubtitulo}")
+        response = requests.delete(f"{BASE_URL_CONTENIDOS}/contenidos/{idSubtitulosContenido}/subtitulos/{idSubtitulo}")
         
         # Maneja errores de la respuesta
         response.raise_for_status()
@@ -2455,7 +2455,7 @@ async def actualizar_subtitulos(request: Request, success: str = None):
 # Enpoint post para actualizar los subtitulos de un contenido
 @app.post("/administrador/actualizar_subtitulo")
 async def actualizar_subtitulos(
-    idContenido: str = Form(...),  # Recibimos idContenido como Form
+    idSubtitulosContenido: str = Form(...),  # Recibimos idContenido como Form
     idSubtitulo: str = Form(...),  # Recibimos idSubtitulo como Form
 ):
     """
@@ -2463,9 +2463,11 @@ async def actualizar_subtitulos(
     Si el subtítulo ya está asignado al contenido, no lo vuelve a asignar.
     """
     try:
+        
+
         # Realiza la llamada GET al endpoint /contenidos/{idContenido}/subtitulos para obtener los subtítulos asignados
         response_check = requests.get(
-            f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}/subtitulos"
+            f"{BASE_URL_CONTENIDOS}/contenidos/{idSubtitulosContenido}/subtitulos"
         )
 
         # Si la respuesta es exitosa, obtenemos los subtítulos asignados
@@ -2485,7 +2487,7 @@ async def actualizar_subtitulos(
 
         # Si no está asignado, intenta añadirlo
         response = requests.post(
-            f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}/subtitulos/{idSubtitulo}"
+            f"{BASE_URL_CONTENIDOS}/contenidos/{idSubtitulosContenido}/subtitulos/{idSubtitulo}"
         )
 
         # Verifica si la llamada al backend fue exitosa
@@ -2502,15 +2504,15 @@ async def actualizar_subtitulos(
         raise HTTPException(status_code=500, detail=f"Error al asignar subtítulo: {e}")
     
 # Endpoint para obtener todos los doblajes de un contenido (para HTML)
-@app.get("/administrador/contenidos/{idContenido}/doblajes")
-def obtener_doblajes_contenido(idContenido: str):
+@app.get("/administrador/contenidos/{idDoblajeContenido}/doblajes")
+def obtener_doblajes_contenido(idDoblajeContenido: str):
     """
     Endpoint en el servicio de Interface que llama al microservicio Contenido
     para obtener los doblajes de un contenido específico.
     """
     try:
         # Realiza la llamada al microservicio Contenido para obtener los doblajes
-        response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}/doblajes")
+        response = requests.get(f"{BASE_URL_CONTENIDOS}/contenidos/{idDoblajeContenido}/doblajes")
         
         # Maneja errores de la respuesta
         response.raise_for_status()
@@ -2546,7 +2548,7 @@ def obtener_todos_los_doblajes():
 # Endpoint post para eliminar los doblajes
 @app.post("/administrador/eliminar_doblajes")
 async def eliminar_doblajes(
-    idContenido: str = Form(...),  # Recibimos idContenido como Form
+    idDoblajeContenido: str = Form(...),  # Recibimos idContenido como Form
     idDoblaje: str = Form(...)   # Recibimos idDoblaje como Form
 ):
     """
@@ -2554,7 +2556,7 @@ async def eliminar_doblajes(
     """
     try:
         # Realiza la llamada DELETE al microservicio Contenido para eliminar el doblaje
-        response = requests.delete(f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}/doblajes/{idDoblaje}")
+        response = requests.delete(f"{BASE_URL_CONTENIDOS}/contenidos/{idDoblajeContenido}/doblajes/{idDoblaje}")
         
         # Maneja errores de la respuesta
         response.raise_for_status()
@@ -2594,7 +2596,7 @@ async def actualizar_doblajes(request: Request, success: str = None):
 # Endpoint post para actualizar los doblajes de un contenido
 @app.post("/administrador/actualizar_doblaje")
 async def actualizar_doblajes(
-    idContenido: str = Form(...),  # Recibimos idContenido como Form
+    idDoblajeContenido: str = Form(...),  # Recibimos idContenido como Form
     idDoblaje: str = Form(...),  # Recibimos idDoblaje como Form
 ):
     """
@@ -2604,7 +2606,7 @@ async def actualizar_doblajes(
     try:
         # Realiza la llamada GET al endpoint /contenidos/{idContenido}/doblajes para obtener los doblajes asignados
         response_check = requests.get(
-            f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}/doblajes"
+            f"{BASE_URL_CONTENIDOS}/contenidos/{idDoblajeContenido}/doblajes"
         )
 
         # Si la respuesta es exitosa, obtenemos los doblajes asignados
@@ -2624,7 +2626,7 @@ async def actualizar_doblajes(
 
         # Si no está asignado, intenta añadirlo
         response = requests.post(
-            f"{BASE_URL_CONTENIDOS}/contenidos/{idContenido}/doblajes/{idDoblaje}"
+            f"{BASE_URL_CONTENIDOS}/contenidos/{idDoblajeContenido}/doblajes/{idDoblaje}"
         )
 
         # Verifica si la llamada al backend fue exitosa

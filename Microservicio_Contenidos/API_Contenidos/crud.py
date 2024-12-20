@@ -112,8 +112,8 @@ def delete_subtitulo(db:Session , subtitulo_id: str):
     return False
 
 # Función para añadir subtítulos a un contenido
-def update_subtitulo(db: Session, content_id: str, subtitulo_id: str):
-    content_query = db.query(models.Contenido).filter(models.Contenido.id == content_id).first()
+def update_subtitulo(db: Session, idSubtitulosContenido: str, subtitulo_id: str):
+    content_query = db.query(models.Contenido).filter(models.Contenido.idSubtitulosContenido == idSubtitulosContenido).first()
     subtitulo_query = db.query(models.Subtitulo).filter(models.Subtitulo.idSubtitulo == subtitulo_id).first()
     if content_query and subtitulo_query:
         db_SubtituloContenido = models.SubtituloContenido (
@@ -126,26 +126,26 @@ def update_subtitulo(db: Session, content_id: str, subtitulo_id: str):
 
     return db_SubtituloContenido
 
-def get_subtitulos(db: Session, idContenido: str):
+def get_subtitulos(db: Session, idSubtitulosContenido: str):
     # Realizamos la consulta uniendo las tablas SubtituloContenido y Subtitulo por idSubtitulo
     subtitulos = (
         db.query(models.Subtitulo)  # Seleccionamos la tabla Subtitulo desde models
         .join(models.SubtituloContenido, models.SubtituloContenido.idSubtitulo == models.Subtitulo.idSubtitulo)  # Unimos SubtituloContenido con Subtitulo
-        .filter(models.SubtituloContenido.idSubtitulosContenido == idContenido)  # Filtramos por idContenido
+        .filter(models.SubtituloContenido.idSubtitulosContenido == idSubtitulosContenido)  # Filtramos por idContenido
         .all()  # Ejecutamos la consulta y obtenemos todos los resultados
     )
     return subtitulos
 
-def delete_subtitulos(db: Session, content_id: str, subtitulo_id: str):
+def delete_subtitulos(db: Session, idSubtitulosContenido: str, subtitulo_id: str):
     # Obtener el contenido y el subtítulo con los ID proporcionados
-    content_query = db.query(models.Contenido).filter(models.Contenido.id == content_id).first()
+    content_query = db.query(models.Contenido).filter(models.Contenido.idSubtitulosContenido == idSubtitulosContenido).first()
     subtitulo_query = db.query(models.Subtitulo).filter(models.Subtitulo.idSubtitulo == subtitulo_id).first()
 
     # Verificar si tanto el contenido como el subtítulo existen
     if content_query and subtitulo_query:
         # Buscar la relación entre el contenido y el subtítulo en la tabla de unión
         db_SubtituloContenido = db.query(models.SubtituloContenido).filter(
-            models.SubtituloContenido.idSubtitulosContenido == content_query.idSubtitulosContenido,
+            models.SubtituloContenido.idSubtitulosContenido == idSubtitulosContenido,
             models.SubtituloContenido.idSubtitulo == subtitulo_query.idSubtitulo
         ).first()
 
@@ -180,16 +180,16 @@ def delete_doblaje(db: Session, doblaje_id: str):
     return False
 
 
-def delete_doblajes(db: Session, content_id: str, doblaje_id: str):
+def delete_doblajes(db: Session, idDoblajeContenido: str, doblaje_id: str):
     # Obtener el contenido y el doblaje con los ID proporcionados
-    content_query = db.query(models.Contenido).filter(models.Contenido.id == content_id).first()
+    content_query = db.query(models.Contenido).filter(models.Contenido.idDoblajeContenido == idDoblajeContenido).first()
     doblaje_query = db.query(models.Doblaje).filter(models.Doblaje.idDoblaje == doblaje_id).first()
 
     # Verificar si tanto el contenido como el doblaje existen
     if content_query and doblaje_query:
         # Buscar la relación entre el contenido y el doblaje en la tabla de unión
         db_DoblajeContenido = db.query(models.DoblajeContenido).filter(
-            models.DoblajeContenido.idDoblajeContenido == content_query.idDoblajeContenido,
+            models.DoblajeContenido.idDoblajeContenido == idDoblajeContenido,
             models.DoblajeContenido.idDoblaje == doblaje_query.idDoblaje
         ).first()
 
@@ -204,8 +204,8 @@ def delete_doblajes(db: Session, content_id: str, doblaje_id: str):
         return {"message": "Contenido o doblaje no encontrados"}
 
 # Función para añadir doblajes a un contenido
-def update_doblaje(db: Session, content_id: str, doblaje_id: str):
-    content_query = db.query(models.Contenido).filter(models.Contenido.id == content_id).first()
+def update_doblaje(db: Session, idDoblajeContenido: str, doblaje_id: str):
+    content_query = db.query(models.Contenido).filter(models.Contenido.idDoblajeContenido == idDoblajeContenido).first()
     doblaje_query = db.query(models.Doblaje).filter(models.Doblaje.idDoblaje == doblaje_id).first()
     if content_query and doblaje_query:
         db_DoblajeContenido = models.DoblajeContenido (
@@ -219,12 +219,12 @@ def update_doblaje(db: Session, content_id: str, doblaje_id: str):
     return db_DoblajeContenido
 
 #Funcion para obtener los doblajes
-def get_doblajes(db: Session, idContenido: str):
+def get_doblajes(db: Session, idDoblajeContenido: str):
     # Realizamos la consulta uniendo las tablas DoblajesContenido y Doblajes por idDoblaje
     doblajes = (
         db.query(models.Doblaje)  # Seleccionamos la tabla Doblaje desde models
         .join(models.DoblajeContenido, models.DoblajeContenido.idDoblaje == models.Doblaje.idDoblaje)  # Unimos SubtituloContenido con Subtitulo
-        .filter(models.DoblajeContenido.idDoblajeContenido == idContenido)  # Filtramos por idContenido
+        .filter(models.DoblajeContenido.idDoblajeContenido == idDoblajeContenido)  # Filtramos por idContenido
         .all()  # Ejecutamos la consulta y obtenemos todos los resultados
     )
     return doblajes  

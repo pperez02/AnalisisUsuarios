@@ -19,10 +19,10 @@
 
                 selectorContenidos.innerHTML = '<option value="">Seleccione un contenido</option>'; // Limpia el selector y añade una opción inicial
 
-                // Agrega cada contenido al selector
+                // Agrega cada contenido al selector con el idDoblajeContenido
                 contenidos.forEach((contenido) => {
                     const option = document.createElement('option');
-                    option.value = contenido.id; // Asigna el ID del contenido
+                    option.value = contenido.idDoblajeContenido; // Asigna el ID del contenido
                     option.textContent = contenido.titulo; // Muestra el título del contenido
                     selectorContenidos.appendChild(option);
                 });
@@ -33,10 +33,10 @@
         }
 
         // Función para cargar doblajes asignados (doblajesContenido) desde el servicio de interface
-        async function cargarDoblajesAsignados(idContenido) {
+        async function cargarDoblajesAsignados(idDoblajeContenido) {
             try {
                 // Llama al endpoint de interface para obtener los doblajes asignados
-                const response = await fetch(`/administrador/contenidos/${idContenido}/doblajes`);
+                const response = await fetch(`/administrador/contenidos/${idDoblajeContenido}/doblajes`);
                 if (!response.ok) {
                     throw new Error('Error al obtener doblajes asignados');
                 }
@@ -86,9 +86,9 @@
 
         // Función para manejar el cambio de contenido seleccionado
         async function manejarCambioContenido() {
-            const idContenido = document.getElementById('idContenido').value;
-            if (idContenido) {
-                await cargarDoblajesAsignados(idContenido); // Carga los doblajes asignados al contenido
+            const idDoblajeContenido = document.getElementById('idContenido').value;
+            if (idDoblajeContenido) {
+                await cargarDoblajesAsignados(idDoblajeContenido); // Carga los doblajes asignados al contenido
                 await cargarDoblajesDisponibles(); // Carga todos los doblajes disponibles
             } else {
                 // Limpia las listas si no hay contenido seleccionado
@@ -129,7 +129,7 @@
         <!-- Formulario para añadir doblajes -->
         <form action="/administrador/actualizar_doblaje" method="post" aria-labelledby="Añadir Doblaje">
             <!-- Este campo oculto pasará el id del contenido al backend -->
-            <input type="hidden" name="idContenido" value="" id="formIdContenido"> <!-- ID del contenido seleccionado -->
+            <input type="hidden" name="idDoblajeContenido" value="" id="formIdDoblajeContenido"> <!-- ID del contenido seleccionado -->
             
             <!-- Etiqueta para los doblajes disponibles -->
             <label for="idDoblaje">Doblajes disponibles:</label>
@@ -147,7 +147,7 @@
         <!-- Formulario para eliminar doblajes -->
         <form action="/administrador/eliminar_doblajes" method="post" aria-labelledby="Eliminar Doblaje">
             <!-- Este campo oculto pasará el id del contenido al backend -->
-            <input type="hidden" name="idContenido" value="" id="formIdContenidoEliminar"> <!-- ID del contenido seleccionado -->
+            <input type="hidden" name="idDoblajeContenido" value="" id="formIdDoblajeContenidoEliminar"> <!-- ID del contenido seleccionado -->
         
             <label for="listaAsignados">Doblajes asignados:</label>
             <select id="listaAsignados" name="idDoblaje" required aria-label="Seleccione un doblaje asignado para eliminar" aria-required="true">
@@ -161,9 +161,9 @@
     <script>
         // Actualiza los campos ocultos del formulario con el contenido seleccionado
         document.getElementById('idContenido').addEventListener('change', (event) => {
-            const idContenidoSeleccionado = event.target.value;
-            document.getElementById('formIdContenido').value = idContenidoSeleccionado;
-            document.getElementById('formIdContenidoEliminar').value = idContenidoSeleccionado;
+            const idDoblajeContenido = event.target.value;
+            document.getElementById('formIdDoblajeContenido').value = idDoblajeContenido;
+            document.getElementById('formIdDoblajeContenidoEliminar').value = idDoblajeContenido;
         });
     </script>
 

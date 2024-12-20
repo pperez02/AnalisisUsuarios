@@ -37,7 +37,10 @@
                         </div>
                     <!-- Condicional: Si es una Serie -->
                     {% elif detalles_contenido["tipoContenido"] == "Serie" %}
-                        <span><strong>Género: </strong>{{ detalles_contenido["idGenero"] }}</span>
+                    <div class="movie-info">
+                        <span><strong>Género: </strong>{{ detalles_contenido["idGenero"] }}</span> |
+                        <span><strong>Número de temporadas: </strong>{{ temporadas|length }}</span>
+                    </div>
                     {% endif %}
 
                     <div class="movie-actions">
