@@ -20,8 +20,8 @@ class User(Base):
     idioma = Column(String, nullable=True)  # Nuevo atributo para el idioma
     # Claves externas
     idPlanSuscripcion = Column(String, ForeignKey("PlanSuscripcion.id"), nullable=True,index=True)  # Ahora no es unique, ya que puede haber varios usuarios con el mismo plan
-    idListaPersonalizada = Column(String, unique=True, index=True, nullable=True)
-    idHistorial = Column(String, unique=True, index=True, nullable=True)
+    idListaPersonalizada = Column(String, default=lambda: str(uuid.uuid4()),unique=True, index=True)
+    idHistorial = Column(String, default=lambda: str(uuid.uuid4()), unique=True, index=True)
 
 
     def __repr__(self):

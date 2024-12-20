@@ -375,7 +375,6 @@ async def pantalla_principal(request: Request, user_id: str = None, mensaje_cred
     datos = cargar_datos(user_id)  # Centralizamos la lógica aquí
     mensaje = datos.get("mensaje", "Error al cargar los datos")
 
-    print(datos["tendencias"])
     # Renderizamos la pantalla principal
     return templates.TemplateResponse(
         "pantalla_principal.html",
@@ -586,7 +585,6 @@ def obtener_me_gusta(userId: str):
 
         # Obtener los datos del usuario
         contenidos = response.json()
-        print(contenidos)
 
         # Devolver los datos del usuario
         return contenidos
@@ -1737,7 +1735,6 @@ def borrar_peliculas(request: Request):
         )
 
     mensaje = request.query_params.get("mensaje", None)
-    print(mensaje)
     # Renderizar la plantilla con los datos de las películas
     return templates.TemplateResponse(
         "admin_borrar_peliculas.html",
@@ -1778,7 +1775,6 @@ def borrar_series(request: Request):
         )
 
     mensaje = request.query_params.get("mensaje", None)
-    print(mensaje)
     # Renderizar la plantilla con los datos de las series
     return templates.TemplateResponse(
         "admin_borrar_series.html",
@@ -1819,7 +1815,6 @@ def borrar_temporadas(request: Request):
         )
 
     mensaje = request.query_params.get("mensaje", None)
-    print(mensaje)
     # Renderizar la plantilla con los datos de las series
     return templates.TemplateResponse(
         "admin_borrar_temporadas.html",
@@ -1860,7 +1855,6 @@ def borrar_episodios(request: Request):
         )
 
     mensaje = request.query_params.get("mensaje", None)
-    print(mensaje)
     # Renderizar la plantilla con los datos de las series
     return templates.TemplateResponse(
         "admin_borrar_episodio.html",
@@ -1901,7 +1895,6 @@ def borrar_generos(request: Request):
         )
 
     mensaje = request.query_params.get("mensaje", None)
-    print(mensaje)
     # Renderizar la plantilla con los datos de los géneros
     return templates.TemplateResponse(
         "admin_borrar_generos.html",
@@ -2083,7 +2076,6 @@ def borrar_actores(request: Request):
         )
 
     mensaje = request.query_params.get("mensaje", None)
-    print(mensaje)
     # Renderizar la plantilla con los datos de actores
     return templates.TemplateResponse(
         "admin_borrar_actores.html",
@@ -2262,7 +2254,6 @@ def esta_en_lista(user_id: str, idContenido: str):
             
             # Buscar el contenido por su ID en la lista personalizada
             for contenido in lista_personalizada:
-                print("Contenido actual:", contenido)  # Depuración: Ver qué contiene `contenido`
                 if contenido["id"] == idContenido:  # Si el ID coincide, devolver True
                     return True
             
@@ -2318,7 +2309,6 @@ async def valorarContenido(userId: str, contentId: str, request: Request):
     try:
         # Extraemos el cuerpo de la solicitud
         body = await request.json()
-        print("JSON recibido:", body)  # Log para depurar
 
         # Validamos que el JSON tenga la clave "valoracion"
         if "valoracion" not in body:
