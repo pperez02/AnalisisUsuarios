@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crear Género</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/header_footer.css">
+</head>
+
+<header>
+    <div class="navbar">
+        <div class="logo">
+            <a href="#" alt="Página principal de Streamflix">Streamflix: Crear Género</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/admin_menu" class="return-button" aria-label="Volver al menú principal">Volver al menú</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<body>
+    {% if error_message %}
+        <p style="color:red;" role="alert" aria-live="assertive">{{ error_message }}</p>
+    {% endif %}
+    <div class="container">
+        <form action="/administrador/genero/crear" method="post">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required aria-label="Nombre del género"><br>
+    
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion" required aria-label="Descripción del género"></textarea><br>
+    
+            <button type="submit">Crear género</button>
+        </form>
+    </div>
+</body>
+</html>

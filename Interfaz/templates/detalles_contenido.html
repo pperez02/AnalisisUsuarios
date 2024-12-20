@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Contenido</title>
+    <link rel="stylesheet" href="/static/detalles_contenido.css">
+</head>
+<body>
+    <!-- Encabezado -->
+    <div class="header">
+        <h1>
+            <a href="/pantalla_principal/?user_id={{ user_id }}" style="text-decoration: none; color: inherit;" aria-label="Ir al Catálogo de Películas">
+                Catálogo de Películas
+            </a>
+        </h1>
+        <a href="/usuarios/{{ user_id }}/perfil" class="perfil-button" aria-label="Ir al perfil del usuario">Perfil</a>
+    </div>
+
+    <!-- Contenido -->
+    <div class="container">
+        <!-- Tarjeta de una película -->
+        <div class="movie-card">
+            <div class="movie-poster" 
+                style="background-image: url('https://unexes-my.sharepoint.com/personal/jmasapas_alumnos_unex_es/Documents/ASEE+GPS/Content-Posters/{{ detalles_contenido.id }}.jpg');"
+                aria-label="Póster de la película"></div>
+            <div class="movie-details">
+                <div>
+                    <div class="movie-title">{{ detalles_contenido["titulo"] }}</div>
+
+                    <!-- Condicional: Si es una Película -->
+                    {% if detalles_contenido["tipoContenido"] == "Pelicula" %}
+                        <div class="movie-info">
+                            <span><strong>Género: </strong>{{ detalles_contenido["idGenero"] }}</span> | 
+                            <span><strong>Duración: </strong> {{ detalles_contenido["duracion"] }} minutos</span> | 
+                            <span><strong>Director: </strong>{{ detalles_contenido["idDirector"] }}</span>
+                        </div>
+                    <!-- Condicional: Si es una Serie -->
+                    {% elif detalles_contenido["tipoContenido"] == "Serie" %}
+                    <div class="movie-info">
+                        <span><strong>Género: </strong>{{ detalles_contenido["idGenero"] }}</span> |
+                        <span><strong>Número de temporadas: </strong>{{ temporadas|length }}</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="movie-actions">
+                        <!-- Botón Me gusta -->
+                        <button id="like-button" class="action-button" 
+                                onclick="toggleLike('{{ detalles_contenido.id }}')" aria-label="Me gusta esta película">
+                            Me gusta
+                        </button>
+                    
+                        <!-- Botón Lista Personalizada -->
+                        <button id="custom-list-button" class="action-button" 
+                                onclick="toggleCustomList('{{ detalles_contenido.id }}')" aria-label="Añadir esta película a mi lista personalizada">
+                            Añadir a mi lista
+                        </button>
+                    
+                        <!-- Sección de valoración -->
+                        <div class="rating-section">
+                            <label for="rating-input">Valorar:</label>
+                            <select id="rating-input" class="rating-input">
+                                <option value="">Selecciona</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                            <button class="action-button" onclick="submitRating('{{ detalles_contenido.id }}')" aria-label="Enviar valoración">
+                                Enviar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="movie-description">
+                        {{ detalles_contenido["descripcion"] }}
+                    </div>
+                </div>
+                <div>
+                    <span><strong>Fecha de lanzamiento:</strong> {{ detalles_contenido["fechaLanzamiento"] }}</span><br>
+                    <span><strong>Valoración promedio:</strong> <span class="rating">{{ detalles_contenido["valoracionPromedio"] }}</span></span>
+                </div>
+
+                <!-- Sección de Reparto -->
+                <div class="reparto">
+                    <strong>Reparto:</strong>
+                    <ul>
+                        {% for actor in reparto %}
+                            <li class="actor-name">{{ actor.nombre }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Sección de Doblajes -->
+                <div class="doblajes">
+                    <strong>Doblajes Disponibles:</strong>
+                    <ul>
+                        {% for doblaje in doblajes %}
+                            <li class="doblaje-item">{{ doblaje.idioma }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Sección de Subtítulos -->
+                <div class="subtitulos">
+                    <strong>Subtítulos Disponibles:</strong>
+                    <ul>
+                        {% for subtitulo in subtitulos %}
+                            <li class="subtitulo-item">{{ subtitulo.idioma }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detalles específicos de la serie -->
+        {% if detalles_contenido["tipoContenido"] == "Serie" %}
+            <div class="serie-info">
+                <h3>Temporadas</h3>
+                <ul>
+                    {% for temporada in temporadas %}
+                        <li>
+                            <strong>Temporada {{ temporada.numeroTemporada }}</strong>
+                            <ul class="episodios-lista">
+                                <!-- Mostrar los episodios de esta temporada -->
+                                {% for episodio in episodios if episodio.idTemporada == temporada.idTemporada %}
+                                    <li class="episodio-item">
+                                        <strong>E{{ episodio.numeroEpisodio }}</strong>:
+                                        ({{ episodio.duracion }} min)
+                                        Director: {{ episodio.director }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Pie de página -->
+    <footer>
+        <p>Derechos reservados &copy; 2024</p>
+    </footer>
+
+    <script>
+        const userId = "{{ user_id }}"; // ID del usuario actual
+        const contentId = "{{ detalles_contenido['id'] }}"; // ID del contenido actual
+    
+        if (!userId) {
+            console.error("User ID no está definido. Por favor, verifica que se haya pasado correctamente.");
+        }
+    
+        /**
+         * Inicializa el estado de los botones "Añadir a mi lista" y "Me gusta".
+         */
+        async function initializeButtons(contentId) {
+            await initializeCustomListButton(contentId);
+            await initializeLikeButton(contentId);
+        }
+    
+        /**
+         * Verifica y configura el estado del botón de lista personalizada.
+         */
+        async function initializeCustomListButton(contentId) {
+            const customListButton = document.getElementById("custom-list-button");
+    
+            try {
+                // Llamada al endpoint para verificar si el contenido está en la lista personalizada
+                const response = await fetch(`/contenidos/${userId}/esta_en_lista/${contentId}`, { method: "GET" });
+                const estaEnLista = await response.json(); // true o false
+    
+                // Configurar el estado inicial del botón según la respuesta
+                if (estaEnLista) {
+                    customListButton.classList.add("in-list");
+                    customListButton.textContent = "Quitar de mi lista";
+                    customListButton.onclick = () => toggleCustomList(contentId, true); // Configura para eliminar
+                } else {
+                    customListButton.classList.remove("in-list");
+                    customListButton.textContent = "Añadir a mi lista";
+                    customListButton.onclick = () => toggleCustomList(contentId, false); // Configura para añadir
+                }
+            } catch (error) {
+                console.error("Error al inicializar el botón de lista personalizada:", error);
+            }
+        }
+    
+        /**
+         * Alterna entre añadir o quitar el contenido de la lista personalizada.
+         */
+        async function toggleCustomList(contentId, isInList) {
+            const customListButton = document.getElementById("custom-list-button");
+    
+            try {
+                if (isInList) {
+                    // Eliminar de lista personalizada
+                    await fetch(`/contenidos/${userId}/eliminar_de_LP/${contentId}`, { method: "DELETE" });
+                    customListButton.classList.remove("in-list");
+                    customListButton.textContent = "Añadir a mi lista";
+                    customListButton.onclick = () => toggleCustomList(contentId, false); // Cambia el estado a añadir
+                } else {
+                    // Añadir a lista personalizada
+                    await fetch(`/contenidos/${userId}/aniadir_a_LP/${contentId}`, { method: "POST" });
+                    customListButton.classList.add("in-list");
+                    customListButton.textContent = "Quitar de mi lista";
+                    customListButton.onclick = () => toggleCustomList(contentId, true); // Cambia el estado a eliminar
+                }
+            } catch (error) {
+                console.error("Error al gestionar la lista personalizada:", error);
+            }
+        }
+    
+        /**
+         * Verifica y configura el estado del botón "Me gusta".
+         */
+        async function initializeLikeButton(contentId) {
+            const likeButton = document.getElementById("like-button");
+    
+            try {
+                // Llamada al endpoint para verificar si el contenido está en "Me gusta"
+                const response = await fetch(`/contenidos/${userId}/esta_en_mg/${contentId}`, { method: "GET" });
+                const estaEnMg = await response.json(); // true o false
+    
+                // Configurar el estado inicial del botón según la respuesta
+                if (estaEnMg) {
+                    likeButton.classList.add("liked");
+                    likeButton.textContent = "Quitar Me gusta";
+                    likeButton.onclick = () => toggleLike(contentId, true); // Configura para eliminar "Me gusta"
+                } else {
+                    likeButton.classList.remove("liked");
+                    likeButton.textContent = "Me gusta";
+                    likeButton.onclick = () => toggleLike(contentId, false); // Configura para añadir "Me gusta"
+                }
+            } catch (error) {
+                console.error("Error al inicializar el botón Me gusta:", error);
+            }
+        }
+    
+        /**
+         * Alterna entre añadir o quitar el contenido de "Me gusta".
+         */
+        async function toggleLike(contentId, isLiked) {
+            const likeButton = document.getElementById("like-button");
+    
+            try {
+                if (isLiked) {
+                    // Eliminar de "Me gusta"
+                    await fetch(`/contenidos/${userId}/eliminar-me-gusta/${contentId}`, { method: "DELETE" });
+                    likeButton.classList.remove("liked");
+                    likeButton.textContent = "Me gusta";
+                    likeButton.onclick = () => toggleLike(contentId, false); // Cambia el estado a añadir "Me gusta"
+                } else {
+                    // Añadir a "Me gusta"
+                    await fetch(`/contenidos/${userId}/dar-me-gusta/${contentId}`, { method: "POST" });
+                    likeButton.classList.add("liked");
+                    likeButton.textContent = "Quitar Me gusta";
+                    likeButton.onclick = () => toggleLike(contentId, true); // Cambia el estado a eliminar "Me gusta"
+                }
+            } catch (error) {
+                console.error("Error al gestionar Me gusta:", error);
+            }
+        }
+
+        /**
+         * Envía la valoración del contenido al servidor.
+         */
+         async function submitRating(contentId) {
+            const ratingInput = document.getElementById("rating-input");
+            const ratingValue = ratingInput.value;
+
+            if (!ratingValue) {
+                alert("Por favor, selecciona una valoración antes de enviarla.");
+                return;
+            }
+
+            console.log("Valoración enviada:", ratingValue); // Log para depurar
+
+            try {
+                const response = await fetch(`/usuarios/${userId}/valorarContenido/${contentId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        valoracion: parseInt(ratingValue, 10),
+                    }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    alert("¡Gracias por tu valoración!");
+                    console.log("Respuesta del servidor:", data);
+                } else {
+                    const error = await response.json();
+                    console.error("Error al enviar la valoración:", error);
+                    alert("Hubo un problema al enviar tu valoración. Inténtalo de nuevo.");
+                }
+            } catch (error) {
+                console.error("Error en la solicitud de valoración:", error);
+                alert("No se pudo enviar tu valoración. Verifica tu conexión e inténtalo de nuevo.");
+            }
+        }
+    
+        // Llamada inicial al cargar la página
+        document.addEventListener("DOMContentLoaded", () => {
+            initializeButtons(contentId);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Crear Película</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/header_footer.css">
+</head>
+
+<header>
+    <div class="navbar">
+        <div class="logo">
+            <a href="#" alt="Página principal de Streamflix">Streamflix: Crear Película</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/admin_menu" class="return-button" aria-label="Volver al menú principal">Volver al menú</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<body>
+    {% if error_message %}
+    <p style="color:red;" role="alert" aria-live="assertive">{{ error_message }}</p>
+    {% endif %}
+    <div class="container">
+        <form action="/administrador/pelicula/crear" method="post">
+            <label for="titulo" aria-label="Introduce el título de la película">Título:</label>
+            <input type="text" id="titulo" name="titulo" required aria-required="true"><br>
+
+            <label for="descripcion" aria-label="Escribe la descripción de la película">Descripción:</label>
+            <input id="descripcion" name="descripcion" required aria-required="true"><br>
+
+            <label for="fecha_lanzamiento" aria-label="Indica la fecha de lanzamiento de la película">Fecha de lanzamiento:</label>
+            <input type="text" id="fecha_lanzamiento" name="fecha_lanzamiento" required aria-required="true"><br>
+
+            <label for="id_genero" aria-label="Selecciona el género de la película">Género:</label>
+            <select id="id_genero" name="id_genero" required aria-label="Género de la película" aria-required="true">
+                {% for genero in generos %}
+                <option value="{{ genero.id }}">{{ genero.nombre }}</option>
+                {% endfor %}
+            </select><br>
+
+            <label for="duracion" aria-label="Especifica la duración en minutos">Duración (minutos):</label>
+            <input type="number" id="duracion" name="duracion" required aria-required="true"><br>
+
+            <label for="directores" aria-label="Selecciona el director de la película">Director:</label>
+            <select id="directores" name="idDirector" required aria-label="Seleccione un director" aria-required="true">
+                <option value="">Seleccione un director</option>
+                {% for director in directores %}
+                <option value="{{ director.id }}">{{ director.nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="actores" aria-label="Selecciona los actores para la película">Actores:</label><br>
+            <div id="actores-container">
+                {% for actor in actores %}
+                <input type="checkbox" id="actor_{{ actor.id }}" name="actores" value="{{ actor.id }}" aria-labelledby="actor_{{ actor.id }}">
+                <label for="actor_{{ actor.id }}" aria-label="Selecciona el actor {{ actor.nombre }}">{{ actor.nombre }}</label><br>
+                {% endfor %}
+            </div>
+
+            <button type="submit" aria-label="Crear nueva película">Crear Película</button>
+        </form>
+    </div>
+</body>
+
+</html>

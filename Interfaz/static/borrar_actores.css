@@ -1,0 +1,153 @@
+/* Estilos generales para la página */
+body {
+    margin: 1rem;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    flex-direction: column; /* Los elementos estarán apilados en una columna */
+    align-items: center; /* Centra los elementos horizontalmente */
+    justify-content: flex-start; /* Alinea los elementos al principio */
+    height: 100vh; /* Altura completa de la ventana */
+}
+
+/* Estilo del encabezado */
+header {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    width: 100%;
+}
+
+/* Estilo para el título */
+h1 {
+    font-size: 2rem; /* Usar rem para ser más flexible */
+    color: #fff;
+    text-align: center;
+    margin-top: 5rem;
+    margin-bottom: 2rem;
+}
+
+/* Estilo del mensaje de éxito o error */
+.message {
+    background-color: #ffeb3b;
+    padding: 0.5rem;
+    margin: 1rem auto;
+    width: 90%;
+    max-width: 600px; /* Añadir un máximo para que no ocupe todo el ancho */
+    text-align: center;
+    border-radius: 5px;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Tabla de actores */
+table {
+    width: 90%;
+    max-width: 1000px; /* Asegura que la tabla no crezca demasiado */
+    margin: 1rem auto; /* Centra la tabla */
+    border-collapse: collapse;
+    background-color: #1a1a1a;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+}
+
+table th, table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: #333;
+    color: white;
+}
+
+table tr:hover {
+    background-color: #444;
+}
+
+/* Estilo para el botón de eliminar */
+button[type="submit"] {
+    background-color: #f44336; /* Rojo */
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 1rem; /* Usar unidades relativas */
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+    background-color: #d32f2f; /* Rojo más oscuro al pasar el ratón */
+}
+
+/* Estilo para el mensaje si no hay actores */
+p {
+    text-align: center;
+    font-size: 1.125rem; /* Mejor tamaño de fuente en rem */
+    color: #555;
+    font-weight: bold;
+}
+
+/* Espaciado y estilo general */
+.container {
+    margin: 1rem auto;
+    padding: 1rem;
+    background-color: #222;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Diseño responsivo para pantallas pequeñas (móviles) */
+@media (max-width: 768px) {
+    body {
+        margin: 1rem; /* Espaciado pequeño para móviles */
+    }
+
+    h1 {
+        font-size: 1.75rem; /* Tamaño de fuente más pequeño para pantallas pequeñas */
+    }
+
+    table {
+        width: 100%; /* Asegura que la tabla ocupe todo el ancho */
+    }
+
+    .message {
+        width: 100%; /* Mensaje de éxito no debe exceder el ancho de la pantalla */
+        font-size: 1rem;
+    }
+
+    button[type="submit"] {
+        font-size: 0.875rem; /* Reducir el tamaño del texto en botones */
+        padding: 0.5rem; /* Hacer los botones más pequeños en móviles */
+    }
+
+    p {
+        font-size: 1rem; /* Reducción de tamaño de texto */
+    }
+}
+
+/* Diseño responsivo para pantallas muy grandes (escritorios) */
+@media (min-width: 1200px) {
+    body {
+        margin: 2rem;
+    }
+
+    table {
+        width: 80%; /* No necesita ocupar todo el ancho en pantallas grandes */
+    }
+
+    .message {
+        width: 60%;
+    }
+}
+
+/* Asegurar que las tablas, imágenes, y otros elementos no se desborden en pantallas pequeñas */
+table, img {
+    max-width: 100%;
+    height: auto;
+}

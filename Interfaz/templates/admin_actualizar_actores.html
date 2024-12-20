@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualizar Actores</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/menu_admin.css">
+    <link rel="stylesheet" href="/static/borrar_actores.css">
+</head>
+
+<header>
+    <div class="navbar">
+        <div class="logo">
+            <a href="#" aria-label="Ir al menú de administración de Streamflix">Streamflix: Menu Administrador</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/admin_menu" class="return-button" aria-label="Volver al menú principal">Volver al menú</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<body>
+    {% if message %}
+    <div class="message" role="alert">
+        ¡Actor actualizado con éxito!
+    </div>
+    {% endif %}
+
+    <h1>Actualizar Actores</h1>
+    <form action="/actor/actualizar" method="POST">
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Nacionalidad</th>
+                    <th scope="col">Fecha de Nacimiento</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for actor in actores %}
+                <tr>
+                    <td>{{ actor.id }}</td>
+                    <td><input type="text" name="nombre_{{ actor.id }}" value="{{ actor.nombre }}" required aria-label="Nombre del actor {{ actor.nombre }}"></td>
+                    <td><input type="text" name="nacionalidad_{{ actor.id }}" value="{{ actor.nacionalidad }}" required aria-label="Nacionalidad del actor {{ actor.nacionalidad }}"></td>
+                    <td><input type="text" name="fechaNacimiento_{{ actor.id }}" value="{{ actor.fechaNacimiento }}" required aria-label="Fecha de nacimiento del actor {{ actor.nombre }}"></td>
+                    <td>
+                        <button type="submit" name="id_actor" value="{{ actor.id }}" aria-label="Actualizar los datos del actor {{ actor.nombre }}">Actualizar</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+</body>
+
+</html>

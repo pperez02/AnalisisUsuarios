@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página principal</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/header_footer.css">
+</head>
+
+<header>
+    <div class="navbar">
+        <div class="logo">
+            <a href="/" aria-label="Ir a la página principal de Streamflix">Streamflix</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/admin_menu" class="admin-menu" aria-label="Ir al menú del administrador">Soy administrador</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<body>
+    <main>
+
+        {% if mensaje_credenciales %}
+                    <div class="mensaje_credenciales" role="alert" aria-live="assertive">
+                        <div class="message-box">
+                            <p class="message-text">
+                                {{ mensaje_credenciales }}
+                            </p>
+                        </div>
+                    </div>
+        {% endif %}
+        
+        <div class="container">
+
+            <h1 id="login-heading">Inicio de Sesión</h1>
+            
+            <!-- Formulario de login -->
+            <form action="/login" method="post" aria-labelledby="login-heading">
+                <label for="email" aria-label="Correo electrónico">Correo electrónico:</label>
+                <input type="email" id="email" name="email" required aria-describedby="email-description">
+                
+                <span id="email-description" class="sr-only">Introduce tu correo electrónico para iniciar sesión.</span>
+
+                <label for="password" aria-label="Contraseña">Contraseña:</label>
+                <input type="password" id="password" name="password" required aria-describedby="password-description">
+                
+                <span id="password-description" class="sr-only">Introduce tu contraseña para iniciar sesión.</span>
+
+                <button type="submit" aria-label="Iniciar sesión">Iniciar sesión</button>
+            </form>
+            
+            <br>
+            
+            <!-- Botón para redirigir al formulario de registro -->
+            <button onclick="window.location.href='/registro_usuario'" aria-label="Ir al formulario de registro de usuario">Registrar</button>
+        </div>
+    </main>
+    {% include "footer.html" %}
+</body>
+
+</html>

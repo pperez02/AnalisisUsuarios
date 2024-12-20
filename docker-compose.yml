@@ -1,0 +1,54 @@
+version: "3.9"
+
+services:
+  contenidos:
+    build:
+      context: ./Microservicio_Contenidos
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_PATH=/app/contenidos.db  # Ruta de la base de datos dentro del contenedor
+    volumes:
+      - ./Microservicio_Contenidos/contenidos.db:/app/contenidos.db  # Mapea la base de datos al contenedor
+    networks:
+      - streamflix_network
+
+  usuarios:
+    build:
+      context: ./Microservicio_Usuarios
+    ports:
+      - "8001:8001"
+    environment:
+      - DB_PATH=/app/usuarios.db  # Ruta de la base de datos dentro del contenedor
+    volumes:
+      - ./Microservicio_Usuarios/usuarios.db:/app/usuarios.db  # Mapea la base de datos al contenedor
+    networks:
+      - streamflix_network
+
+  interacciones:
+    build:
+      context: ./Microservicio_Interacciones
+    ports:
+      - "8002:8002"
+    environment:
+      - DB_PATH=/app/interacciones.db  # Ruta de la base de datos dentro del contenedor
+    volumes:
+      - ./Microservicio_Interacciones/interacciones.db:/app/interacciones.db  # Mapea la base de datos al contenedor
+    networks:
+      - streamflix_network
+
+  interfaz:
+    build:
+      context: ./Interfaz
+    ports:
+      - "8003:8003"
+    depends_on:
+      - contenidos
+      - usuarios
+      - interacciones
+    networks:
+      - streamflix_network
+
+networks:
+  streamflix_network:
+    driver: bridge

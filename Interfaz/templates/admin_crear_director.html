@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Director</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/header_footer.css">
+</head>
+
+<header>
+    <div class="navbar">
+        <div class="logo">
+            <a href="#" aria-label="Volver al inicio">Streamflix: Crear Director</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/admin_menu" class="return-button" aria-label="Volver al menú principal">Volver al menú</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<body>
+    <h1>Crear Director</h1>
+    <div class="container">
+        <form action="/administrador/director/crear" method="post">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required aria-describedby="nombreHelp">
+
+            <label for="nacionalidad">Nacionalidad:</label>
+            <input type="text" id="nacionalidad" name="nacionalidad" required aria-describedby="nacionalidadHelp">
+
+            <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+            <input type="date" id="fechaNacimiento" name="fechaNacimiento" required aria-describedby="fechaNacimientoHelp">
+
+            <button type="submit">Crear Director</button>
+        </form>
+
+        {% if error_message %}
+        <p style="color:red;" role="alert" aria-live="assertive">{{ error_message }}</p>
+        {% endif %}
+    </div>
+</body>
+
+</html>

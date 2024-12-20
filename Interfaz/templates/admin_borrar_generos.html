@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrar Géneros</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/menu_admin.css">
+    <link rel="stylesheet" href="/static/borrar_actores.css">
+</head>
+
+<header>
+    <div class="navbar">
+        <div class="logo">
+            <a href="#">Streamflix: Borrar Géneros</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/admin_menu" class="return-button" aria-label="Volver al menú principal">Volver al inicio</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<body>
+    <h1>Borrar Géneros</h1>
+
+    <!-- Mostrar mensaje de éxito o error -->
+    {% if mensaje %}
+        <div class="message" role="alert" aria-live="assertive">
+            <p>{{ mensaje }}</p>
+        </div>
+    {% endif %}
+
+    <!-- Mostrar la tabla solo si hay géneros -->
+    {% if generos and generos|length > 0 %}
+        <table aria-labelledby="tablaGeneros">
+            <caption id="tablaGeneros">Lista de Géneros</caption>
+            <thead>
+                <tr>
+                    <th>Nombre Género</th>
+                    <th>Descripción</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for genero in generos %}
+                    <tr>
+                        <td>{{ genero.nombre }}</td>
+                        <td>{{ genero.descripcion }}</td>
+                        <td>
+                            <!-- Formulario para eliminar el género -->
+                            <form action="/generos/{{ genero.id }}/borrar" method="post" style="display:inline;" aria-label="Eliminar el género {{ genero.nombre }}">
+                                <button type="submit" aria-label="Eliminar género {{ genero.nombre }}">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <!-- Si no hay géneros, mostrar un mensaje -->
+        <p>No existen géneros.</p>
+    {% endif %}
+</body>
+
+</html>

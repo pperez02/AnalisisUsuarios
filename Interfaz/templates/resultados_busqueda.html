@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de Búsqueda</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/resultados.css">
+    <link rel="stylesheet" href="/static/header_footer.css">
+</head>
+<body>
+    {% include "header.html" %}
+
+    <div class="container">
+        <h1>Resultados de búsqueda</h1>
+        <p aria-live="polite">Búsqueda: <strong>{{ query }}</strong> - Tipo: <strong>{{ tipo }}</strong></p>
+
+        {% if mensaje %}
+            <p class="no-results-message" aria-live="assertive">{{ mensaje }}</p>  <!-- Mostrar mensaje si no hay resultados -->
+        {% else %}
+            <!-- Mostrar resultados de contenidos si los hay -->
+            {% if contenidos %}
+                <section class="results" aria-labelledby="contenido-results">
+                    <h2 id="contenido-results">Contenidos relacionados</h2>
+                    {% for item in contenidos %}
+                        <div class="result-item" aria-labelledby="result-{{ item.id }}">
+                            <h3 id="result-{{ item.id }}">{{ item.titulo }}</h3>
+                            <p><strong>Género:</strong> {{ item.genero }}</p>
+                            <a href="/detalles_contenido/{{ item.id }}?user_id={{ user_id }}" class="details-button" aria-label="Ver detalles de {{ item.titulo }}">Detalles</a>
+                        </div>
+                    {% endfor %}
+                </section>
+            {% endif %}
+
+            <!-- Mostrar resultados de actores si los hay -->
+            {% if actores %}
+                <section class="results" aria-labelledby="actor-results">
+                    <h2 id="actor-results">Actores relacionados</h2>
+                    {% for actor in actores %}
+                        <div class="result-item" aria-labelledby="actor-{{ actor.id }}">
+                            <h3 id="actor-{{ actor.id }}">{{ actor.nombre }}</h3> <!-- Nombre del actor -->
+
+                            {% if contenidos_por_actor[actor.id] %}
+                                <p><strong>Contenido relacionado:</strong></p>
+                                <ul>
+                                    {% for contenido in contenidos_por_actor[actor.id] %}
+                                        <li>
+                                            <a href="/detalles_contenido/{{ contenido.id }}?user_id={{ user_id }}" class="details-button" aria-label="Ver detalles de {{ contenido.titulo }}">
+                                                {{ contenido.titulo }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p>No se encontraron contenidos relacionados con este actor.</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </section>
+            {% endif %}
+
+        {% endif %}
+    </div>
+
+    {% include "footer.html" %}
+</body>
+</html>

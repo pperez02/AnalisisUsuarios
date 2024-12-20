@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Subtítulos</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/header_footer.css">
+    <script>
+        // Función para cargar subtítulos existentes desde el backend
+        async function cargarSubtitulos() {
+            try {
+                // Llama al endpoint para obtener la lista de subtítulos
+                const response = await fetch('/administrador/contenidos/subtitulos');
+                if (!response.ok) {
+                    throw new Error('Error al obtener la lista de subtítulos');
+                }
+                const subtitulos = await response.json();
+                const listaSubtitulos = document.getElementById('listaSubtitulos');
+
+                // Limpia la lista y agrega los subtítulos obtenidos
+                listaSubtitulos.innerHTML = '';
+                subtitulos.forEach((subtitulo) => {
+                    const option = document.createElement('option');
+                    option.value = subtitulo.idSubtitulo; // ID del subtítulo
+                    option.textContent = subtitulo.idioma; // Idioma del subtítulo
+                    listaSubtitulos.appendChild(option);
+                });
+            } catch (error) {
+                console.error(error);
+                alert('Hubo un error al cargar los subtítulos.');
+            }
+        }
+
+        // Inicializa la página cargando los subtítulos
+        window.onload = cargarSubtitulos;
+    </script>
+</head>
+
+<body>
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <a href="#" alt="Página principal de gestión de subtítulos" title="Streamflix: Gestión de Subtítulos">Streamflix: Gestión de Subtítulos</a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/admin_menu" class="return-button" alt="Volver al menú principal" aria-label="Volver al menú principal">Volver al menú</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>Gestión de Subtítulos (Idiomas)</h1>
+
+        <!-- Formulario para crear un nuevo subtítulo -->
+        <form action="/administrador/crear_subtitulo" method="post" aria-labelledby="formCrearSubtitulo">
+            <h2 id="formCrearSubtitulo">Añadir Nuevo Subtítulo</h2>
+            <label for="nuevoIdioma" aria-describedby="nuevoIdiomaHelp">Idioma del Subtítulo:</label>
+            <input type="text" id="nuevoIdioma" name="nuevoIdioma" placeholder="Ingrese el idioma" required aria-describedby="nuevoIdiomaHelp">
+            <button type="submit" aria-label="Añadir nuevo subtítulo">Añadir Subtítulo</button>
+        </form>
+
+        <br>
+
+        <!-- Formulario para eliminar un subtítulo -->
+        <form action="/administrador/eliminar_subtitulo" method="post" aria-labelledby="formEliminarSubtitulo">
+            <h2 id="formEliminarSubtitulo">Eliminar Subtítulo Existente</h2>
+            <label for="listaSubtitulos" aria-describedby="listaSubtitulosHelp">Seleccionar Subtítulo:</label>
+            <select id="listaSubtitulos" name="idSubtitulo" required aria-describedby="listaSubtitulosHelp">
+                <!-- Los subtítulos existentes se cargarán dinámicamente -->
+            </select>
+            <button type="submit" aria-label="Eliminar subtítulo seleccionado">Eliminar Subtítulo</button>
+        </form>
+    </div>
+
+    <script>
+        // Comprobamos si la URL contiene los parámetros success o error para mostrar mensajes al usuario
+        const urlParams = new URLSearchParams(window.location.search);
+        const successMessage = urlParams.get('message');
+        const errorMessage = urlParams.get('error_message');
+
+        if (successMessage) {
+            alert(successMessage); // Muestra el mensaje de éxito
+        }
+
+        if (errorMessage) {
+            alert(errorMessage); // Muestra el mensaje de error
+        }
+    </script>
+</body>
+
+</html>

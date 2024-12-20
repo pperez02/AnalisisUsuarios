@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrar Películas</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/menu_admin.css">
+    <link rel="stylesheet" href="/static/borrar_actores.css">
+</head>
+
+<header>
+    <div class="navbar">
+        <div class="logo">
+            <a href="#">Streamflix: Borrar Películas</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/admin_menu" class="return-button" aria-label="Volver al menú principal">Volver al inicio</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<body>
+    <h1>Borrar Películas</h1>
+
+    <!-- Mostrar mensaje de éxito o error -->
+    {% if mensaje %}
+        <div class="message" role="alert" aria-live="assertive">
+            <p>{{ mensaje }}</p>
+        </div>
+    {% endif %}
+
+    <!-- Mostrar la tabla solo si hay películas -->
+    {% if peliculas and peliculas|length > 0 %}
+        <table aria-labelledby="tablaPeliculas">
+            <caption id="tablaPeliculas">Lista de Películas</caption>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Descripción</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pelicula in peliculas %}
+                    <tr>
+                        <td>{{ pelicula.id }}</td>
+                        <td>{{ pelicula.titulo }}</td>
+                        <td>{{ pelicula.descripcion }}</td>
+                        <td>
+                            <!-- Formulario para eliminar la película -->
+                            <form action="/peliculas/{{ pelicula.id }}/borrar" method="post" style="display:inline;" aria-label="Eliminar la película {{ pelicula.titulo }}">
+                                <button type="submit" aria-label="Eliminar película {{ pelicula.titulo }}">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <!-- Si no hay películas, mostrar un mensaje -->
+        <p>No existen películas.</p>
+    {% endif %}
+</body>
+
+</html>

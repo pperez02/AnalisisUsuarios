@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Administrador</title>
+    <link rel="stylesheet" href="/static/menu_admin.css">
+</head>
+
+<header>
+    <div class="navbar">
+        <div class="logo">
+            <a href="#" alt="Página principal de Streamflix" aria-label="Página principal de Streamflix">Streamflix: Menú Administrador</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/" class="return-button" aria-label="Volver al inicio">Volver al inicio</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<body>
+    <div class="container">
+        {% if message %}
+            <div style="color: green; font-weight: bold;" role="alert" aria-live="assertive">{{ message }}</div>
+        {% endif %}
+        <!-- Contenedor con grid -->
+        <div class="grid">
+            <!-- Sección Usuarios -->
+            <div class="section" aria-labelledby="usuarios-section">
+                <h2 id="usuarios-section">Usuarios</h2>
+                <ul>
+                    <li><a href="/administrador/usuarios" aria-label="Listar todos los usuarios">Listar todos los usuarios</a></li>
+                </ul>
+            </div>
+
+            <!-- Sección Contenidos -->
+            <div class="section" aria-labelledby="contenidos-section">
+                <h2 id="contenidos-section">Contenidos</h2>
+                <ul>
+                    <li><a href="/administrador/pelicula/crear" aria-label="Crear nueva película">Crear película</a></li>
+                    <li><a href="/administrador/serie/crear" aria-label="Crear nueva serie">Crear serie</a></li>
+                    <li><a href="/administrador/temporada/crear" aria-label="Crear nueva temporada">Crear temporada</a></li>
+                    <li><a href="/administrador/episodio/crear" aria-label="Crear nuevo episodio">Crear episodio</a></li>
+                    <li><a href="/administrador/genero/crear" aria-label="Crear nuevo género">Crear género</a></li>
+                    <hr>
+                    <li style="color: #e50914;" aria-labelledby="actualizar-pelicula">
+                        <span id="actualizar-pelicula">Actualizar película:</span>
+                        <ul>
+                            {% for pelicula in peliculas %}
+                            <li>
+                                &emsp; <a href="/administrador/peliculas/{{pelicula.id}}" aria-label="Actualizar película {{pelicula.titulo}}">- {{pelicula.titulo}}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <hr>
+                    <li style="color: #e50914;" aria-labelledby="actualizar-serie">
+                        <span id="actualizar-serie">Actualizar serie:</span>
+                        <ul>
+                            {% for serie in series %}
+                            <li>
+                                &emsp; <a href="/administrador/series/{{serie.idSerie}}" aria-label="Actualizar serie {{serie.titulo}}">- {{serie.titulo}}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <hr>
+                    <li style="color: #e50914;" aria-labelledby="actualizar-temporada">
+                        <span id="actualizar-temporada">Actualizar temporada</span>
+                        <ul>
+                            {% for serie in series %}
+                            <li>
+                                &emsp;- {{serie.titulo}}
+                                <ul>
+                                    {% for temporada in serie.Temporadas %}
+                                    <li>
+                                        &emsp;&emsp; <a href="/administrador/series/{{serie.idSerie}}/temporadas/{{temporada.idTemporada}}" aria-label="Actualizar temporada {{temporada.numeroTemporada}} de la serie {{serie.titulo}}">- Temporada {{temporada.numeroTemporada}}</a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>    
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <hr>    
+                    <li style="color: #e50914;" aria-labelledby="actualizar-episodio">
+                        <span id="actualizar-episodio">Actualizar episodio</span>
+                        <ul>
+                            {% for serie in series %}
+                            <li>
+                                <li style="color: #e50914;">&emsp;- {{serie.titulo}}</li>
+                                <ul>
+                                    {% for temporada in serie.Temporadas %}
+                                    <li>
+                                        &emsp;&emsp;- Temporada {{temporada.numeroTemporada}}
+                                        <ul>
+                                            {% for episodio in temporada.Episodios %}
+                                            <li>
+                                                &emsp;&emsp;&emsp; <a href="/administrador/series/{{serie.idSerie}}/temporadas/{{temporada.idTemporada}}/episodios/{{episodio.idEpisodio}}" aria-label="Actualizar episodio {{episodio.numeroEpisodio}} de la temporada {{temporada.numeroTemporada}} de la serie {{serie.titulo}}">- Episodio {{episodio.numeroEpisodio}}</a>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                    {% endfor %}
+                                </ul>    
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        <hr>
+                    </li>
+                    <li style="color: #e50914;" aria-labelledby="actualizar-genero">
+                        <span id="actualizar-genero">Actualizar género:</span>
+                        <ul>
+                            {% for genero in generos %}
+                            <li>
+                                &emsp; <a href="/administrador/generos/{{genero.id}}" aria-label="Actualizar género {{genero.nombre}}">- {{genero.nombre}}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <hr>
+                    <li><a href="/peliculas/borrar" aria-label="Borrar película">Borrar película</a></li>
+                    <li><a href="/series/borrar" aria-label="Borrar serie">Borrar serie</a></li>
+                    <li><a href="/temporadas/borrar" aria-label="Borrar temporada">Borrar temporada</a></li>
+                    <li><a href="/episodios/borrar" aria-label="Borrar episodio">Borrar episodio</a></li>
+                    <li><a href="/generos/borrar" aria-label="Borrar género">Borrar género</a></li><!-- TODO cambiar por /administrador/-->
+                    <li><a href="/administrador/actualizar_subtitulos" aria-label="Administrar subtitulos de contenido">Administrar subtítulos de contenido</a></li>
+                    <li><a href="/administrador/actualizar_doblajes" aria-label="Administrar doblajes de contenido">Administrar doblajes de contenido</a></li>
+                    <li><a href="/administrador/administrar_subtitulos_idiomas" aria-label="Administrar idiomas de subtítulos">Administrar idiomas de subtítulos</a></li>
+                    <li><a href="/administrador/administrar_doblajes_idiomas" aria-label="Administrar idiomas de doblajes">Administrar idiomas de doblajes</a></li>
+                </ul>
+            </div>
+
+            <!-- Sección Actores y Directores -->
+            <div class="section" aria-labelledby="actores-directores-section">
+                <h2 id="actores-directores-section">Actores y Directores</h2>
+                <ul>
+                    <li><a href="/administrador/actor/crear" aria-label="Crear nuevo actor">Crear actor</a></li>
+                    <li><a href="/administrador/director/crear" aria-label="Crear nuevo director">Crear director</a></li>
+                    <li><a href="/actores/actualizar" aria-label="Actualizar actor">Actualizar actor</a></li>
+                    <li><a href="/directores/actualizar" aria-label="Actualizar director">Actualizar director</a></li>
+                    <li><a href="/actores/borrar" aria-label="Borrar actor">Borrar actor</a></li>
+                    <li><a href="/directores/borrar" aria-label="Borrar director">Borrar director</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

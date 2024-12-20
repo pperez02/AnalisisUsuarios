@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <title>Actualizar Género</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/header_footer.css">
+</head>
+
+<header>
+    <div class="navbar">
+        <div class="logo">
+            <a href="#" aria-label="Ir a la página principal de actualización de géneros">Streamflix: Actualizar Género</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/admin_menu" class="return-button" aria-label="Volver al menú principal">Volver al menú</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<body>
+    {% if error_message %}
+        <p style="color:red;" aria-live="assertive">{{ error_message }}</p>
+    {% endif %}
+    
+    <div class="container">
+        <form action="/administrador/update_genero/{{idGenero}}" method="post" aria-labelledby="formActualizarGenero">
+            <h1 id="formActualizarGenero">Actualizar Género</h1>
+
+            <!-- Campo Nombre -->
+            <label for="nombre" aria-label="Nombre del género">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" value="{{nombre}}" required aria-required="true" aria-label="Ingrese el nombre del género"><br>
+
+            <!-- Campo Descripción -->
+            <label for="descripcion" aria-label="Descripción del género">Descripción:</label>
+            <textarea id="descripcion" name="descripcion" required aria-required="true" aria-label="Ingrese una descripción del género">{{descripcion}}</textarea><br>
+
+            <button type="submit" aria-label="Actualizar género">Actualizar género</button>
+        </form>
+    </div>
+</body>
+
+</html>

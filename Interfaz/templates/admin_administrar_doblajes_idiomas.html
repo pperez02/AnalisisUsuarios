@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Doblajes</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/header_footer.css">
+    <script>
+        // Función para cargar doblajes existentes desde el backend
+        async function cargarDoblajes() {
+            try {
+                // Llama al endpoint para obtener la lista de doblajes
+                const response = await fetch('/administrador/contenidos/doblajes');
+                if (!response.ok) {
+                    throw new Error('Error al obtener la lista de doblajes');
+                }
+                const doblajes = await response.json();
+                const listaDoblajes = document.getElementById('listaDoblajes');
+
+                // Limpia la lista y agrega los doblajes obtenidos
+                listaDoblajes.innerHTML = '';
+                doblajes.forEach((doblaje) => {
+                    const option = document.createElement('option');
+                    option.value = doblaje.idDoblaje; // ID del doblaje
+                    option.textContent = doblaje.idioma; // Idioma del doblaje
+                    listaDoblajes.appendChild(option);
+                });
+            } catch (error) {
+                console.error(error);
+                alert('Hubo un error al cargar los doblajes.');
+            }
+        }
+
+        // Inicializa la página cargando los doblajes
+        window.onload = cargarDoblajes;
+    </script>
+</head>
+
+<body>
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <a href="#" alt="Página principal de gestión de doblajes" title="Streamflix: Gestión de Doblajes">Streamflix: Gestión de Doblajes</a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/admin_menu" class="return-button" alt="Volver al menú principal" aria-label="Volver al menú principal">Volver al menú</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>Gestión de Doblajes (Idiomas)</h1>
+
+        <!-- Formulario para crear un nuevo doblaje -->
+        <form action="/administrador/crear_doblaje" method="post" aria-labelledby="formCrearDoblaje">
+            <h2 id="formCrearDoblaje">Añadir Nuevo Doblaje</h2>
+            <label for="nuevoIdioma" aria-describedby="nuevoIdiomaHelp">Idioma del Doblaje:</label>
+            <input type="text" id="nuevoIdioma" name="nuevoIdioma" placeholder="Ingrese el idioma" required aria-describedby="nuevoIdiomaHelp">
+            <button type="submit" aria-label="Añadir nuevo doblaje">Añadir Doblaje</button>
+        </form>
+
+        <br>
+
+        <!-- Formulario para eliminar un doblaje -->
+        <form action="/administrador/eliminar_doblaje" method="post" aria-labelledby="formEliminarDoblaje">
+            <h2 id="formEliminarDoblaje">Eliminar Doblaje Existente</h2>
+            <label for="listaDoblajes" aria-describedby="listaDoblajesHelp">Seleccionar Doblaje:</label>
+            <select id="listaDoblajes" name="idDoblaje" required aria-describedby="listaDoblajesHelp">
+                <!-- Los doblajes existentes se cargarán dinámicamente -->
+            </select>
+            <button type="submit" aria-label="Eliminar doblaje seleccionado">Eliminar Doblaje</button>
+        </form>
+    </div>
+
+    <script>
+        // Comprobamos si la URL contiene los parámetros success o error para mostrar mensajes al usuario
+        const urlParams = new URLSearchParams(window.location.search);
+        const successMessage = urlParams.get('message');
+        const errorMessage = urlParams.get('error_message');
+
+        if (successMessage) {
+            alert(successMessage); // Muestra el mensaje de éxito
+        }
+
+        if (errorMessage) {
+            alert(errorMessage); // Muestra el mensaje de error
+        }
+    </script>
+</body>
+
+</html>

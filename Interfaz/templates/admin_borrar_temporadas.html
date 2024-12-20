@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrar Temporadas</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/menu_admin.css">
+    <link rel="stylesheet" href="/static/borrar_actores.css">
+</head>
+
+<header>
+    <div class="navbar">
+        <div class="logo">
+            <a href="#">Streamflix: Borrar Temporadas</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/admin_menu" class="return-button" aria-label="Volver al menú principal">Volver al inicio</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<body>
+    <h1>Borrar Temporadas</h1>
+
+    <!-- Mostrar mensaje de éxito o error -->
+    {% if mensaje %}
+    <div class="message" role="alert" aria-live="assertive">
+        <p>{{ mensaje }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Mostrar la tabla solo si hay series -->
+    {% if series and series|length > 0 %}
+    <table aria-labelledby="tablaTemporadas">
+        <caption id="tablaTemporadas">Lista de Temporadas</caption>
+        <thead>
+            <tr>
+                <th>Título de la Serie</th>
+                <th>Número de Temporada</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for serie in series %}
+            {% if serie.Temporadas and serie.Temporadas|length > 0 %}
+            {% for temporada in serie.Temporadas %}
+            <tr>
+                <td>{{ serie.titulo }}</td>
+                <td>{{ temporada.numeroTemporada }}</td>
+                <td>
+                    <!-- Formulario para eliminar la temporada -->
+                    <form action="/series/{{ serie.idSerie }}/temporadas/{{ temporada.idTemporada }}/borrar" method="post" style="display:inline;" aria-label="Eliminar la temporada {{ temporada.numeroTemporada }} de {{ serie.titulo }}">
+                        <button type="submit" aria-label="Eliminar temporada {{ temporada.numeroTemporada }} de {{ serie.titulo }}">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <!-- Si no hay series, mostrar un mensaje -->
+    <p>No existen series.</p>
+    {% endif %}
+</body>
+
+</html>

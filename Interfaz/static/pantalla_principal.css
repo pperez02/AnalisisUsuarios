@@ -1,0 +1,184 @@
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip: rect(0, 0, 0, 0);
+    overflow: hidden;
+}
+
+/* General body styling */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #000; /* Fondo completamente negro */
+    font-family: Arial, sans-serif;
+}
+
+/* Contenedor */
+.container {
+    background-color: #1a1a1a; /* Fondo gris oscuro */
+    margin: auto;
+    width: 90%; /* 90% del ancho de la pantalla */
+    max-width: 1200px;
+    height: auto; /* Ajusta la altura según el contenido */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    position: relative;
+    overflow-y: auto; /* Scroll si el contenido es demasiado grande */
+    box-sizing: border-box;
+}
+
+/* Estilo para las secciones con los recuadros de contenido */
+.section {
+    margin-top: 25px; /* Más espacio entre secciones */
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Recuadros de contenido (simulación de portadas) */
+.content-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Espacio entre los recuadros */
+    justify-content: flex-start; /* Alineación hacia la izquierda */
+    margin: 0;
+    padding: 0;
+}
+
+/* Recuadro de contenido */
+.content-box {
+    background-image: url('/static/default-cover.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding: 0;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 1px 1px 2px black;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    width: 100%; /* Se ajusta al 100% de la columna disponible */
+    max-width: 220px; /* Limitamos el tamaño máximo */
+    height: 220px; /* Más alto */
+    transition: transform 0.3s ease-in-out;
+    margin: 0; /* Elimina el margen adicional */
+    overflow: hidden;
+}
+
+/* Mejoras visuales para los recuadros */
+.content-box span {
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    text-align: center;
+    padding: 8px 0;
+    font-size: 14px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* Efecto hover para los recuadros */
+.content-box:hover {
+    transform: scale(1.1); /* Efecto hover más marcado */
+}
+
+/* Estilo para los encabezados de las secciones */
+.section h2 {
+    font-family: 'Arial Black', sans-serif;
+    font-size: 20px; /* Encabezados más grandes */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #e50914;
+    margin-bottom: 15px;
+}
+
+/* Estilo de los recuadros de contenido */
+.content-box {
+    display: block; /* Cambiado a bloque */
+    height: 180px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+    text-align: center;
+    font-size: 14px;
+    padding: 10px;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+/* Efecto hover para los recuadros */
+.content-box:hover {
+    transform: scale(1.05);
+    background-color: #444;
+}
+
+/* Ajusta el contenedor para mantener la coherencia */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Asegura altura mínima completa */
+}
+
+main {
+    flex: 1; /* Expande el contenido principal para empujar el footer hacia abajo */
+}
+
+/* Estilos responsivos */
+
+/* Dispositivos grandes (pantallas mayores a 1200px) */
+@media (max-width: 1200px) {
+    .content-list {
+        justify-content: space-evenly; /* Distribuye el contenido horizontalmente */
+    }
+
+    .content-box {
+        max-width: 300px; /* Aumenta el tamaño máximo de los recuadros */
+        height: 250px; /* Ajuste de altura */
+    }
+}
+
+/* Dispositivos medianos (pantallas menores a 900px) */
+@media (max-width: 900px) {
+    .content-list {
+        flex-direction: column; /* En pantallas medianas, los recuadros se alinean verticalmente */
+        gap: 20px; /* Espacio entre recuadros */
+        justify-content: center; /* Alineación centrada */
+    }
+
+    .content-box {
+        max-width: 90%; /* Los recuadros ocupan casi todo el ancho */
+        height: 220px; /* Ajuste de altura */
+    }
+}
+
+/* Dispositivos pequeños (pantallas menores a 600px) */
+@media (max-width: 600px) {
+    .content-list {
+        flex-direction: column; /* En pantallas muy pequeñas, los recuadros se alinean verticalmente */
+        gap: 15px; /* Reduce el espacio entre los recuadros */
+        justify-content: center; /* Alineación centrada */
+    }
+
+    .content-box {
+        max-width: 100%; /* Los recuadros ocupan todo el ancho */
+        height: 180px; /* Ajuste de altura */
+    }
+
+    .section h2 {
+        font-size: 18px; /* Reduce el tamaño de la fuente para pantallas pequeñas */
+        margin-bottom: 10px;
+    }
+
+    .container {
+        padding: 20px; /* Reduce el padding en pantallas pequeñas */
+    }
+}
