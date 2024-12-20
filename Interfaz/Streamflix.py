@@ -797,8 +797,6 @@ async def crear_pelicula(
         "fechaLanzamiento": fecha_lanzamiento,
         "idGenero": id_genero,
         "valoracionPromedio": 0.0,
-        "idSubtitulosContenido": "1",
-        "idDoblajeContenido": "1", #TODO
         "duracion": duracion,
         "idDirector": idDirector,
     }
@@ -881,8 +879,6 @@ async def crear_serie(
         "fechaLanzamiento": fecha_lanzamiento,
         "idGenero": id_genero,
         "valoracionPromedio": 0.0,
-        "idSubtitulosContenido": "1",
-        "idDoblajeContenido": "1",
         "duracion": None,
         "idDirector": None,
     }

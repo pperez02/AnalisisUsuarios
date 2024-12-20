@@ -21,8 +21,8 @@ class Contenido(Base):
     fechaLanzamiento = Column(String)  # Formato: YYYY-MM-DD
     idGenero = Column(String, ForeignKey("Genero.id"))
     valoracionPromedio = Column(Float)  # Escala de 0 a 10
-    idSubtitulosContenido = Column(String, ForeignKey("SubtituloContenido.idSubtitulosContenido"))
-    idDoblajeContenido = Column(String, ForeignKey("DoblajeContenido.idDoblajeContenido"))
+    idSubtitulosContenido = Column(String, default=lambda: str(uuid.uuid4()), index=True)
+    idDoblajeContenido = Column(String, default=lambda: str(uuid.uuid4()), index=True)
 
     #Parametros exclusivos de Pelicula
     duracion = Column(Integer, nullable=True)  # En minutos
