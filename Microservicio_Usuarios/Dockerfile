@@ -9,7 +9,7 @@ COPY API_Usuarios /app/API_Usuarios
 COPY usuarios.db /app/
 
 # Instala las dependencias necesarias
-RUN pip install fastapi uvicorn sqlalchemy pydantic "pydantic[email]" typing
+RUN pip install fastapi pydantic "pydantic[email]" sqlalchemy typing uvicorn
 
 # Comando para ejecutar la aplicación
 CMD ["uvicorn", "API_Usuarios.main:app", "--host", "0.0.0.0", "--port", "8001"]
