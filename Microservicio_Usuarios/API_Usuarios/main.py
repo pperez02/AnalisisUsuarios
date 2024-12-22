@@ -111,8 +111,8 @@ def add_payment_method(idusuario: str, metodo_pago: schemas.MetodoPagoCreate, db
     user = crud.get_user(db, user_id=idusuario)
     if user is None:
         raise HTTPException(status_code=404, detail=mensaje_no_encontrado)
-    metodoPagoCreado = crud.create_metodo_pago(db, metodo_pago)
-    idMetodoPago = metodoPagoCreado.id
+    metodopagocreado = crud.create_metodo_pago(db, metodo_pago)
+    idMetodoPago = metodopagocreado.id
     return crud.create_metodo_pago_usuario(db, idUsuario=user.id, idMetodoPago=idMetodoPago)
 
 # Endpoint para obtener un listado con todos los planes de suscripcición existentes en la BD
