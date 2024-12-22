@@ -75,12 +75,12 @@ def get_metodos_pago(db: Session, skip: int = 0, limit: int = 10):
 
 def get_metodos_pago_usuario(db: Session, user_id: str):
 
-    metodosPagoUsuario = db.query(models.MetodoPagoUsuario).filter(models.MetodoPagoUsuario.idUsuario == user_id).all()
+    metodospagousuario = db.query(models.MetodoPagoUsuario).filter(models.MetodoPagoUsuario.idUsuario == user_id).all()
 
-    if not metodosPagoUsuario:
+    if not metodospagousuario:
         return None
     
-    metodos_pago = db.query(models.MetodoPago).filter(models.MetodoPago.id.in_([mpu.idMetodoPago for mpu in metodosPagoUsuario])).all()
+    metodos_pago = db.query(models.MetodoPago).filter(models.MetodoPago.id.in_([mpu.idMetodoPago for mpu in metodospagousuario])).all()
     return metodos_pago
 
 def create_metodo_pago_usuario(db: Session, idUsuario: str, idMetodoPago: str):
