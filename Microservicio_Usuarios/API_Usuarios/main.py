@@ -31,9 +31,9 @@ def get_database():
 def get_usuarios(skip: int = 0, limit: int = 10, db: Session = Depends(get_database)):
     return crud.get_users(db, skip=skip, limit=limit)
 
-@app.get("/usuarios/{idUsuario}", response_model=schemas.User)
-def get_usuarios(idUsuario: str, db: Session = Depends(get_database)):
-    usuario = crud.get_user(db, user_id=idUsuario)
+@app.get("/usuarios/{idusuario}", response_model=schemas.User)
+def get_usuarios(idusuario: str, db: Session = Depends(get_database)):
+    usuario = crud.get_user(db, user_id=idusuario)
     if not usuario:
         raise HTTPException(status_code=404, detail=mensaje_no_encontrado)
     return usuario
@@ -52,17 +52,17 @@ def login_user(credentials: schemas.UserLogin, db: Session = Depends(get_databas
         raise HTTPException(status_code=401, detail="Credenciales incorrectas")
     return db_user    
 
-@app.put("/usuarios/{idUsuario}/perfil")
-def update_user_profile(idUsuario: str, user_data: schemas.UserUpdate, db: Session = Depends(get_database)):
-    user = crud.update_user(db, user_id=idUsuario, user_data=user_data)
+@app.put("/usuarios/{idusuario}/perfil")
+def update_user_profile(idusuario: str, user_data: schemas.UserUpdate, db: Session = Depends(get_database)):
+    user = crud.update_user(db, user_id=idusuario, user_data=user_data)
     if user is None:
         raise HTTPException(status_code=404, detail=mensaje_no_encontrado)
     return {"message": "Perfil actualizado exitosamente"}
 
-@app.put("/usuarios/{idUsuario}/idioma")
-def update_user_language(idUsuario: str, idioma: schemas.UserLanguage, db: Session = Depends(get_database)):
+@app.put("/usuarios/{idusuario}/idioma")
+def update_user_language(idusuario: str, idioma: schemas.UserLanguage, db: Session = Depends(get_database)):
     # Aquí puedes implementar la lógica para actualizar el idioma del usuario
-    user = crud.get_user(db, user_id=idUsuario)
+    user = crud.get_user(db, user_id=idusuario)
     if user is None:
         raise HTTPException(status_code=404, detail=mensaje_no_encontrado)
     # Supongamos que agregamos un campo 'idioma' en el modelo User
@@ -70,9 +70,9 @@ def update_user_language(idUsuario: str, idioma: schemas.UserLanguage, db: Sessi
     db.commit()
     return {"message": "Idioma actualizado exitosamente"}
 
-@app.put("/usuarios/{idUsuario}/suscripcion")
-def update_subscription(idUsuario: str, subscription: schemas.SubscriptionUpdate, db: Session = Depends(get_database)):
-    user = crud.get_user(db, user_id=idUsuario)
+@app.put("/usuarios/{idusuario}/suscripcion")
+def update_subscription(idusuario: str, subscription: schemas.SubscriptionUpdate, db: Session = Depends(get_database)):
+    user = crud.get_user(db, user_id=idusuario)
     if user is None:
         raise HTTPException(status_code=404, detail=mensaje_no_encontrado)
 
@@ -97,18 +97,18 @@ def update_subscription(idUsuario: str, subscription: schemas.SubscriptionUpdate
 def get_payment_methods(db: Session = Depends(get_database)):
     return crud.get_metodos_pago(db)
 
-@app.get("/usuarios/{idUsuario}/metodos-pago", response_model=list[schemas.MetodoPago])
-def get_user_payment_methods(idUsuario: str, db: Session = Depends(get_database)):
-    user = crud.get_user(db, user_id=idUsuario)
+@app.get("/usuarios/{idusuario}/metodos-pago", response_model=list[schemas.MetodoPago])
+def get_user_payment_methods(idusuario: str, db: Session = Depends(get_database)):
+    user = crud.get_user(db, user_id=idusuario)
     if user is None:
         raise HTTPException(status_code=404, detail=mensaje_no_encontrado)
     
-    metodosPagoUsuario = crud.get_metodos_pago_usuario(db, user_id=idUsuario)
+    metodosPagoUsuario = crud.get_metodos_pago_usuario(db, user_id=idusuario)
     return metodosPagoUsuario
 
-@app.post("/usuarios/{idUsuario}/metodos-pago", response_model=schemas.MetodoPagoUsuarioCreate)
-def add_payment_method(idUsuario: str, metodo_pago: schemas.MetodoPagoCreate, db: Session = Depends(get_database)):
-    user = crud.get_user(db, user_id=idUsuario)
+@app.post("/usuarios/{idusuario}/metodos-pago", response_model=schemas.MetodoPagoUsuarioCreate)
+def add_payment_method(idusuario: str, metodo_pago: schemas.MetodoPagoCreate, db: Session = Depends(get_database)):
+    user = crud.get_user(db, user_id=idusuario)
     if user is None:
         raise HTTPException(status_code=404, detail=mensaje_no_encontrado)
     metodoPagoCreado = crud.create_metodo_pago(db, metodo_pago)
