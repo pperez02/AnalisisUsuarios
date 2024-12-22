@@ -83,8 +83,8 @@ def get_metodos_pago_usuario(db: Session, user_id: str):
     metodos_pago = db.query(models.MetodoPago).filter(models.MetodoPago.id.in_([mpu.idMetodoPago for mpu in metodospagousuario])).all()
     return metodos_pago
 
-def create_metodo_pago_usuario(db: Session, idUsuario: str, idMetodoPago: str):
-    metodoPagoUsuario = models.MetodoPagoUsuario(idUsuario=idUsuario, idMetodoPago=idMetodoPago)
+def create_metodo_pago_usuario(db: Session, idUsuario: str, idmetodopago: str):
+    metodoPagoUsuario = models.MetodoPagoUsuario(idUsuario=idUsuario, idMetodoPago=idmetodopago)
     db.add(metodoPagoUsuario)
     db.commit()
     db.refresh(metodoPagoUsuario)
